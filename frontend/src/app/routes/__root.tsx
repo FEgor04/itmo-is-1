@@ -9,7 +9,14 @@ type RouterContext = {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>
-      <Outlet />
+      <header className="border-b">
+        <nav className="container mx-auto flex items-center h-14">
+          <h1 className="text-2xl font-bold">Вебмакакинг</h1>
+        </nav>
+      </header>
+      <main className="container mx-auto mt-8">
+        <Outlet />
+      </main>
       <TanStackRouterDevtools />
     </>
   ),
