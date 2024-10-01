@@ -28,7 +28,7 @@ jobs:
     - name: Linter
       run: pnpm run lint
     - name: Upload artifacts
-      uses: actions/upload-artifacts@v4
+      uses: actions/upload-artifact@v4
       with:
         name: frontend
         path: ./frontend/dist
