@@ -5,7 +5,6 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:@conarti/feature-sliced/recommended",
   ],
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
@@ -15,6 +14,5 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
-    "@conarti/feature-sliced/absolute-relative": "off",
   },
 };
