@@ -1,3 +1,4 @@
+import { getHumansQueryOptions } from "@/entities/human-being/api";
 import { useHumanBeingTable } from "@/entities/human-being/table";
 import { PaginatedQuerySchema } from "@/shared/pagination";
 import { DataTable } from "@/shared/ui/data-table";
@@ -8,27 +9,14 @@ const SearchSchema = PaginatedQuerySchema;
 export const Route = createFileRoute("/humans")({
   component: Page,
   validateSearch: SearchSchema,
+  loaderDeps: ({ search }) => search,
+  loader: ({ context, deps }) => {
+    return context.queryClient.ensureQueryData(getHumansQueryOptions(deps));
+  },
 });
 
 function Page() {
-  const table = useHumanBeingTable([
-    {
-      id: 1,
-      name: "asd",
-      realHero: true,
-      mood: "CALM",
-      coordinates: {
-        x: 1,
-        y: 1,
-      },
-      creationDate: new Date(),
-      hasToothpick: true,
-      weaponType: "AXE",
-      car: {
-        cool: true,
-      },
-      impactSpeed: 50,
-    },
-  ]);
+  const data = Route.useLoaderData();
+  const table = useHumanBeingTable(data.values);
   return <DataTable table={table} />;
 }

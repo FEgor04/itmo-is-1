@@ -13,6 +13,8 @@ export const PaginatedQuerySchema = z.object({
 
 export const PaginatedResponseSchema = <T>(value: ZodType<T>) =>
   z.object({
+    page: z.number().min(1),
+    pageSize: z.number().refine((value) => ALLOWED_PAGE_SIZE.includes(value)),
     total: z.number(),
     values: z.array(value),
   });
