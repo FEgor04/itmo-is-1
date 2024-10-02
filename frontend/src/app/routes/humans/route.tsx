@@ -9,7 +9,7 @@ import { Input } from "@/shared/ui/input";
 import { PaginationFooter } from "@/shared/ui/pagination";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
-import { ScanSearchIcon, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
