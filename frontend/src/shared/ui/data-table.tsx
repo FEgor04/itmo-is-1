@@ -1,6 +1,6 @@
 "use client";
 
-import { flexRender, Table as RTable } from "@tanstack/react-table";
+import { flexRender, Header, Table as RTable } from "@tanstack/react-table";
 
 import {
   Table,
@@ -10,6 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
+import { Button } from "./button";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronsUpDown,
+  ChevronUp,
+  SortAsc,
+} from "lucide-react";
 
 interface DataTableProps<TData> {
   table: RTable<TData>;
@@ -22,18 +30,9 @@ export function DataTable<TData>({ table }: DataTableProps<TData>) {
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <TableColumnHeader header={header} />
+              ))}
             </TableRow>
           ))}
         </TableHeader>
@@ -54,15 +53,56 @@ export function DataTable<TData>({ table }: DataTableProps<TData>) {
           ) : (
             <TableRow>
               <TableCell
-                colSpan={table.getHeaderGroups().map(it => it.headers.length).reduce((a, b) => a + b, 0)}
+                colSpan={table
+                  .getHeaderGroups()
+                  .map((it) => it.headers.length)
+                  .reduce((a, b) => a + b, 0)}
                 className="h-24 text-center"
               >
-              Нет результатов
+                Нет результатов
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+function TableColumnHeader<T>({ header }: { header: Header<T, unknown> }) {
+  const sortable = header.column.getCanSort();
+  if (!sortable) {
+    return (
+      <TableHead key={header.id}>
+        {header.isPlaceholder
+          ? null
+          : flexRender(header.column.columnDef.header, header.getContext())}
+      </TableHead>
+    );
+  }
+
+  const sorted = header.column.getIsSorted();
+
+  function onClick() {
+    if (sorted === false) {
+      header.column.toggleSorting(false);
+    } else if (sorted == "asc") {
+      header.column.toggleSorting(true);
+    } else if (sorted == "desc") {
+      header.column.toggleSorting();
+    }
+  }
+
+  return (
+    <TableHead key={header.id}>
+      <Button className="px-1 py-0" variant="ghost" onClick={onClick}>
+        {header.isPlaceholder
+          ? null
+          : flexRender(header.column.columnDef.header, header.getContext())}
+        {sorted == false && <ChevronsUpDown className="ml-2 size-4" />}
+        {sorted == "asc" && <ArrowUp className="ml-2 size-4" />}
+        {sorted == "desc" && <ArrowDown className="ml-2 size-4" />}
+      </Button>
+    </TableHead>
   );
 }
