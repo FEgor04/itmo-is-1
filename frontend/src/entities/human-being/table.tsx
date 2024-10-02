@@ -4,6 +4,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FetchedHumanBeing } from "./model";
+import { MoodBadge } from "../enums/mood";
+import { WeaponTypeBadge } from "../enums/weapon-type";
 
 const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   {
@@ -40,6 +42,9 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   {
     accessorKey: "mood",
     header: "Настроение",
+    cell: ({ row }) => {
+      return <MoodBadge value={row.original.mood} />;
+    },
   },
   {
     accessorKey: "impactSpeed",
@@ -48,6 +53,9 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   {
     accessorKey: "weaponType",
     header: "Тип оружия",
+    cell: ({ row }) => {
+      return <WeaponTypeBadge value={row.original.weaponType} />;
+    },
   },
 ];
 
@@ -56,5 +64,17 @@ export function useHumanBeingTable(data: Array<FetchedHumanBeing>) {
     getCoreRowModel: getCoreRowModel(),
     data,
     columns: HumanBeingTableDef,
+    defaultColumn: {
+      cell: ({ getValue }) => {
+        const value = getValue();
+        if (value === undefined) {
+          return <>&mdash;</>;
+        }
+        if (typeof value === "boolean") {
+          return value ? "Да" : "Нет";
+        }
+        return value;
+      },
+    },
   });
 }

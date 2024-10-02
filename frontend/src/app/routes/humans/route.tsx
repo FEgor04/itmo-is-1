@@ -7,6 +7,22 @@ export const Route = createFileRoute("/humans")({
 });
 
 function Page() {
-  const table = useHumanBeingTable([]);
+  const table = useHumanBeingTable([{
+    id: 1,
+    name: "asd",
+    realHero: true,
+    mood: "CALM",
+    coordinates: {
+      x: 1,
+      y: 1
+    },
+    creationDate: new Date(),
+    hasToothpick: true,
+    weaponType: "AXE",
+    car: {
+      cool: true
+    },
+    impactSpeed: 50
+  }]);
   return <DataTable table={table} />;
 }
