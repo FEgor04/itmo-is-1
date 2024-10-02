@@ -1,7 +1,7 @@
 import { z, ZodType } from "zod";
 
-const ALLOWED_PAGE_SIZE = [10, 25, 50];
-const DEFAULT_PAGE_SIZE = ALLOWED_PAGE_SIZE[0];
+export const ALLOWED_PAGE_SIZE = [10, 25, 50];
+export const DEFAULT_PAGE_SIZE = ALLOWED_PAGE_SIZE[0];
 
 export const PaginatedQuerySchema = z.object({
   page: z.number().min(1).catch(1),
