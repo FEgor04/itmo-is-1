@@ -4,7 +4,11 @@ import {
 } from "@/shared/pagination";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
-import { FetchedHumanBeingSchema, FetchedHumanBeingSchemaKeys } from "./model";
+import {
+  BaseHumanBeingSchema,
+  FetchedHumanBeingSchema,
+  FetchedHumanBeingSchemaKeys,
+} from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
 
 export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
@@ -51,3 +55,9 @@ export const getHumansQueryOptions = (
     },
   });
 };
+
+export const CreateHumanBeingSchema = BaseHumanBeingSchema.omit({
+  id: true,
+}).extend({
+    car: z.number(),
+});
