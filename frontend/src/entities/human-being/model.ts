@@ -21,5 +21,17 @@ export const BaseHumanBeingSchema = z.object({
 export const FetchedHumanBeingSchema = BaseHumanBeingSchema.extend({
   car: CarSchema,
 });
+export const FetchedHumanBeingSchemaKeys = z.enum([
+  "id",
+  "name",
+  "coordinates_x",
+  "coordinates_y",
+  "creationDate",
+  "realHero",
+  "hasToothpick",
+  "mood",
+  "impactSpeed",
+  "weaponType",
+]);
 
-export type FetchedHumanBeing = z.infer<typeof FetchedHumanBeingSchema>
+export type FetchedHumanBeing = z.infer<typeof FetchedHumanBeingSchema>;

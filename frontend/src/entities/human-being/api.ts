@@ -4,11 +4,11 @@ import {
 } from "@/shared/pagination";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
-import { FetchedHumanBeingSchema } from "./model";
+import { FetchedHumanBeingSchema, FetchedHumanBeingSchemaKeys } from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
 
 export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
-  SortingQuerySchema(FetchedHumanBeingSchema),
+  SortingQuerySchema(FetchedHumanBeingSchemaKeys),
 );
 export const GetHumansResponseSchema = PaginatedResponseSchema(
   FetchedHumanBeingSchema,

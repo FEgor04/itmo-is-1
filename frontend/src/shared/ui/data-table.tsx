@@ -15,8 +15,6 @@ import {
   ArrowDown,
   ArrowUp,
   ChevronsUpDown,
-  ChevronUp,
-  SortAsc,
 } from "lucide-react";
 
 interface DataTableProps<TData> {

@@ -1,6 +1,8 @@
 import {
   ColumnDef,
   getCoreRowModel,
+  OnChangeFn,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { FetchedHumanBeing } from "./model";
@@ -59,11 +61,19 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   },
 ];
 
-export function useHumanBeingTable(data: Array<FetchedHumanBeing>) {
+export function useHumanBeingTable(
+  data: Array<FetchedHumanBeing>,
+  sortingState: SortingState,
+  handleSetSortingState: OnChangeFn<SortingState>,
+) {
   return useReactTable({
     getCoreRowModel: getCoreRowModel(),
     data,
     columns: HumanBeingTableDef,
+    state: {
+      sorting: sortingState,
+    },
+    onSortingChange: handleSetSortingState,
     defaultColumn: {
       cell: ({ getValue }) => {
         const value = getValue();
