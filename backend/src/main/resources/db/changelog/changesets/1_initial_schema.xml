@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="andrey.karabanov">
+        <createTable tableName="car">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="color" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brand" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cool" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="human_being">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="x" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+            <column name="y" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="real_hero" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_toothpick" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mood" type="varchar(255)"/>
+            <column name="impact_speed" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weapon_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="human_being"
+                baseColumnNames="car_id"
+                referencedTableName="car"
+                referencedColumnNames="id"
+                constraintName="fk_human_being_car"/>
+
+    </changeSet>
+
+</databaseChangeLog>
