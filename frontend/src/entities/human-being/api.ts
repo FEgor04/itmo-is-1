@@ -9,7 +9,9 @@ import { SortingQuerySchema } from "@/shared/sorting";
 
 export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
   SortingQuerySchema(FetchedHumanBeingSchemaKeys),
-);
+).extend({
+  name: z.string().min(1).optional().catch(undefined),
+});
 export const GetHumansResponseSchema = PaginatedResponseSchema(
   FetchedHumanBeingSchema,
 );
