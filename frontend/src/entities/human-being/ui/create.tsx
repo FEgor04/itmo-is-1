@@ -1,12 +1,18 @@
-import { DialogContent, DialogFooter, DialogHeader } from "@/shared/ui/dialog";
+import {
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateHumanBeingSchema } from "../api";
 import { z } from "zod";
-import { Form, FormField, FormItem } from "@/shared/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/shared/ui/form";
 import { Label } from "@/shared/ui/label";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
+import { Checkbox } from "@/shared/ui/checkbox";
 
 export function CreateHumanBeingDialogContent() {
   const form = useForm<z.infer<typeof CreateHumanBeingSchema>>({
@@ -19,9 +25,15 @@ export function CreateHumanBeingDialogContent() {
 
   return (
     <DialogContent>
-      <DialogHeader>Создание Human Being</DialogHeader>
-      <form id="create-human-being-form" onSubmit={form.handleSubmit(onSubmit)}>
-        <Form {...form}>
+      <DialogHeader>
+        <DialogTitle>Создание Human Being</DialogTitle>
+      </DialogHeader>
+      <Form {...form}>
+        <form
+          id="create-human-being-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <FormField
             control={form.control}
             name="name"
@@ -29,11 +41,73 @@ export function CreateHumanBeingDialogContent() {
               <FormItem>
                 <Label>Имя</Label>
                 <Input {...field} />
+                <FormMessage />
               </FormItem>
             )}
           />
-        </Form>
-      </form>
+          <FormField
+            control={form.control}
+            name="coordinates.x"
+            render={({ field }) => (
+              <FormItem>
+                <Label>X</Label>
+                <Input {...field} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="coordinates.y"
+            render={({ field }) => (
+              <FormItem>
+                <Label>Y</Label>
+                <Input {...field} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="impactSpeed"
+            render={({ field }) => (
+              <FormItem>
+                <Label>Скорость</Label>
+                <Input {...field} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hasToothpick"
+            render={({ field: { value, onChange, ...field } }) => (
+              <FormItem className="flex items-center space-x-3 space-y-0">
+                <Checkbox
+                  checked={value}
+                  onCheckedChange={(value) => onChange(value)}
+                  {...field}
+                />
+                <Label>Зубочистка есть?</Label>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="realHero"
+            render={({ field: { value, onChange, ...field } }) => (
+              <FormItem className="flex items-center space-x-3 space-y-0">
+                <Checkbox
+                  checked={value}
+                  onCheckedChange={(value) => onChange(value)}
+                  {...field}
+                />
+                <Label>Настоящий герой?</Label>
+              </FormItem>
+            )}
+          />
+        </form>
+      </Form>
       <DialogFooter>
         <Button form="create-human-being-form">Создать</Button>
       </DialogFooter>
