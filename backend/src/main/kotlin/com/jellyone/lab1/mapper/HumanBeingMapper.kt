@@ -15,7 +15,7 @@ object HumanBeingMapper {
             creationDate = humanBeing.creationDate,
             realHero = humanBeing.realHero,
             hasToothpick = humanBeing.hasToothpick,
-            carId = humanBeing.car.id ?: throw IllegalArgumentException("Car ID cannot be null"),
+            carId = humanBeing.car.id!!,
             mood = humanBeing.mood,
             impactSpeed = humanBeing.impactSpeed,
             weaponType = humanBeing.weaponType
