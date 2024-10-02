@@ -5,8 +5,11 @@ import {
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
 import { FetchedHumanBeingSchema } from "./model";
+import { SortingQuerySchema } from "@/shared/sorting";
 
-export const GetHumansQuerySchema = PaginatedQuerySchema;
+export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
+  SortingQuerySchema(FetchedHumanBeingSchema),
+);
 export const GetHumansResponseSchema = PaginatedResponseSchema(
   FetchedHumanBeingSchema,
 );

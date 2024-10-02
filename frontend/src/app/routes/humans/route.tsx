@@ -1,12 +1,11 @@
-import { getHumansQueryOptions } from "@/entities/human-being/api";
+import { getHumansQueryOptions, GetHumansQuerySchema } from "@/entities/human-being/api";
 import { useHumanBeingTable } from "@/entities/human-being/table";
-import { PaginatedQuerySchema } from "@/shared/pagination";
 import { DataTable } from "@/shared/ui/data-table";
 import { PaginationFooter } from "@/shared/ui/pagination";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-const SearchSchema = PaginatedQuerySchema;
+const SearchSchema = GetHumansQuerySchema;
 
 export const Route = createFileRoute("/humans")({
   component: Page,
