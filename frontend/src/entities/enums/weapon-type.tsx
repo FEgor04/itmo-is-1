@@ -1,4 +1,5 @@
 import { Badge } from "@/shared/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { z } from "zod";
 
 export const WeaponTypeSchema = z.enum(["AXE", "PISTOL", "MACHINE_GUN"])
@@ -26,3 +27,29 @@ const WeaponTypeStyle = {
       </Badge>
     );
   }
+
+type Props = {
+  value: WeaponType | undefined;
+  onChange: (value: WeaponType) => void;
+} & Omit<React.ComponentProps<typeof Select>, "value" | "onChange">;
+
+export const SelectWeaponType: React.FC<Props> = ({ value, onChange, ...props }) => {
+  return (
+    <Select
+      value={value}
+      onValueChange={(value) => onChange(WeaponTypeSchema.parse(value))}
+      {...props}
+    >
+      <SelectTrigger>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {WeaponTypeSchema.options.map((option) => (
+          <SelectItem value={option} key={option}>
+            {WeaponTypeTranslation[option]}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
