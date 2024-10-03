@@ -40,7 +40,7 @@ export function CreateHumanBeingDialogContent() {
         <form
           id="create-human-being-form"
           onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
-          className="space-y-4"
+          className="2 max-h-[75vh] space-y-4 overflow-y-auto"
         >
           <FormField
             control={form.control}
@@ -59,7 +59,7 @@ export function CreateHumanBeingDialogContent() {
             render={({ field }) => (
               <FormItem>
                 <Label>X</Label>
-                <Input {...field} />
+                <Input required {...field} />
                 <FormMessage />
               </FormItem>
             )}
@@ -70,7 +70,7 @@ export function CreateHumanBeingDialogContent() {
             render={({ field }) => (
               <FormItem>
                 <Label>Y</Label>
-                <Input {...field} />
+                <Input required {...field} />
                 <FormMessage />
               </FormItem>
             )}
@@ -121,7 +121,7 @@ export function CreateHumanBeingDialogContent() {
             render={({ field }) => (
               <FormItem>
                 <Label>Скорость</Label>
-                <Input {...field} />
+                <Input required {...field} />
                 <FormMessage />
               </FormItem>
             )}
@@ -141,7 +141,7 @@ export function CreateHumanBeingDialogContent() {
           <FormField
             control={form.control}
             name="car"
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+             
             render={({ field: { value, onChange } }) => (
               <FormItem>
                 <Label>Тип оружия</Label>
@@ -159,7 +159,11 @@ export function CreateHumanBeingDialogContent() {
         </form>
       </Form>
       <DialogFooter>
-        <Button disabled={isPending} type="submit" form="create-human-being-form">
+        <Button
+          disabled={isPending}
+          type="submit"
+          form="create-human-being-form"
+        >
           Создать
         </Button>
       </DialogFooter>

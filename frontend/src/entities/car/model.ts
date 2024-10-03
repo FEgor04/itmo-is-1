@@ -1,6 +1,7 @@
+import { REQUIRED_CONFIG } from "@/shared/zod";
 import z from "zod";
 
-export const CarIDSchema = z.number();
+export const CarIDSchema = z.number(REQUIRED_CONFIG);
 
 export const BaseCarSchema = z.object({
   id: CarIDSchema,

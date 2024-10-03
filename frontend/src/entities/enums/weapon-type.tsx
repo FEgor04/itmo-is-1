@@ -1,8 +1,9 @@
 import { Badge } from "@/shared/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { REQUIRED_CONFIG } from "@/shared/zod";
 import { z } from "zod";
 
-export const WeaponTypeSchema = z.enum(["AXE", "PISTOL", "MACHINE_GUN"])
+export const WeaponTypeSchema = z.enum(["AXE", "PISTOL", "MACHINE_GUN"], REQUIRED_CONFIG)
 
 export type WeaponType = z.infer<typeof WeaponTypeSchema>
 
