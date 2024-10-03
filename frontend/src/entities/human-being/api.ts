@@ -2,7 +2,11 @@ import {
   PaginatedQuerySchema,
   PaginatedResponseSchema,
 } from "@/shared/pagination";
-import { queryOptions } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { z } from "zod";
 import {
   BaseHumanBeingSchema,
@@ -65,5 +69,20 @@ export const CreateHumanBeingSchema = BaseHumanBeingSchema.omit({
   id: true,
   creationDate: true,
 }).extend({
-    car: CarIDSchema,
+  car: CarIDSchema,
 });
+
+export function useCreateHumanBeingMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (valuesRaw: z.infer<typeof CreateHumanBeingSchema>) => {
+      const values = CreateHumanBeingSchema.parse(valuesRaw);
+      await new Promise((res) => setTimeout(res, 2000));
+      console.log("Creating human being ", values);
+      return values;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["humans"] });
+    },
+  });
+}
