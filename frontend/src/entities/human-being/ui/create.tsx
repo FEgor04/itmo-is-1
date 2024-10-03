@@ -15,6 +15,7 @@ import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { SelectMood } from "@/entities/enums/mood";
 import { SelectWeaponType } from "@/entities/enums/weapon-type";
+import { SelectCar } from "@/entities/car/select";
 
 export function CreateHumanBeingDialogContent() {
   const form = useForm<z.infer<typeof CreateHumanBeingSchema>>({
@@ -132,6 +133,24 @@ export function CreateHumanBeingDialogContent() {
               <FormItem>
                 <Label>Тип оружия</Label>
                 <SelectWeaponType {...field} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="car"
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { value, onChange } }) => (
+              <FormItem>
+                <Label>Тип оружия</Label>
+                <div>
+                  <SelectCar
+                    className="inline-flex justify-between w-full"
+                    value={value}
+                    onChange={onChange}
+                  />
+                </div>
                 <FormMessage />
               </FormItem>
             )}
