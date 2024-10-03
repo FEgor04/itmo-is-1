@@ -10,6 +10,7 @@ import {
   FetchedHumanBeingSchemaKeys,
 } from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
+import { CarIDSchema } from "../car/model";
 
 export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
   SortingQuerySchema(FetchedHumanBeingSchemaKeys),
@@ -41,6 +42,10 @@ export const getHumansQueryOptions = (
           hasToothpick: true,
           weaponType: "AXE",
           car: {
+            id: 1,
+            brand: "Lada",
+            model: "Kalina",
+            color: "red",
             cool: true,
           },
           impactSpeed: 50,
@@ -60,5 +65,5 @@ export const CreateHumanBeingSchema = BaseHumanBeingSchema.omit({
   id: true,
   creationDate: true,
 }).extend({
-    car: z.number(),
+    car: CarIDSchema,
 });

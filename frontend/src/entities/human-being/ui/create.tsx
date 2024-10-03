@@ -104,6 +104,7 @@ export function CreateHumanBeingDialogContent() {
           <FormField
             control={form.control}
             name="mood"
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             render={({ field: { ref: _, ...field } }) => (
               <FormItem>
                 <Label>Настроение</Label>
@@ -126,6 +127,7 @@ export function CreateHumanBeingDialogContent() {
           <FormField
             control={form.control}
             name="weaponType"
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             render={({ field: { ref: _, ...field } }) => (
               <FormItem>
                 <Label>Тип оружия</Label>
