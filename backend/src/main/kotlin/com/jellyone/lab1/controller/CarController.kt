@@ -45,7 +45,7 @@ class CarController(private val carService: CarService) {
         sortDirection == "asc",
         model,
         brand
-    )
+    ).map { CarMapper.toDto(it) }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a car by ID", description = "Returns a car by its ID")
