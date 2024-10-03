@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
+import { forwardRef } from "react";
 import z from "zod";
 export const MoodSchema = z.enum(["SORROW", "APATHY", "CALM", "FRENZY"]);
 
@@ -32,24 +33,28 @@ export function MoodBadge({ value }: { value: Mood }) {
 type Props = {
   value: Mood | undefined;
   onChange: (value: Mood) => void;
-};
+} & Omit<React.ComponentProps<typeof Select>, "value" | "onChange">;
 
-export function SelectMood({ value, onChange }: Props) {
-  return (
-    <Select
-      value={value}
-      onValueChange={(value) => onChange(MoodSchema.parse(value))}
-    >
-      <SelectTrigger>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {MoodSchema.options.map((option) => (
-          <SelectItem value={option} key={option}>
-            {MoodTranslation[option]}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
-}
+export const SelectMood = forwardRef<React.ComponentRef<typeof Select>, Props>(
+  ({ value, onChange, ...props }, ref) => {
+    return (
+      <Select
+        value={value}
+        onValueChange={(value) => onChange(MoodSchema.parse(value))}
+        ref={ref}
+        {...props}
+      >
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {MoodSchema.options.map((option) => (
+            <SelectItem value={option} key={option}>
+              {MoodTranslation[option]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+  },
+);

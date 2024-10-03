@@ -13,10 +13,15 @@ import { Label } from "@/shared/ui/label";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
+import { SelectMood } from "@/entities/enums/mood";
 
 export function CreateHumanBeingDialogContent() {
   const form = useForm<z.infer<typeof CreateHumanBeingSchema>>({
     resolver: zodResolver(CreateHumanBeingSchema),
+    defaultValues: {
+      hasToothpick: false,
+      realHero: false
+    }
   });
 
   function onSubmit(values: z.infer<typeof CreateHumanBeingSchema>) {
@@ -106,10 +111,21 @@ export function CreateHumanBeingDialogContent() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="mood"
+            render={({ field }) => (
+              <FormItem>
+                <Label>Настроение</Label>
+                <SelectMood value={field.value} onChange={field.onChange} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </form>
       </Form>
       <DialogFooter>
-        <Button form="create-human-being-form">Создать</Button>
+        <Button type="submit" form="create-human-being-form">Создать</Button>
       </DialogFooter>
     </DialogContent>
   );
