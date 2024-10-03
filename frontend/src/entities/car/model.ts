@@ -9,3 +9,5 @@ export const BaseCarSchema = z.object({
   color: z.string(),
   cool: z.boolean(),
 });
+
+export const CarSchemaKeys = BaseCarSchema.keyof()
