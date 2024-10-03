@@ -6,9 +6,12 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="1" author="andrey.karabanov">
+
+        <createSequence sequenceName="car_seq" incrementBy="1"/>
+
         <createTable tableName="car">
-            <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="id" type="bigint" defaultValueComputed="nextval('car_seq')" remarks="Идентификатор">
+                <constraints primaryKey="true"/>
             </column>
             <column name="color" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -24,9 +27,11 @@
             </column>
         </createTable>
 
+        <createSequence sequenceName="human_being_seq" incrementBy="1"/>
+
         <createTable tableName="human_being">
-            <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="id" type="bigint" defaultValueComputed="nextval('human_being_seq')" remarks="Идентификатор">
+                <constraints primaryKey="true"/>
             </column>
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
