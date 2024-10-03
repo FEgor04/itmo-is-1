@@ -1,9 +1,15 @@
 package com.jellyone.lab1.repository
 
+import com.jellyone.lab1.domain.Car
+import com.jellyone.lab1.domain.Coordinates
 import com.jellyone.lab1.domain.HumanBeing
+import com.jellyone.lab1.domain.enums.Mood
+import com.jellyone.lab1.domain.enums.WeaponType
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
+import java.sql.Date
+import java.time.LocalDate
 
 @Repository
 class HumanBeingRepository(private val dsl: DSLContext) {
@@ -11,12 +17,15 @@ class HumanBeingRepository(private val dsl: DSLContext) {
     fun findById(id: Long): HumanBeing? {
         return dsl.selectFrom("human_being")
             .where(DSL.field("id").eq(id))
-            .fetchOneInto(HumanBeing::class.java)
+            .fetchOne()?.let { result ->
+                createHumanBeingFromResult(result)
+            }
     }
 
     fun findAll(): List<HumanBeing> {
         return dsl.selectFrom("human_being")
-            .fetchInto(HumanBeing::class.java)
+            .fetch()
+            .map { createHumanBeingFromResult(it) }
     }
 
     fun save(humanBeing: HumanBeing): HumanBeing {
@@ -64,5 +73,39 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             .where(DSL.field("id").eq(id))
             .execute()
         return rowsDeleted > 0
+    }
+
+    private fun createHumanBeingFromResult(result: org.jooq.Record): HumanBeing {
+        val coordinates = Coordinates(
+            x = result.get("x") as Double,
+            y = result.get("y") as Double
+        )
+
+        val carId = result.get("car_id") as Long?
+        val car = carId?.let { fetchCarById(it) } ?: throw IllegalArgumentException("Car ID cannot be null")
+
+        return HumanBeing(
+            id = result.get("id") as Long,
+            name = result.get("name") as String,
+            coordinates = coordinates,
+            creationDate = getLocalDateFromSqlDate(result.get("creation_date") as Date),
+            realHero = result.get("real_hero") as Boolean,
+            hasToothpick = result.get("has_toothpick") as Boolean,
+            car = car,
+            mood = result.get("mood")?.let { Mood.valueOf(it as String) },
+            impactSpeed = result.get("impact_speed") as Long,
+            weaponType = WeaponType.valueOf(result.get("weapon_type") as String)
+        )
+    }
+
+
+    private fun fetchCarById(carId: Long): Car {
+        return dsl.selectFrom("car")
+            .where(DSL.field("id").eq(carId))
+            .fetchOneInto(Car::class.java) ?: throw IllegalArgumentException("Car with id $carId not found")
+    }
+
+    private fun getLocalDateFromSqlDate(date: java.sql.Date): LocalDate {
+        return date.toLocalDate()
     }
 }
