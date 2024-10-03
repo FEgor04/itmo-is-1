@@ -14,9 +14,23 @@ class CarRepository(private val dsl: DSLContext) {
             .fetchOneInto(Car::class.java)
     }
 
-    fun findAll(): List<Car> {
-        return dsl.selectFrom("car")
+    fun findAll(
+        page: Int,
+        pageSize: Int,
+        modelFilter: String?,
+        brandFilter: String?,
+    ): PaginatedResponse<Car> {
+        val values = dsl.selectFrom("car")
+            .where(DSL.field("model").contains(modelFilter ?: "").and(DSL.field("brand").contains(brandFilter ?: "")))
+            .limit(pageSize)
+            .offset((page - 1) * pageSize)
             .fetchInto(Car::class.java)
+        return PaginatedResponse(
+            page,
+            pageSize,
+            50,
+            values,
+        )
     }
 
     fun save(car: Car): Car {

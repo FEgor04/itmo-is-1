@@ -1,8 +1,10 @@
 package com.jellyone.lab1.controller
 
+import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.dto.CarDTO
 import com.jellyone.lab1.dto.CreateCarDTO
 import com.jellyone.lab1.mapper.CarMapper
+import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.CarService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -26,9 +28,7 @@ class CarController(private val carService: CarService) {
         ]
     )
     @GetMapping("")
-    fun getAllCars(): List<CarDTO> {
-        return carService.getAllCars().map(CarMapper::toDto)
-    }
+    fun getAllCars(page: Int, pageSize: Int) = carService.getAllCars(page, pageSize, "", "")
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a car by ID", description = "Returns a car by its ID")
