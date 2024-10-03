@@ -48,9 +48,24 @@ class CarRepository(private val dsl: DSLContext) {
     }
 
     fun deleteById(id: Long): Boolean {
+        // Сначала находим всех human_being, связанных с данной машиной
+        val humanBeings = dsl.selectFrom("human_being")
+            .where(DSL.field("car_id").eq(id))
+            .fetch()
+
+        // Удаляем всех human_being
+        for (record in humanBeings) {
+            val humanId = record.get("id") as Long
+            dsl.deleteFrom(DSL.table("human_being"))
+                .where(DSL.field("id").eq(humanId))
+                .execute()
+        }
+
+        // Теперь удаляем саму машину
         val rowsDeleted = dsl.deleteFrom(DSL.table("car"))
             .where(DSL.field("id").eq(id))
             .execute()
+
         return rowsDeleted > 0
     }
 }
