@@ -1,10 +1,10 @@
 package com.jellyone.lab1.controller
 
-import com.jellyone.lab1.domain.Car
-import com.jellyone.lab1.dto.CarDto
+import com.jellyone.lab1.dto.CarDTO
+import com.jellyone.lab1.dto.CreateCarDTO
+import com.jellyone.lab1.mapper.CarMapper
 import com.jellyone.lab1.service.CarService
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -26,8 +26,8 @@ class CarController(private val carService: CarService) {
         ]
     )
     @GetMapping("")
-    fun getAllCars(): List<CarDto> {
-        return carService.getAllCars()
+    fun getAllCars(): List<CarDTO> {
+        return carService.getAllCars().map(CarMapper::toDto)
     }
 
     @GetMapping("/{id}")
@@ -40,7 +40,7 @@ class CarController(private val carService: CarService) {
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = CarDto::class)
+                        schema = Schema(implementation = CarDTO::class)
                     )
                 ]
             ),
@@ -48,10 +48,10 @@ class CarController(private val carService: CarService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun getCarById(@PathVariable id: Long): ResponseEntity<CarDto> {
-        val carDto = carService.getCarById(id)
-        return if (carDto != null) {
-            ResponseEntity.ok(carDto)
+    fun getCarById(@PathVariable id: Long): ResponseEntity<CarDTO> {
+        val car = carService.getCarById(id)
+        return if (car != null) {
+            ResponseEntity.ok(CarMapper.toDto(car))
         } else {
             ResponseEntity.notFound().build()
         }
@@ -67,7 +67,7 @@ class CarController(private val carService: CarService) {
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = CarDto::class)
+                        schema = Schema(implementation = CarDTO::class)
                     )
                 ]
             ),
@@ -75,9 +75,16 @@ class CarController(private val carService: CarService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun createCar(@RequestBody carDto: CarDto): ResponseEntity<CarDto> {
-        val createdCar = carService.createCar(carDto)
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCar)
+    fun createCar(@RequestBody carDto: CreateCarDTO): ResponseEntity<CarDTO> {
+        val createdCar = carService.createCar(
+            CarService.CreateCarRequest(
+                model = carDto.model,
+                brand = carDto.brand,
+                color = carDto.color,
+                cool = carDto.cool
+            )
+        )
+        return ResponseEntity.status(HttpStatus.CREATED).body(CarMapper.toDto(createdCar))
     }
 
     @PutMapping("/{id}")
@@ -90,7 +97,7 @@ class CarController(private val carService: CarService) {
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = CarDto::class)
+                        schema = Schema(implementation = CarDTO::class)
                     )
                 ]
             ),
@@ -99,10 +106,10 @@ class CarController(private val carService: CarService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun updateCar(@PathVariable id: Long, @RequestBody carDto: CarDto): ResponseEntity<CarDto> {
-        val updatedCar = carService.updateCar(id, carDto)
+    fun updateCar(@PathVariable id: Long, @RequestBody carDto: CarDTO): ResponseEntity<CarDTO> {
+        val updatedCar = carService.updateCar(id, CarMapper.toEntity(carDto))
         return if (updatedCar != null) {
-            ResponseEntity.ok(updatedCar)
+            ResponseEntity.ok(CarMapper.toDto(updatedCar))
         } else {
             ResponseEntity.notFound().build()
         }

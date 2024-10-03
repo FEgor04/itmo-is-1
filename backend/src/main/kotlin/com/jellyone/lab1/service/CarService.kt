@@ -1,7 +1,6 @@
 package com.jellyone.lab1.service
 
 import com.jellyone.lab1.domain.Car
-import com.jellyone.lab1.dto.CarDto
 import com.jellyone.lab1.mapper.CarMapper
 import com.jellyone.lab1.repository.CarRepository
 import org.springframework.stereotype.Service
@@ -9,29 +8,30 @@ import org.springframework.stereotype.Service
 @Service
 class CarService(private val carRepository: CarRepository) {
 
-    fun getAllCars(): List<CarDto> {
-        return carRepository.findAll().map { CarMapper.toDto(it) }
+    fun getAllCars() = carRepository.findAll()
+
+    fun getCarById(id: Long) = carRepository.findById(id)
+
+    fun createCar(car: CreateCarRequest): Car {
+        val savedCar =
+            carRepository.save(Car(null, color = car.color, model = car.model, brand = car.brand, cool = car.cool))
+        return savedCar
     }
 
-    fun getCarById(id: Long): CarDto? {
-        return carRepository.findById(id)?.let { CarMapper.toDto(it) }
-    }
-
-    fun createCar(carDto: CarDto): CarDto {
-        val car = CarMapper.toEntity(carDto)
-        val savedCar = carRepository.save(car)
-        return CarMapper.toDto(savedCar)
-    }
-
-    fun updateCar(id: Long, carDto: CarDto): CarDto? {
-        val existingCar = carRepository.findById(id) ?: return null
-
-        val carToUpdate = CarMapper.toEntity(carDto.copy(id = existingCar.id))
-        val updatedCar = carRepository.update(carToUpdate) ?: return null
-        return CarMapper.toDto(updatedCar)
+    fun updateCar(id: Long, car: Car): Car? {
+        carRepository.findById(id) ?: return null
+        val updatedCar = carRepository.update(car) ?: return null
+        return updatedCar
     }
 
     fun deleteCar(id: Long): Boolean {
         return carRepository.deleteById(id)
     }
+
+    data class CreateCarRequest(
+        val color: String,
+        val model: String,
+        val brand: String,
+        val cool: Boolean
+    )
 }
