@@ -6,7 +6,7 @@ import {
 } from "@/shared/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateHumanBeingSchema } from "../api";
+import { CreateHumanBeingSchema, useCreateHumanBeingMutation } from "../api";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormMessage } from "@/shared/ui/form";
 import { Label } from "@/shared/ui/label";
@@ -25,9 +25,10 @@ export function CreateHumanBeingDialogContent() {
       realHero: false,
     },
   });
+  const { mutate, isPending } = useCreateHumanBeingMutation();
 
   function onSubmit(values: z.infer<typeof CreateHumanBeingSchema>) {
-    console.log(values);
+    mutate(values);
   }
 
   return (
@@ -146,7 +147,7 @@ export function CreateHumanBeingDialogContent() {
                 <Label>Тип оружия</Label>
                 <div>
                   <SelectCar
-                    className="inline-flex justify-between w-full"
+                    className="inline-flex w-full justify-between"
                     value={value}
                     onChange={onChange}
                   />
@@ -158,7 +159,7 @@ export function CreateHumanBeingDialogContent() {
         </form>
       </Form>
       <DialogFooter>
-        <Button type="submit" form="create-human-being-form">
+        <Button disabled={isPending} type="submit" form="create-human-being-form">
           Создать
         </Button>
       </DialogFooter>
