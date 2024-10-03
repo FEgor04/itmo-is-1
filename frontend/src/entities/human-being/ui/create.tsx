@@ -80,20 +80,6 @@ export function CreateHumanBeingDialogContent() {
           />
           <FormField
             control={form.control}
-            name="hasToothpick"
-            render={({ field: { value, onChange, ...field } }) => (
-              <FormItem className="flex items-center space-x-3 space-y-0">
-                <Checkbox
-                  checked={value}
-                  onCheckedChange={(value) => onChange(value)}
-                  {...field}
-                />
-                <Label>Зубочистка есть?</Label>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="realHero"
             render={({ field: { value, onChange, ...field } }) => (
               <FormItem className="flex items-center space-x-3 space-y-0">
@@ -103,6 +89,20 @@ export function CreateHumanBeingDialogContent() {
                   {...field}
                 />
                 <Label>Настоящий герой?</Label>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hasToothpick"
+            render={({ field: { value, onChange, ...field } }) => (
+              <FormItem className="flex items-center space-x-3 space-y-0">
+                <Checkbox
+                  checked={value}
+                  onCheckedChange={(value) => onChange(value)}
+                  {...field}
+                />
+                <Label>Зубочистка есть?</Label>
               </FormItem>
             )}
           />
