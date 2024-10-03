@@ -1,6 +1,13 @@
 package com.jellyone.lab1.controller
 
+import com.jellyone.lab1.domain.enums.Mood
+import com.jellyone.lab1.domain.enums.WeaponType
+import com.jellyone.lab1.dto.CreateHumanBeingDto
 import com.jellyone.lab1.dto.HumanBeingDto
+import com.jellyone.lab1.mapper.HumanBeingMapper
+import com.jellyone.lab1.repository.CarRepository
+import com.jellyone.lab1.repository.HumanBeingRepository
+import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.HumanBeingService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -11,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/humans")
@@ -24,9 +32,25 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
         ]
     )
     @GetMapping("")
-    fun getAllHumans(): List<HumanBeingDto> {
-        return humanBeingService.getAllHumans()
-    }
+    fun getAllHumans(
+        page: Int,
+        pageSize: Int,
+        @Schema(
+            allowableValues = ["id", "name", "creationDate", "realHero", "hasToothpick",
+                "mood", "impactSpeed", "weaponType"]
+        )
+        sortBy: String,
+        @Schema(allowableValues = ["asc", "desc"])
+        sortDirection: String,
+        name: String?,
+    ) = humanBeingService.getAllHumans(
+        page,
+        pageSize,
+        HumanBeingRepository.HumanBeingFields.entries.find { it.dbName == sortBy }!!,
+        sortDirection == "asc",
+        name
+    ).map { HumanBeingMapper.toDto(it) }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a human by ID", description = "Returns a human by its ID")
@@ -73,8 +97,21 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun createHuman(@RequestBody humanBeingDto: HumanBeingDto): ResponseEntity<HumanBeingDto> {
-        val createdHuman = humanBeingService.createHuman(humanBeingDto)
+    fun createHuman(@RequestBody humanBeingDto: CreateHumanBeingDto): ResponseEntity<HumanBeingDto> {
+        val createdHuman = humanBeingService.createHuman(
+            HumanBeingService.CreateHumanBeingRequest(
+                name = humanBeingDto.name,
+                x = humanBeingDto.x,
+                y = humanBeingDto.y,
+                creationDate = humanBeingDto.creationDate,
+                realHero = humanBeingDto.realHero,
+                hasToothpick = humanBeingDto.hasToothpick,
+                carId = humanBeingDto.carId,
+                mood = humanBeingDto.mood,
+                impactSpeed = humanBeingDto.impactSpeed,
+                weaponType = humanBeingDto.weaponType
+            )
+        )
         return ResponseEntity.status(HttpStatus.CREATED).body(createdHuman)
     }
 

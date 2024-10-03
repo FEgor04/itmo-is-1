@@ -22,10 +22,75 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             }
     }
 
-    fun findAll(): List<HumanBeing> {
-        return dsl.selectFrom("human_being")
+    fun findAll(
+        page: Int,
+        pageSize: Int,
+        sortBy: HumanBeingFields,
+        sortAsc: Boolean,
+        name: String?
+    ): PaginatedResponse<HumanBeing> {
+        val dslWhere =
+            DSL.field("lower(name)")
+                .contains(name?.lowercase() ?: "")
+        val total = dsl.fetchCount(
+            dsl.selectFrom("human_being")
+                .where(dslWhere)
+        )
+
+        val records = dsl.select(
+            DSL.field("id"),
+            DSL.field("name"),
+            DSL.field("x"),
+            DSL.field("y"),
+            DSL.field("creation_date"),
+            DSL.field("real_hero"),
+            DSL.field("has_toothpick"),
+            DSL.field("car_id"),
+            DSL.field("mood"),
+            DSL.field("impact_speed"),
+            DSL.field("weapon_type")
+        )
+            .from("human_being")
+            .where(dslWhere)
+            .orderBy(DSL.field(sortBy.dbName).let {
+                if (sortAsc) it.asc() else it.desc()
+            })
+            .limit(pageSize)
+            .offset((page - 1) * pageSize)
             .fetch()
-            .map { createHumanBeingFromResult(it) }
+
+
+        // Преобразуем каждую запись в HumanBeing
+        val values = records.map { result ->
+            val coordinates = Coordinates(
+                x = result.get("x") as Double,
+                y = result.get("y") as Double
+            )
+
+            val carId = result.get("car_id") as Long?
+            val car = carId?.let { fetchCarById(it) } ?: throw IllegalArgumentException("Car ID cannot be null")
+
+
+            HumanBeing(
+                id = result.get("id") as Long,
+                name = result.get("name") as String,
+                coordinates = coordinates,
+                creationDate = getLocalDateFromSqlDate(result.get("creation_date") as Date),
+                realHero = result.get("real_hero") as Boolean,
+                hasToothpick = result.get("has_toothpick") as Boolean,
+                car = car,
+                mood = result.get("mood")?.let { Mood.valueOf(it as String) },
+                impactSpeed = result.get("impact_speed") as Long,
+                weaponType = WeaponType.valueOf(result.get("weapon_type") as String)
+            )
+        }
+
+        return PaginatedResponse(
+            page,
+            pageSize,
+            total,
+            values
+        )
     }
 
     fun save(humanBeing: HumanBeing): HumanBeing {
@@ -36,7 +101,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             .set(DSL.field("creation_date"), humanBeing.creationDate)
             .set(DSL.field("real_hero"), humanBeing.realHero)
             .set(DSL.field("has_toothpick"), humanBeing.hasToothpick)
-            .set(DSL.field("car_id"), humanBeing.car?.id)
+            .set(DSL.field("car_id"), humanBeing.car.id)
             .set(DSL.field("mood"), humanBeing.mood?.name)
             .set(DSL.field("impact_speed"), humanBeing.impactSpeed)
             .set(DSL.field("weapon_type"), humanBeing.weaponType.name)
@@ -107,5 +172,17 @@ class HumanBeingRepository(private val dsl: DSLContext) {
 
     private fun getLocalDateFromSqlDate(date: java.sql.Date): LocalDate {
         return date.toLocalDate()
+    }
+
+    enum class HumanBeingFields(val dbName: String) {
+        ID("id"),
+        NAME("name"),
+        CREATION_DATE("creation_date"),
+        REAL_HERO("real_hero"),
+        HAS_TOOTHPICK("has_toothpick"),
+        CAR_ID("car_id"),
+        MOOD("mood"),
+        IMPACT_SPEED("impact_speed"),
+        WEAPON_TYPE("weapon_type"),
     }
 }

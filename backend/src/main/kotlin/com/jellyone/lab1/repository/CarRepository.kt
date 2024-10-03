@@ -30,13 +30,15 @@ class CarRepository(private val dsl: DSLContext) {
                     DSL.field("lower(brand)")
                         .contains(brandFilter?.lowercase() ?: "")
                 )
-        val total = dsl.fetchCount(dsl.selectFrom("car")
-            .where(
-dslWhere
-            ))
+        val total = dsl.fetchCount(
+            dsl.selectFrom("car")
+                .where(
+                    dslWhere
+                )
+        )
         val values = dsl.selectFrom("car")
             .where(
-dslWhere
+                dslWhere
             )
             .orderBy(DSL.field(sortBy.dbName).let {
                 if (sortAsc) {
