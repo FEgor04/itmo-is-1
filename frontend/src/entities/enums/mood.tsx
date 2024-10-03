@@ -1,4 +1,11 @@
 import { Badge } from "@/shared/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
 import z from "zod";
 export const MoodSchema = z.enum(["SORROW", "APATHY", "CALM", "FRENZY"]);
 
@@ -19,11 +26,30 @@ const MoodStyle = {
 } satisfies Record<Mood, string>;
 
 export function MoodBadge({ value }: { value: Mood }) {
+  return <Badge className={MoodStyle[value]}>{MoodTranslation[value]}</Badge>;
+}
+
+type Props = {
+  value: Mood | undefined;
+  onChange: (value: Mood) => void;
+};
+
+export function SelectMood({ value, onChange }: Props) {
   return (
-    <Badge
-      className={MoodStyle[value]}
+    <Select
+      value={value}
+      onValueChange={(value) => onChange(MoodSchema.parse(value))}
     >
-      {MoodTranslation[value]}
-    </Badge>
+      <SelectTrigger>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {MoodSchema.options.map((option) => (
+          <SelectItem value={option} key={option}>
+            {MoodTranslation[option]}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
