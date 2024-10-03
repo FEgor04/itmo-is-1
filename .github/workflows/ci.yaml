@@ -3,6 +3,8 @@ name: ci
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build-frontend:
@@ -64,5 +66,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: backend
-        path: ./backend/build/libs/lab1-*.jar
+        path: ./backend/build/libs/*.jar
       
