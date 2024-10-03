@@ -2,11 +2,14 @@ package com.jellyone.lab1.service
 
 import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.domain.HumanBeing
+import com.jellyone.lab1.domain.enums.Mood
+import com.jellyone.lab1.domain.enums.WeaponType
 import com.jellyone.lab1.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class HumanBeingService(
@@ -14,19 +17,24 @@ class HumanBeingService(
     private val carRepository: CarRepository
 ) {
 
-    fun getAllHumans(): List<HumanBeingDto> {
-        return humanBeingRepository.findAll().map { HumanBeingMapper.toDto(it) }
-    }
+    fun getAllHumans(
+        page: Int,
+        pageSize: Int,
+        sortBy: HumanBeingRepository.HumanBeingFields,
+        sortAsc: Boolean,
+        name: String?
+    ) = humanBeingRepository.findAll(page, pageSize, sortBy, sortAsc, name);
+
 
     fun getHumanById(id: Long): HumanBeingDto? {
         return humanBeingRepository.findById(id)?.let { HumanBeingMapper.toDto(it) }
     }
 
-    fun createHuman(humanBeingDto: HumanBeingDto): HumanBeingDto {
-        val car: Car = carRepository.findById(humanBeingDto.carId)
-            ?: throw IllegalArgumentException("Car not found with id ${humanBeingDto.carId}")
+    fun createHuman(humanBeing: CreateHumanBeingRequest): HumanBeingDto {
+        val car: Car = carRepository.findById(humanBeing.carId)
+            ?: throw IllegalArgumentException("Car not found with id ${humanBeing.carId}")
 
-        val humanBeing = HumanBeingMapper.toEntity(humanBeingDto, car)
+        val humanBeing = HumanBeingMapper.fromCreateHumanBeingRequestToEntity(humanBeing, car)
         val savedHumanBeing = humanBeingRepository.save(humanBeing)
         return HumanBeingMapper.toDto(savedHumanBeing)
     }
@@ -45,4 +53,17 @@ class HumanBeingService(
     fun deleteHuman(id: Long): Boolean {
         return humanBeingRepository.deleteById(id)
     }
+
+    data class CreateHumanBeingRequest(
+        val name: String,
+        val x: Double,
+        val y: Double,
+        val creationDate: LocalDate,
+        val realHero: Boolean,
+        val hasToothpick: Boolean,
+        val carId: Long,
+        val mood: Mood?,
+        val impactSpeed: Long,
+        val weaponType: WeaponType
+    )
 }
