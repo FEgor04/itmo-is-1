@@ -1,10 +1,9 @@
 package com.jellyone.lab1.controller
 
-import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.dto.CarDto
-import com.jellyone.lab1.service.CarService
+import com.jellyone.lab1.dto.HumanBeingDto
+import com.jellyone.lab1.service.HumanBeingService
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -15,9 +14,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/cars")
-@Tag(name = "Car Management")
-class CarController(private val carService: CarService) {
+@RequestMapping("/humans")
+@Tag(name = "Human Management")
+class HumanBeingController(private val humanBeingService: HumanBeingService) {
 
     @ApiResponses(
         value = [
@@ -26,48 +25,48 @@ class CarController(private val carService: CarService) {
         ]
     )
     @GetMapping("")
-    fun getAllCars(): List<CarDto> {
-        return carService.getAllCars()
+    fun getAllHumans(): List<HumanBeingDto> {
+        return humanBeingService.getAllHumans()
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a car by ID", description = "Returns a car by its ID")
+    @Operation(summary = "Get a human by ID", description = "Returns a human by its ID")
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Successfully retrieved car",
+                description = "Successfully retrieved human",
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = CarDto::class)
+                        schema = Schema(implementation = HumanBeingDto::class)
                     )
                 ]
             ),
-            ApiResponse(responseCode = "404", description = "Car not found"),
+            ApiResponse(responseCode = "404", description = "Human not found"),
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun getCarById(@PathVariable id: Long): ResponseEntity<CarDto> {
-        val carDto = carService.getCarById(id)
-        return if (carDto != null) {
-            ResponseEntity.ok(carDto)
+    fun getHumanById(@PathVariable id: Long): ResponseEntity<HumanBeingDto> {
+        val humanDto = humanBeingService.getHumanById(id)
+        return if (humanDto != null) {
+            ResponseEntity.ok(humanDto)
         } else {
             ResponseEntity.notFound().build()
         }
     }
 
     @PostMapping
-    @Operation(summary = "Create a new car", description = "Creates a new car and returns its details")
+    @Operation(summary = "Create a new human", description = "Creates a new human and returns its details")
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "201",
-                description = "Car successfully created",
+                description = "Human successfully created",
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = CarDto::class)
+                        schema = Schema(implementation = HumanBeingDto::class)
                     )
                 ]
             ),
@@ -75,50 +74,50 @@ class CarController(private val carService: CarService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun createCar(@RequestBody carDto: CarDto): ResponseEntity<CarDto> {
-        val createdCar = carService.createCar(carDto)
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCar)
+    fun createHuman(@RequestBody humanBeingDto: HumanBeingDto): ResponseEntity<HumanBeingDto> {
+        val createdHuman = humanBeingService.createHuman(humanBeingDto)
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdHuman)
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update car information", description = "Updates an existing car's information")
+    @Operation(summary = "Update human information", description = "Updates an existing human's information")
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Car successfully updated",
+                description = "Human successfully updated",
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = CarDto::class)
+                        schema = Schema(implementation = HumanBeingDto::class)
                     )
                 ]
             ),
-            ApiResponse(responseCode = "404", description = "Car not found"),
+            ApiResponse(responseCode = "404", description = "Human not found"),
             ApiResponse(responseCode = "400", description = "Bad request"),
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun updateCar(@PathVariable id: Long, @RequestBody carDto: CarDto): ResponseEntity<CarDto> {
-        val updatedCar = carService.updateCar(id, carDto)
-        return if (updatedCar != null) {
-            ResponseEntity.ok(updatedCar)
+    fun updateHuman(@PathVariable id: Long, @RequestBody humanBeingDto: HumanBeingDto): ResponseEntity<HumanBeingDto> {
+        val updatedHuman = humanBeingService.updateHuman(id, humanBeingDto)
+        return if (updatedHuman != null) {
+            ResponseEntity.ok(updatedHuman)
         } else {
             ResponseEntity.notFound().build()
         }
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a car", description = "Deletes a car by its ID")
+    @Operation(summary = "Delete a human", description = "Deletes a human by its ID")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "204", description = "Car successfully deleted"),
-            ApiResponse(responseCode = "404", description = "Car not found"),
+            ApiResponse(responseCode = "204", description = "Human successfully deleted"),
+            ApiResponse(responseCode = "404", description = "Human not found"),
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun deleteCar(@PathVariable id: Long): ResponseEntity<Void> {
-        return if (carService.deleteCar(id)) {
+    fun deleteHuman(@PathVariable id: Long): ResponseEntity<Void> {
+        return if (humanBeingService.deleteHuman(id)) {
             ResponseEntity.noContent().build()
         } else {
             ResponseEntity.notFound().build()
