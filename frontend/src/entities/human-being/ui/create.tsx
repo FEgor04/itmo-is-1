@@ -37,7 +37,7 @@ export function CreateHumanBeingDialogContent() {
       <Form {...form}>
         <form
           id="create-human-being-form"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
           className="space-y-4"
         >
           <FormField
@@ -68,17 +68,6 @@ export function CreateHumanBeingDialogContent() {
             render={({ field }) => (
               <FormItem>
                 <Label>Y</Label>
-                <Input {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="impactSpeed"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Скорость</Label>
                 <Input {...field} />
                 <FormMessage />
               </FormItem>
@@ -119,6 +108,17 @@ export function CreateHumanBeingDialogContent() {
               <FormItem>
                 <Label>Настроение</Label>
                 <SelectMood {...field} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="impactSpeed"
+            render={({ field }) => (
+              <FormItem>
+                <Label>Скорость</Label>
+                <Input {...field} />
                 <FormMessage />
               </FormItem>
             )}

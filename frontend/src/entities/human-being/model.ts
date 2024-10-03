@@ -15,10 +15,10 @@ export const BaseHumanBeingSchema = z.object({
     y: z.coerce.number(MUST_BE_INT_CONFIG),
   }),
   creationDate: z.coerce.date(),
-  realHero: z.boolean().optional(),
-  hasToothpick: z.boolean().optional(),
+  realHero: z.boolean().catch(false),
+  hasToothpick: z.boolean().catch(false),
   mood: MoodSchema,
-  impactSpeed: z.number(MUST_BE_INT_CONFIG).max(108).optional(),
+  impactSpeed: z.coerce.number(MUST_BE_INT_CONFIG).max(108, "Значение должно быть меньше 108").optional(),
   weaponType: WeaponTypeSchema,
 });
 
