@@ -1,6 +1,5 @@
 package com.jellyone.lab1.controller
 
-import com.jellyone.lab1.dto.CarDto
 import com.jellyone.lab1.dto.HumanBeingDto
 import com.jellyone.lab1.service.HumanBeingService
 import io.swagger.v3.oas.annotations.Operation

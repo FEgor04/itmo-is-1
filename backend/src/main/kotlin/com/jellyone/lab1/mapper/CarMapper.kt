@@ -1,12 +1,12 @@
 package com.jellyone.lab1.mapper
 
 import com.jellyone.lab1.domain.Car
-import com.jellyone.lab1.dto.CarDto
+import com.jellyone.lab1.dto.CarDTO
 
 object CarMapper {
-    fun toDto(car: Car): CarDto {
-        return CarDto(
-            id = car.id,
+    fun toDto(car: Car): CarDTO {
+        return CarDTO(
+            id = car.id!!,
             color = car.color,
             model = car.model,
             brand = car.brand,
@@ -14,7 +14,7 @@ object CarMapper {
         )
     }
 
-    fun toEntity(carDto: CarDto): Car {
+    fun toEntity(carDto: CarDTO): Car {
         return Car(
             id = carDto.id,
             color = carDto.color,
