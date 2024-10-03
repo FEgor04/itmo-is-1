@@ -4,6 +4,7 @@ import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.dto.CarDTO
 import com.jellyone.lab1.dto.CreateCarDTO
 import com.jellyone.lab1.mapper.CarMapper
+import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.CarService
 import io.swagger.v3.oas.annotations.Operation
@@ -28,7 +29,23 @@ class CarController(private val carService: CarService) {
         ]
     )
     @GetMapping("")
-    fun getAllCars(page: Int, pageSize: Int) = carService.getAllCars(page, pageSize, "", "")
+    fun getAllCars(
+        page: Int,
+        pageSize: Int,
+        @Schema(allowableValues = ["id", "brand", "model", "cool", "color"])
+        sortBy: String,
+        @Schema(allowableValues = ["asc", "desc"])
+        sortDirection: String,
+        model: String?,
+        brand: String?
+    ) = carService.getAllCars(
+        page,
+        pageSize,
+        CarRepository.CarFields.entries.find { it.dbName == sortBy }!!,
+        sortDirection == "asc",
+        model,
+        brand
+    )
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a car by ID", description = "Returns a car by its ID")
