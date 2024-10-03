@@ -23,8 +23,21 @@ class CarRepository(private val dsl: DSLContext) {
         modelFilter: String?,
         brandFilter: String?,
     ): PaginatedResponse<Car> {
+        val dslWhere =
+            DSL.field("lower(model)")
+                .contains(modelFilter?.lowercase() ?: "")
+                .and(
+                    DSL.field("lower(brand)")
+                        .contains(brandFilter?.lowercase() ?: "")
+                )
+        val total = dsl.fetchCount(dsl.selectFrom("car")
+            .where(
+dslWhere
+            ))
         val values = dsl.selectFrom("car")
-            .where(DSL.field("model").contains(modelFilter ?: "").and(DSL.field("brand").contains(brandFilter ?: "")))
+            .where(
+dslWhere
+            )
             .orderBy(DSL.field(sortBy.dbName).let {
                 if (sortAsc) {
                     it.asc()
@@ -38,7 +51,7 @@ class CarRepository(private val dsl: DSLContext) {
         return PaginatedResponse(
             page,
             pageSize,
-            50,
+            total,
             values,
         )
     }
