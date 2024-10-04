@@ -3,13 +3,12 @@ import {
   getCoreRowModel,
   OnChangeFn,
   SortingState,
-  useReactTable,
-} from "@tanstack/react-table";
+  useReactTable, } from "@tanstack/react-table";
 import { FetchedHumanBeing } from "./model";
 import { MoodBadge } from "../enums/mood";
 import { WeaponTypeBadge } from "../enums/weapon-type";
 import { Button } from "@/shared/ui/button";
-import { Ellipsis, Trash } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,6 +72,7 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
     id: "actions",
     header: "Действия",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const { mutate, isPending } = useDeleteHumanBeingMutation();
       return (
         <DropdownMenu>

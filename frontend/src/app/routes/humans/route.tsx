@@ -10,7 +10,7 @@ import { DataTable } from "@/shared/ui/data-table";
 import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { PaginationFooter } from "@/shared/ui/pagination";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
 import { PlusCircle, SearchIcon } from "lucide-react";
