@@ -1,10 +1,9 @@
 package com.jellyone.lab1.service
 
 import com.jellyone.lab1.domain.Car
-import com.jellyone.lab1.domain.HumanBeing
 import com.jellyone.lab1.domain.enums.Mood
 import com.jellyone.lab1.domain.enums.WeaponType
-import com.jellyone.lab1.dto.HumanBeingDto
+import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository

@@ -25,6 +25,12 @@ class UserRepository(private val dsl: DSLContext) {
         }
     }
 
+    fun findById(id: Long): User? {
+        return dsl.selectFrom("users")
+            .where(DSL.field("id").eq(id))
+            .fetchOneInto(User::class.java)
+    }
+
     fun countByRole(role: String): Int {
         return dsl.selectCount()
             .from(DSL.table("users"))
