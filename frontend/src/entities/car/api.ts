@@ -2,7 +2,11 @@ import {
   PaginatedQuerySchema,
   PaginatedResponseSchema,
 } from "@/shared/pagination";
-import { queryOptions } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { z } from "zod";
 import { BaseCarSchema, CarSchemaKeys } from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
@@ -35,3 +39,29 @@ export const getCarsQueryOptions = (
     },
   });
 };
+
+export const CreateCarSchema = z.object({
+  brand: z.string(),
+  model: z.string(),
+  color: z.string(),
+  cool: z.boolean(),
+});
+
+export function useCreateCarMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (valuesRaw: z.infer<typeof CreateCarSchema>) => {
+      const values = CreateCarSchema.parse(valuesRaw);
+      const { data } = await ApiInstance.cars.createCar({
+        brand: values.brand,
+        model: values.model,
+        color: values.color,
+        cool: values.cool,
+      });
+      return (data);
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["cars"] });
+    },
+  });
+}
