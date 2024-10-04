@@ -12,17 +12,9 @@ type RouterContext = {
   queryClient: QueryClient;
 };
 
-import { Car, LogOut, PanelLeft, User } from "lucide-react";
+import { Car, PanelLeft, User } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/ui/sheet";
 import {
   Tooltip,
