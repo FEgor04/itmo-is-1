@@ -53,7 +53,6 @@ class ApplicationConfig(
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .requestMatchers("/actuator", "/actuator/**", "/actuator/prometheus", "/**").permitAll()
-                    .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             }
             .anonymous { it.disable() }
