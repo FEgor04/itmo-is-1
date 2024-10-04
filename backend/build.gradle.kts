@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.springframework.security:spring-security-config")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
+	implementation("org.projectlombok:lombok:1.18.28")
 	implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")

@@ -23,11 +23,8 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
         Tag(name = "User Management", description = "API for users")
     ]
 )
-@SecurityScheme(
-    name = "basicAuth",
-    type = SecuritySchemeType.HTTP,
-    scheme = "basic"
-)
+
+@SecurityScheme(type = SecuritySchemeType.HTTP, name = "BasicAuth", scheme = "basic")
 class SwaggerConfig {
 
 }
