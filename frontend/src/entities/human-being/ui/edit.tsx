@@ -6,7 +6,7 @@ import {
 } from "@/shared/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateHumanBeingSchema, useCreateHumanBeingMutation } from "../api";
+import { EditHumanBeingSchema, useEditHumanBeingMutation } from "../api";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormMessage } from "@/shared/ui/form";
 import { Label } from "@/shared/ui/label";
@@ -16,35 +16,46 @@ import { Checkbox } from "@/shared/ui/checkbox";
 import { SelectMood } from "@/entities/enums/mood";
 import { SelectWeaponType } from "@/entities/enums/weapon-type";
 import { SelectCar } from "@/entities/car/select";
+import { FetchedHumanBeing } from "../model";
 
-export function CreateHumanBeingDialogContent({
-  onClose,
-}: {
+type Props = {
+  humanBeing: FetchedHumanBeing;
   onClose: () => void;
-}) {
-  const form = useForm<z.infer<typeof CreateHumanBeingSchema>>({
-    resolver: zodResolver(CreateHumanBeingSchema),
+};
+
+export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
+  const form = useForm<z.infer<typeof EditHumanBeingSchema>>({
+    resolver: zodResolver(EditHumanBeingSchema),
     defaultValues: {
-      hasToothpick: false,
-      realHero: false,
+      name: humanBeing.name,
+      car: humanBeing.car.id,
+      id: humanBeing.id,
+      coordinates: humanBeing.coordinates,
+      realHero: humanBeing.realHero,
+      hasToothpick: humanBeing.hasToothpick,
+      mood: humanBeing.mood,
+      weaponType: humanBeing.weaponType,
+      impactSpeed: humanBeing.impactSpeed,
     },
   });
-  const { mutate, isPending } = useCreateHumanBeingMutation();
+  const { mutate, isPending } = useEditHumanBeingMutation();
 
-  function onSubmit(values: z.infer<typeof CreateHumanBeingSchema>) {
+  function onSubmit(values: z.infer<typeof EditHumanBeingSchema>) {
     mutate(values, {
-      onSuccess: onClose,
+      onSuccess: () => {
+        onClose();
+      },
     });
   }
 
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Создание Human Being</DialogTitle>
+        <DialogTitle>Изменение Human Being</DialogTitle>
       </DialogHeader>
       <Form {...form}>
         <form
-          id="create-human-being-form"
+          id="edit-human-being-form"
           onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
           className="2 max-h-[75vh] space-y-4 overflow-y-auto"
         >
@@ -164,12 +175,8 @@ export function CreateHumanBeingDialogContent({
         </form>
       </Form>
       <DialogFooter>
-        <Button
-          disabled={isPending}
-          type="submit"
-          form="create-human-being-form"
-        >
-          Создать
+        <Button disabled={isPending} type="submit" form="edit-human-being-form">
+          Сохранить
         </Button>
       </DialogFooter>
     </DialogContent>

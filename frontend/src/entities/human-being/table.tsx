@@ -18,6 +18,9 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 import { useDeleteHumanBeingMutation } from "./api";
+import { useState } from "react";
+import { Dialog } from "@/shared/ui/dialog";
+import { EditHumanBeingDialogContent } from "./ui/edit";
 
 const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   {
@@ -72,34 +75,45 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   {
     id: "actions",
     header: "",
-    cell: ({ row }) => <Actions id={row.original.id} />,
+    cell: ({ row }) => <Actions humanBeing={row.original} />,
   },
 ];
 
-function Actions({ id }: { id: number }) {
+function Actions({ humanBeing }: { humanBeing: FetchedHumanBeing }) {
+  const [isEditOpen, setEditOpen] = useState(false);
   const { mutate, isPending } = useDeleteHumanBeingMutation();
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-        >
-          <Ellipsis className="h-4 w-4" />
-          <span className="sr-only">Open menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem disabled={isPending}>Редактировать</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          disabled={isPending}
-          onClick={() => mutate(id)}
-        >
-          Удалить
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
+            <Ellipsis className="h-4 w-4" />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuItem onClick={() => setEditOpen(true)}>
+            Редактировать
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            disabled={isPending}
+            onClick={() => mutate(humanBeing.id)}
+          >
+            Удалить
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={isEditOpen} onOpenChange={setEditOpen}>
+        <EditHumanBeingDialogContent
+          humanBeing={humanBeing}
+          onClose={() => setEditOpen(false)}
+        />
+      </Dialog>
+    </>
   );
 }
 
