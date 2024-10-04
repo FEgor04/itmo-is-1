@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
 import { PlusCircle, SearchIcon } from "lucide-react";
+import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
@@ -84,19 +85,22 @@ function Page() {
       name: name && name?.length > 0 ? name : undefined,
     }));
   }, 500);
+  const [createOpen, setCreateOpen] = useState(false);
 
   return (
     <div className="space-y-4">
       <header className="flex items-center justify-between">
         <div>
-          <Dialog>
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
               <Button size="sm" variant="outline">
                 <PlusCircle className="mr-2 size-4" />
                 Создать
               </Button>
             </DialogTrigger>
-            <CreateHumanBeingDialogContent />
+            <CreateHumanBeingDialogContent
+              onClose={() => setCreateOpen(false)}
+            />
           </Dialog>
         </div>
         <div className="inline-flex items-center">

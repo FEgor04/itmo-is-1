@@ -17,7 +17,11 @@ import { SelectMood } from "@/entities/enums/mood";
 import { SelectWeaponType } from "@/entities/enums/weapon-type";
 import { SelectCar } from "@/entities/car/select";
 
-export function CreateHumanBeingDialogContent() {
+export function CreateHumanBeingDialogContent({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
   const form = useForm<z.infer<typeof CreateHumanBeingSchema>>({
     resolver: zodResolver(CreateHumanBeingSchema),
     defaultValues: {
@@ -28,7 +32,9 @@ export function CreateHumanBeingDialogContent() {
   const { mutate, isPending } = useCreateHumanBeingMutation();
 
   function onSubmit(values: z.infer<typeof CreateHumanBeingSchema>) {
-    mutate(values);
+    mutate(values, {
+      onSuccess: onClose,
+    });
   }
 
   return (
@@ -141,7 +147,6 @@ export function CreateHumanBeingDialogContent() {
           <FormField
             control={form.control}
             name="car"
-             
             render={({ field: { value, onChange } }) => (
               <FormItem>
                 <Label>Машина</Label>
