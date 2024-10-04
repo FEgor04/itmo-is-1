@@ -11,18 +11,19 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api")
 @Tag(name = "User Management")
 class UserController(
     private val userService: UserService,
-    private val authService: AuthService
 ) {
 
     @PostMapping("/signup")
@@ -86,6 +87,8 @@ class UserController(
         return ResponseEntity.ok("Admin request approved")
     }
 
+    private val logger = LoggerFactory.getLogger(UserController::class.java)
+
     @GetMapping("/me")
     @Operation(summary = "Get current user", description = "Get current user")
     @ApiResponses(
@@ -102,31 +105,8 @@ class UserController(
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun me(): ResponseEntity<String> {
-        val authentication = SecurityContextHolder.getContext().authentication
-        val userDetails = authentication.principal as UserDetails
-
-        return ResponseEntity.ok(userDetails.username)
-    }
-
-    @PostMapping("/signin")
-    @Operation(summary = "Sign in user", description = "Sign in user")
-    @ApiResponses(
-        value = [ApiResponse(
-            responseCode = "200",
-            description = "User successfully signed in",
-            content = [
-                Content(
-                    schema = Schema(implementation = String::class)
-                )
-            ]
-        ),
-            ApiResponse(responseCode = "400", description = "Bad request"),
-            ApiResponse(responseCode = "500", description = "Internal server error")
-        ]
-    )
-    fun signIn(@RequestBody signInRequest: SignInRequest): ResponseEntity<String> {
-        authService.signIn(signInRequest)
-        return ResponseEntity.ok("Successfully signed in");
+    fun me(principal: Principal): ResponseEntity<String> {
+        logger.info("request on /me. casting to string: ${principal.name}")
+        return ResponseEntity.ok(principal.name)
     }
 }

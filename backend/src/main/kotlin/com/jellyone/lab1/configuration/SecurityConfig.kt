@@ -9,10 +9,12 @@ import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -28,6 +30,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
+import java.lang.System.Logger
 import java.util.*
 
 @Slf4j
@@ -35,18 +38,47 @@ import java.util.*
 @EnableConfigurationProperties
 class SecurityConfiguration(
     private val customAuthenticationProvider: CustomAuthenticationProvider,
-    private val userService: UserService
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
     ): DefaultSecurityFilterChain {
         http
             .csrf { it.disable() }
-
+            .formLogin { form ->
+                form
+                    .loginProcessingUrl("/api/login")
+                    .successHandler { req, res, auth ->
+                        logger.info("Handling success")
+                        res.status = HttpStatus.OK.value()
+                    }
+                    .failureHandler { req, res, auth ->
+                        logger.info("Handling secure failure: $auth")
+                        res.status = HttpStatus.UNAUTHORIZED.value()
+                    }
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+            }
+            .logout { logout ->
+                logout
+                    .logoutUrl("/api/logout")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                    .logoutSuccessHandler { req, resp, auth ->
+                        resp.status = 200
+                    }
+            }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/api/signup", "/api/signin", "/api/admin-requests/submit")
+                    .requestMatchers(
+                        "/api/signup",
+                        "/api/signin",
+                        "/api/admin-requests/submit",
+                        "/api/login",
+                        "/api/loogout"
+                    )
                     .permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                     .permitAll()
@@ -69,56 +101,4 @@ class SecurityConfiguration(
     fun configureAuthenticationManager(authManagerBuilder: AuthenticationManagerBuilder) {
         authManagerBuilder.authenticationProvider(customAuthenticationProvider)
     }
-
-
-    class CustomAuthenticationFilter(
-        private val userService: UserService
-    ) : OncePerRequestFilter() {
-        @Throws(ServletException::class, IOException::class)
-        override fun doFilterInternal(
-            request: HttpServletRequest,
-            response: HttpServletResponse,
-            filterChain: FilterChain
-        ) {
-            val path = request.requestURI
-            if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path == "/swagger-ui.html" ||
-                path.contains("/api/signup") || path.contains("/api/signin") || path.contains("/api/admin-requests/submit")
-            ) {
-                filterChain.doFilter(request, response)
-                return
-            }
-
-
-            try {
-                var tokenString = request.getHeader("Authorization");
-                tokenString = String(Base64.getDecoder().decode(tokenString.split(" ")[1]));
-                val username = tokenString.split(":")[0];
-                val password = tokenString.split(":")[1];
-
-                if (userService.checkPassword(username, password)) {
-                    setAuthenticationToSecurityContextByUsername(username, password);
-                    filterChain.doFilter(request, response)
-                } else {
-                    response.status = HttpServletResponse.SC_UNAUTHORIZED
-                }
-            } catch (e: Exception) {
-                response.status = HttpServletResponse.SC_UNAUTHORIZED
-            }
-        }
-
-        private fun setAuthenticationToSecurityContextByUsername(username: String, password: String) {
-            val authorities: List<GrantedAuthority> = listOf(SimpleGrantedAuthority(Role.USER.toString()))
-
-            val userDetails = User.withUsername(username)
-                .password(password)
-                .authorities(authorities)
-                .build()
-
-            val authentication = UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.authorities
-            )
-            SecurityContextHolder.getContext().authentication = authentication
-        }
-    }
-
 }
