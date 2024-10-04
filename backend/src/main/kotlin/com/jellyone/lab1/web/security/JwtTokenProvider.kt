@@ -42,7 +42,6 @@ class JwtTokenProvider(
             .build()
 
         val now = Date()
-        println(("Access token expires at ${now.time + jwtProperties.access!!}"))
 
         val dateValidity = Date(now.time + jwtProperties.access!!)
         return Jwts.builder()
