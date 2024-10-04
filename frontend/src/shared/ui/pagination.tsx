@@ -20,7 +20,7 @@ export function PaginationFooter<T extends { page: number; pageSize: number }>({
   setQuery,
   total,
 }: Props<T>) {
-  const totalPages = Math.ceil(total / query.page);
+  const totalPages = Math.ceil(total / query.pageSize);
   const hasPrevious = query.page > 1;
   const hasNext = query.page < totalPages;
   return (
