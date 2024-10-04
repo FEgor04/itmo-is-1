@@ -6,6 +6,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
 import { BaseCarSchema, CarSchemaKeys } from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
+import { ApiInstance } from "@/shared/instance";
 
 export const GetCarsQuerySchema = PaginatedQuerySchema.merge(
   SortingQuerySchema(CarSchemaKeys),
@@ -22,22 +23,15 @@ export const getCarsQueryOptions = (
   return queryOptions({
     queryKey: ["cars", "list", validated],
     queryFn: async () => {
-      await new Promise((res) => setInterval(res, 500));
-      const values = [
-        {
-          id: 1,
-          brand: "Lada",
-          model: "Kalina",
-          color: "red",
-          cool: true,
-        },
-      ];
-      return GetCarsResponseSchema.parse({
-        values,
-        total: 500,
-        page: query.page,
-        pageSize: query.pageSize,
+      const { data } = await ApiInstance.cars.getAllCars({
+        page: validated.page,
+        pageSize: validated.pageSize,
+        sortBy: validated.sortBy ?? "id",
+        sortDirection: validated.sortDirection ?? "asc",
+        model: validated.model,
+        brand: validated.brand,
       });
+      return GetCarsResponseSchema.parse(data);
     },
   });
 };

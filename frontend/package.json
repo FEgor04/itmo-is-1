@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prettier": "prettier . --write",
-    "swagger": "swagger-typescript-api --union-enums --add-readonly --axios --another-array-type -p http://localhost:8080/v3/api-docs -o ./src/shared -n api.ts"
+    "swagger": "swagger-typescript-api --union-enums --add-readonly --axios --another-array-type -p http://localhost:8080/v3/api-docs -o ./src/shared -n api.gen.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
