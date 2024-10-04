@@ -51,6 +51,14 @@ function Page() {
     } else {
       newValue = updaterOrValue;
     }
+    if (newValue.length == 0) {
+      setQuery((prev) => ({
+        ...prev,
+        sortBy: undefined,
+        sortDirection: undefined,
+      }));
+      return;
+    }
     setQuery((prev) => ({
       ...prev,
       sortBy: newValue[0].id as CarKeys,
