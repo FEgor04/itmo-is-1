@@ -1,7 +1,7 @@
 package com.jellyone.lab1.mapper
 
 import com.jellyone.lab1.domain.AdminRequest
-import com.jellyone.lab1.dto.AdminRequestDto
+import com.jellyone.lab1.web.dto.AdminRequestDto
 
 class RequestAdminMapper {
     fun toDto(request: AdminRequest): AdminRequestDto {

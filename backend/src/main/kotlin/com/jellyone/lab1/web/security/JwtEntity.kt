@@ -1,21 +1,17 @@
-package com.jellyone.lab1.domain
+package com.jellyone.lab1.web.security
 
-import com.jellyone.lab1.domain.enums.Role
-import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-data class User(
-    val id: Long,
+data class JwtEntity(
     private val username: String,
     private val password: String,
-    val role: Role
+    private val authorities: Collection<GrantedAuthority>,
+    var id: Long
 ) : UserDetails {
 
-
-    override fun getAuthorities(): Collection<SimpleGrantedAuthority> {
-        val list = mutableListOf<SimpleGrantedAuthority>()
-        list.add(SimpleGrantedAuthority("ROLE${role.name.uppercase()}"))
-        return list
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        return authorities
     }
 
     override fun getPassword(): String {
@@ -27,19 +23,18 @@ data class User(
     }
 
     override fun isAccountNonExpired(): Boolean {
-        return false
+        return true
     }
 
     override fun isAccountNonLocked(): Boolean {
-        return false
+        return true
     }
 
     override fun isCredentialsNonExpired(): Boolean {
-        return false
+        return true
     }
 
     override fun isEnabled(): Boolean {
-        return false
+        return true
     }
-
 }

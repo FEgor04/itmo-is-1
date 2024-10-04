@@ -24,7 +24,12 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
     ]
 )
 
-@SecurityScheme(type = SecuritySchemeType.HTTP, name = "BasicAuth", scheme = "basic")
+@SecurityScheme(
+    name = "JWT",
+    type = SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    scheme = "bearer"
+)
 class SwaggerConfig {
 
 }

@@ -1,4 +1,4 @@
-package com.jellyone.lab1.dto
+package com.jellyone.lab1.web.dto
 
 data class SignInRequest(
     val username: String,

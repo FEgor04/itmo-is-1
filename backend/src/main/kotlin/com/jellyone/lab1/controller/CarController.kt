@@ -1,11 +1,11 @@
 package com.jellyone.lab1.controller
 
-import com.jellyone.lab1.dto.CarDTO
-import com.jellyone.lab1.dto.CreateCarDTO
 import com.jellyone.lab1.mapper.CarMapper
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.CarService
+import com.jellyone.lab1.web.dto.CarDTO
+import com.jellyone.lab1.web.dto.CreateCarDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/cars")
 @Tag(name = "Car Management")
-@SecurityRequirement(name = "BasicAuth")
+@SecurityRequirement(name = "JWT")
 class CarController(private val carService: CarService) {
 
     @ApiResponses(
