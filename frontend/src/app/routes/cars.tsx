@@ -1,13 +1,20 @@
-import { getCarsQueryOptions, GetCarsQuerySchema } from "@/entities/car/api";
+import {
+  CreateCarSchema,
+  getCarsQueryOptions,
+  GetCarsQuerySchema,
+} from "@/entities/car/api";
+import { CreateCarDialogContent } from "@/entities/car/create";
 import { CarKeys } from "@/entities/car/model";
 import { useCarTable } from "@/entities/car/table";
 import { Button } from "@/shared/ui/button";
 import { DataTable } from "@/shared/ui/data-table";
+import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
 import { PlusCircle, SearchIcon } from "lucide-react";
+import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
@@ -79,14 +86,20 @@ function Page() {
       model,
     }));
   }, 200);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="space-y-4">
       <header className="flex">
-        <Button variant="outline">
-          <PlusCircle className="mr-2 size-4" />
-          Создать
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline">
+              <PlusCircle className="mr-2 size-4" />
+              Создать
+            </Button>
+          </DialogTrigger>
+          <CreateCarDialogContent onClose={() => setOpen(false)} />
+        </Dialog>
         <div className="ml-auto flex items-center space-x-2">
           <div className="flex">
             <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
