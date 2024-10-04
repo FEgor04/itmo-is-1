@@ -34,34 +34,19 @@ export const getHumansQueryOptions = (
   return queryOptions({
     queryKey: ["humans", "list", validated],
     queryFn: async () => {
-      const values = [
-        {
-          id: 1,
-          name: "asd",
-          realHero: true,
-          mood: "CALM",
-          coordinates: {
-            x: 1,
-            y: 1,
-          },
-          creationDate: new Date(),
-          hasToothpick: true,
-          weaponType: "AXE",
-          car: {
-            id: 1,
-            brand: "Lada",
-            model: "Kalina",
-            color: "red",
-            cool: true,
-          },
-          impactSpeed: 50,
-        },
-      ];
+      const { data } = await ApiInstance.humans.getAllHumans({
+        page: validated.page,
+        pageSize: validated.pageSize,
+        // @ts-expect-error fix after https://github.com/FEgor04/itmo-is-1/issues/23
+        sortBy: validated.sortBy ?? "id",
+        sortDirection: validated.sortDirection ?? "asc",
+        name: validated.name,
+      });
       return GetHumansResponseSchema.parse({
-        values,
-        total: 500,
-        page: query.page,
-        pageSize: query.pageSize,
+        values: data.values.map(parseHumanBeingDTO),
+        total: data.total,
+        page: data.page,
+        pageSize: data.pageSize,
       });
     },
   });

@@ -41,6 +41,7 @@ export const FetchedHumanBeingSchemaKeys = z.enum([
 
 export function parseHumanBeingDTO(data: HumanBeingDto) {
   return FetchedHumanBeingSchema.parse({
+    id: data.id,
     name: data.name,
     coordinates: {
       x: data.x,
