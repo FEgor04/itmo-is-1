@@ -71,7 +71,7 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   },
   {
     id: "actions",
-    header: "Действия",
+    header: "",
     cell: ({ row }) => <Actions id={row.original.id} />,
   },
 ];
