@@ -12,12 +12,7 @@ type RouterContext = {
   queryClient: QueryClient;
 };
 
-import {
-  Car,
-  LogOut,
-  PanelLeft,
-  User,
-} from "lucide-react";
+import { Car, LogOut, PanelLeft, User } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
 import {
@@ -35,6 +30,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/shared/ui/tooltip";
+import { PrincipalProfile } from "@/entities/principal/profile";
 
 function LocationTitle() {
   const location = useLocation();
@@ -153,23 +149,7 @@ export function Dashboard() {
           <h1 className="text-2xl font-bold">
             <LocationTitle />
           </h1>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="ml-auto overflow-hidden rounded-full"
-              ></Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <PrincipalProfile />
         </header>
         <main className="flex-1 items-start p-4 sm:px-6 sm:py-0">
           <Outlet />
