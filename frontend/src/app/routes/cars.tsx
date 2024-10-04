@@ -1,5 +1,4 @@
 import {
-  CreateCarSchema,
   getCarsQueryOptions,
   GetCarsQuerySchema,
 } from "@/entities/car/api";
