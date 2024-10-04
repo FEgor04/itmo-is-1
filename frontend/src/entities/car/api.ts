@@ -89,3 +89,16 @@ export function useEditCarMutation() {
     },
   });
 }
+
+export function useDeleteCarMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { data } = await ApiInstance.cars.deleteCar(id);
+      return data;
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["cars"] });
+    },
+  });
+}

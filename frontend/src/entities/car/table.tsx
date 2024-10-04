@@ -18,6 +18,7 @@ import {
 import { useState } from "react";
 import { EditCarDialogContent } from "./edit";
 import { Dialog } from "@/shared/ui/dialog";
+import { useDeleteCarMutation } from "./api";
 
 const carColumns: Array<ColumnDef<Car>> = [
   {
@@ -49,6 +50,7 @@ const carColumns: Array<ColumnDef<Car>> = [
 
 function Actions({ car }: { car: Car }) {
   const [open, setEditOpen] = useState(false);
+  const { mutate, isPending } = useDeleteCarMutation();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -65,7 +67,9 @@ function Actions({ car }: { car: Car }) {
           Редактировать
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Удалить</DropdownMenuItem>
+        <DropdownMenuItem disabled={isPending} onClick={() => mutate(car.id)}>
+          Удалить
+        </DropdownMenuItem>
       </DropdownMenuContent>
       <Dialog open={open} onOpenChange={setEditOpen}>
         <EditCarDialogContent car={car} onClose={() => setEditOpen(false)} />
