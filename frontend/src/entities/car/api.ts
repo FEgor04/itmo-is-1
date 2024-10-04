@@ -58,7 +58,31 @@ export function useCreateCarMutation() {
         color: values.color,
         cool: values.cool,
       });
-      return (data);
+      return data;
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["cars"] });
+    },
+  });
+}
+
+export const UpdateCarSchema = CreateCarSchema.extend({
+  id: z.number(),
+});
+
+export function useUpdateCarSchema() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (valuesRaw: z.infer<typeof UpdateCarSchema>) => {
+      const values = UpdateCarSchema.parse(valuesRaw);
+      const { data } = await ApiInstance.cars.updateCar(values.id, {
+        brand: values.brand,
+        model: values.model,
+        color: values.color,
+        cool: values.cool,
+        id: values.id,
+      });
+      return data;
     },
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ["cars"] });
