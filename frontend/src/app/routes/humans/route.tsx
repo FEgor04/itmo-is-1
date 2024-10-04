@@ -10,6 +10,7 @@ import { DataTable } from "@/shared/ui/data-table";
 import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { PaginationFooter } from "@/shared/ui/pagination";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
 import { PlusCircle, SearchIcon } from "lucide-react";
@@ -30,7 +31,8 @@ export const Route = createFileRoute("/humans")({
 function Page() {
   const query = Route.useSearch();
   const navigate = Route.useNavigate();
-  const data = Route.useLoaderData();
+  const initialData = Route.useLoaderData();
+  const { data } = useQuery({ ...getHumansQueryOptions(query), initialData });
   const sortingState: SortingState =
     query.sortDirection && query.sortBy
       ? [
