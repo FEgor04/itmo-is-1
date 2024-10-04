@@ -10,6 +10,7 @@ import { Button } from "@/shared/ui/button";
 import { DataTable } from "@/shared/ui/data-table";
 import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
+import { PaginationFooter } from "@/shared/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
@@ -128,6 +129,7 @@ function Page() {
       <main>
         <DataTable table={table} />
       </main>
+      <PaginationFooter query={search} setQuery={setQuery} total={data.total} />
     </div>
   );
 }
