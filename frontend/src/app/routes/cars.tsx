@@ -7,7 +7,7 @@ import { Input } from "@/shared/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, SearchIcon } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
@@ -72,25 +72,36 @@ function Page() {
     }));
   }, 200);
 
-
   return (
     <div className="space-y-4">
       <header className="flex">
         <Button variant="outline">
-          <PlusCircle className="size-4" />
+          <PlusCircle className="mr-2 size-4" />
           Создать
         </Button>
-        <div className="ml-auto flex space-x-2">
-          <Input
-            placeholder="Брэнд"
-            defaultValue={search.brand}
-            onChange={(e) => debouncedSetBrand(e.target.value)}
-          />
-          <Input
-            placeholder="Модель"
-            defaultValue={search.model}
-            onChange={(e) => debouncedSetModel(e.target.value)}
-          />
+        <div className="ml-auto flex items-center space-x-2">
+          <div className="flex">
+            <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
+              <SearchIcon className="mr-2 size-4" />
+              Брэнд
+            </span>
+            <Input
+              className="h-8 rounded-l-none ring-0"
+              defaultValue={search.brand}
+              onChange={(e) => debouncedSetBrand(e.target.value)}
+            />
+          </div>
+          <div className="flex">
+            <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
+              <SearchIcon className="mr-2 size-4" />
+              Модель
+            </span>
+            <Input
+              className="h-8 rounded-l-none ring-0"
+              defaultValue={search.model}
+              onChange={(e) => debouncedSetModel(e.target.value)}
+            />
+          </div>
         </div>
       </header>
       <main>

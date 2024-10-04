@@ -104,7 +104,7 @@ function Page() {
           </Dialog>
         </div>
         <div className="inline-flex items-center">
-          <span className="inline-flex h-8 items-center rounded rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
+          <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
             <SearchIcon className="mr-2 size-4" />
             Имя
           </span>
