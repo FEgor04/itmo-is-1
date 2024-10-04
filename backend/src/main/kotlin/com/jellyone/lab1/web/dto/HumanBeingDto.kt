@@ -1,4 +1,4 @@
-package com.jellyone.lab1.dto
+package com.jellyone.lab1.web.dto
 
 import com.jellyone.lab1.domain.enums.Mood
 import com.jellyone.lab1.domain.enums.WeaponType

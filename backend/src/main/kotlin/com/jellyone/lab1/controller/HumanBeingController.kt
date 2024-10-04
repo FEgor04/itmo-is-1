@@ -1,7 +1,7 @@
 package com.jellyone.lab1.controller
 
-import com.jellyone.lab1.dto.CreateHumanBeingDto
-import com.jellyone.lab1.dto.HumanBeingDto
+import com.jellyone.lab1.web.dto.CreateHumanBeingDto
+import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.map
@@ -21,7 +21,7 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/humans")
 @Tag(name = "Human Management")
-@SecurityRequirement(name = "BasicAuth")
+@SecurityRequirement(name = "JWT")
 class HumanBeingController(private val humanBeingService: HumanBeingService) {
 
     @ApiResponses(

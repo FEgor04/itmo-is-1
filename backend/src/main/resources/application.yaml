@@ -10,3 +10,11 @@ spring:
     jpa:
         hibernate:
             ddl-auto: ${DDL_MODE:create}
+security:
+    jwt:
+        secret: ${securityJwtSecret}
+        access: ${securityJwtAccess}
+        refresh: ${securityJwtRefresh}
+logging:
+    level:
+        org.springframework.security: ERROR

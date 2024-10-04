@@ -3,7 +3,7 @@ package com.jellyone.lab1.mapper
 import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.domain.Coordinates
 import com.jellyone.lab1.domain.HumanBeing
-import com.jellyone.lab1.dto.HumanBeingDto
+import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.service.HumanBeingService
 
 object HumanBeingMapper {
