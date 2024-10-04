@@ -1,11 +1,8 @@
 package com.jellyone.lab1.controller
 
-import com.jellyone.lab1.domain.enums.Mood
-import com.jellyone.lab1.domain.enums.WeaponType
 import com.jellyone.lab1.dto.CreateHumanBeingDto
 import com.jellyone.lab1.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
-import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.HumanBeingService
@@ -14,16 +11,17 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.util.*
 
 @RestController
 @RequestMapping("/humans")
 @Tag(name = "Human Management")
+@SecurityRequirement(name = "BasicAuth")
 class HumanBeingController(private val humanBeingService: HumanBeingService) {
 
     @ApiResponses(
