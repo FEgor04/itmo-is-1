@@ -144,7 +144,7 @@ export function CreateHumanBeingDialogContent() {
              
             render={({ field: { value, onChange } }) => (
               <FormItem>
-                <Label>Тип оружия</Label>
+                <Label>Машина</Label>
                 <div>
                   <SelectCar
                     className="inline-flex w-full justify-between"

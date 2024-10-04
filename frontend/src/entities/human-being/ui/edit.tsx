@@ -6,10 +6,7 @@ import {
 } from "@/shared/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  EditHumanBeingSchema,
-  useEditHumanBeingMutation,
-} from "../api";
+import { EditHumanBeingSchema, useEditHumanBeingMutation } from "../api";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormMessage } from "@/shared/ui/form";
 import { Label } from "@/shared/ui/label";
@@ -23,9 +20,10 @@ import { FetchedHumanBeing } from "../model";
 
 type Props = {
   humanBeing: FetchedHumanBeing;
+  onClose: () => void;
 };
 
-export function EditHumanBeingDialogContent({ humanBeing }: Props) {
+export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
   const form = useForm<z.infer<typeof EditHumanBeingSchema>>({
     resolver: zodResolver(EditHumanBeingSchema),
     defaultValues: {
@@ -43,7 +41,11 @@ export function EditHumanBeingDialogContent({ humanBeing }: Props) {
   const { mutate, isPending } = useEditHumanBeingMutation();
 
   function onSubmit(values: z.infer<typeof EditHumanBeingSchema>) {
-    mutate(values);
+    mutate(values, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
   }
 
   return (
@@ -158,7 +160,7 @@ export function EditHumanBeingDialogContent({ humanBeing }: Props) {
             name="car"
             render={({ field: { value, onChange } }) => (
               <FormItem>
-                <Label>Тип оружия</Label>
+                <Label>Машина</Label>
                 <div>
                   <SelectCar
                     className="inline-flex w-full justify-between"
@@ -173,12 +175,8 @@ export function EditHumanBeingDialogContent({ humanBeing }: Props) {
         </form>
       </Form>
       <DialogFooter>
-        <Button
-          disabled={isPending}
-          type="submit"
-          form="edit-human-being-form"
-        >
-        Сохранить
+        <Button disabled={isPending} type="submit" form="edit-human-being-form">
+          Сохранить
         </Button>
       </DialogFooter>
     </DialogContent>

@@ -19,7 +19,7 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { useDeleteHumanBeingMutation } from "./api";
 import { useState } from "react";
-import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
+import { Dialog } from "@/shared/ui/dialog";
 import { EditHumanBeingDialogContent } from "./ui/edit";
 
 const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
@@ -108,7 +108,10 @@ function Actions({ humanBeing }: { humanBeing: FetchedHumanBeing }) {
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={isEditOpen} onOpenChange={setEditOpen}>
-        <EditHumanBeingDialogContent humanBeing={humanBeing} />
+        <EditHumanBeingDialogContent
+          humanBeing={humanBeing}
+          onClose={() => setEditOpen(false)}
+        />
       </Dialog>
     </>
   );
