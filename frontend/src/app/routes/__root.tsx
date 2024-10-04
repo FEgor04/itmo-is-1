@@ -3,6 +3,7 @@ import {
   createRootRouteWithContext,
   Link,
   Outlet,
+  useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import webMonkeyIcon from "@/shared/ui/icon.png";
@@ -12,6 +13,7 @@ type RouterContext = {
 };
 
 import {
+  Car,
   Home,
   LineChart,
   Package,
@@ -20,6 +22,7 @@ import {
   Search,
   Settings,
   ShoppingCart,
+  User,
   Users2,
 } from "lucide-react";
 
@@ -32,7 +35,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { Input } from "@/shared/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/ui/sheet";
 import {
   Tooltip,
@@ -41,8 +43,15 @@ import {
   TooltipTrigger,
 } from "@/shared/ui/tooltip";
 
-export const description =
-  "An orders dashboard with a sidebar navigation. The sidebar has icon navigation. The content area has a breadcrumb and search in the header. The main area has a list of recent orders with a filter and export button. The main area also has a detailed view of a single order with order details, shipping information, billing information, customer information, and payment information.";
+function LocationTitle() {
+  const location = useLocation();
+  if (location.href.includes("/cars")) {
+    return "Машины";
+  }
+  if (location.href.includes("/humans")) {
+    return "Люди";
+  }
+}
 
 export function Dashboard() {
   return (
@@ -50,7 +59,7 @@ export function Dashboard() {
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
-            href="#"
+            to="/"
             className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full border border-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
           >
             <img src={webMonkeyIcon} className="size-6 group-hover:scale-110" />
@@ -58,61 +67,31 @@ export function Dashboard() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                to="/humans"
+                search={{
+                  page: 1,
+                  pageSize: 10,
+                  sortBy: "id",
+                  sortDirection: "asc",
+                }}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[status=active]:bg-accent md:h-8 md:w-8"
               >
-                <Home className="h-5 w-5" />
+                <User className="h-5 w-5" />
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">Dashboard</TooltipContent>
+            <TooltipContent side="right">Люди</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                to="/cars"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-accent-foreground transition-colors hover:text-foreground data-[status=active]:bg-accent md:h-8 md:w-8"
               >
-                <ShoppingCart className="h-5 w-5" />
-                <span className="sr-only">Orders</span>
+                <Car className="h-5 w-5" />
+                <span className="sr-only">Машины</span>
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">Orders</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <Package className="h-5 w-5" />
-                <span className="sr-only">Products</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Products</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <Users2 className="h-5 w-5" />
-                <span className="sr-only">Customers</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Customers</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <LineChart className="h-5 w-5" />
-                <span className="sr-only">Analytics</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Analytics</TooltipContent>
           </Tooltip>
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
@@ -186,13 +165,15 @@ export function Dashboard() {
               </nav>
             </SheetContent>
           </Sheet>
-          <h1 className="text-2xl font-bold">Human Beings</h1>
+          <h1 className="text-2xl font-bold">
+            <LocationTitle />
+          </h1>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
-                className="overflow-hidden rounded-full ml-auto"
+                className="ml-auto overflow-hidden rounded-full"
               ></Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
