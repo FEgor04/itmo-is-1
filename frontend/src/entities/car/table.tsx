@@ -16,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 import { useState } from "react";
+import { EditCarDialogContent } from "./edit";
+import { Dialog } from "@/shared/ui/dialog";
 
 const carColumns: Array<ColumnDef<Car>> = [
   {
@@ -45,8 +47,8 @@ const carColumns: Array<ColumnDef<Car>> = [
   },
 ];
 
-function Actions({}: { car: Car }) {
-  const [_, setEditOpen] = useState(false);
+function Actions({ car }: { car: Car }) {
+  const [open, setEditOpen] = useState(false);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -65,6 +67,9 @@ function Actions({}: { car: Car }) {
         <DropdownMenuSeparator />
         <DropdownMenuItem>Удалить</DropdownMenuItem>
       </DropdownMenuContent>
+      <Dialog open={open} onOpenChange={setEditOpen}>
+        <EditCarDialogContent car={car} onClose={() => setEditOpen(false)} />
+      </Dialog>
     </DropdownMenu>
   );
 }

@@ -70,7 +70,7 @@ export const UpdateCarSchema = CreateCarSchema.extend({
   id: z.number(),
 });
 
-export function useUpdateCarSchema() {
+export function useEditCarMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (valuesRaw: z.infer<typeof UpdateCarSchema>) => {
