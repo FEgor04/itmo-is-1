@@ -8,6 +8,19 @@ import {
 import { FetchedHumanBeing } from "./model";
 import { MoodBadge } from "../enums/mood";
 import { WeaponTypeBadge } from "../enums/weapon-type";
+import { Button } from "@/shared/ui/button";
+import { Ellipsis } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/shared/ui/dropdown-menu";
+import { useDeleteHumanBeingMutation } from "./api";
+import { useState } from "react";
+import { Dialog } from "@/shared/ui/dialog";
+import { EditHumanBeingDialogContent } from "./ui/edit";
 
 const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   {
@@ -59,7 +72,50 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
       return <WeaponTypeBadge value={row.original.weaponType} />;
     },
   },
+  {
+    id: "actions",
+    header: "",
+    cell: ({ row }) => <Actions humanBeing={row.original} />,
+  },
 ];
+
+function Actions({ humanBeing }: { humanBeing: FetchedHumanBeing }) {
+  const [isEditOpen, setEditOpen] = useState(false);
+  const { mutate, isPending } = useDeleteHumanBeingMutation();
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
+            <Ellipsis className="h-4 w-4" />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuItem onClick={() => setEditOpen(true)}>
+            Редактировать
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            disabled={isPending}
+            onClick={() => mutate(humanBeing.id)}
+          >
+            Удалить
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={isEditOpen} onOpenChange={setEditOpen}>
+        <EditHumanBeingDialogContent
+          humanBeing={humanBeing}
+          onClose={() => setEditOpen(false)}
+        />
+      </Dialog>
+    </>
+  );
+}
 
 export function useHumanBeingTable(
   data: Array<FetchedHumanBeing>,

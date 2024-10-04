@@ -4,12 +4,17 @@ import {
 } from "@/entities/human-being/api";
 import { FetchedHumanBeingSchemaKeys } from "@/entities/human-being/model";
 import { useHumanBeingTable } from "@/entities/human-being/table";
+import { CreateHumanBeingDialogContent } from "@/entities/human-being/ui/create";
+import { Button } from "@/shared/ui/button";
 import { DataTable } from "@/shared/ui/data-table";
+import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { PaginationFooter } from "@/shared/ui/pagination";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
-import { SearchIcon } from "lucide-react";
+import { PlusCircle, SearchIcon } from "lucide-react";
+import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
@@ -27,7 +32,8 @@ export const Route = createFileRoute("/humans")({
 function Page() {
   const query = Route.useSearch();
   const navigate = Route.useNavigate();
-  const data = Route.useLoaderData();
+  const initialData = Route.useLoaderData();
+  const { data } = useQuery({ ...getHumansQueryOptions(query), initialData });
   const sortingState: SortingState =
     query.sortDirection && query.sortBy
       ? [
@@ -79,10 +85,24 @@ function Page() {
       name: name && name?.length > 0 ? name : undefined,
     }));
   }, 500);
+  const [createOpen, setCreateOpen] = useState(false);
 
   return (
     <div className="space-y-4">
-      <header>
+      <header className="flex items-center justify-between">
+        <div>
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                <PlusCircle className="mr-2 size-4" />
+                Создать
+              </Button>
+            </DialogTrigger>
+            <CreateHumanBeingDialogContent
+              onClose={() => setCreateOpen(false)}
+            />
+          </Dialog>
+        </div>
         <div className="inline-flex items-center">
           <span className="inline-flex h-8 items-center rounded rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
             <SearchIcon className="mr-2 size-4" />

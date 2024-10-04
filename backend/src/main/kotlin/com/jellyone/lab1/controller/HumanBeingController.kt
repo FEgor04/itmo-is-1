@@ -1,11 +1,8 @@
 package com.jellyone.lab1.controller
 
-import com.jellyone.lab1.domain.enums.Mood
-import com.jellyone.lab1.domain.enums.WeaponType
 import com.jellyone.lab1.dto.CreateHumanBeingDto
 import com.jellyone.lab1.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
-import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.HumanBeingService
@@ -19,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/humans")
@@ -104,7 +102,7 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
                 name = humanBeingDto.name,
                 x = humanBeingDto.x,
                 y = humanBeingDto.y,
-                creationDate = humanBeingDto.creationDate,
+                creationDate = LocalDate.now(),
                 realHero = humanBeingDto.realHero,
                 hasToothpick = humanBeingDto.hasToothpick,
                 carId = humanBeingDto.carId,
