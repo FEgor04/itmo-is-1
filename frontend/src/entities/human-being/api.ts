@@ -12,6 +12,7 @@ import {
   BaseHumanBeingSchema,
   FetchedHumanBeingSchema,
   FetchedHumanBeingSchemaKeys,
+  parseHumanBeingDTO,
 } from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
 import { CarIDSchema } from "../car/model";
@@ -90,27 +91,7 @@ export function useCreateHumanBeingMutation() {
         impactSpeed: values.impactSpeed ?? -1,
         weaponType: values.weaponType,
       });
-      return FetchedHumanBeingSchema.parse({
-        name: data.name,
-        coordinates: {
-          x: data.x,
-          y: data.y,
-        },
-        // TODO: fix car after https://github.com/FEgor04/itmo-is-1/issues/22
-        car: {
-          id: data.carId,
-          model: "",
-          brand: "",
-          color: "",
-          cool: false,
-        },
-        mood: data.mood,
-        impactSpeed: data.impactSpeed,
-        weaponType: data.weaponType,
-        realHero: data.realHero,
-        hasToothpick: data.hasToothpick,
-        creationDate: data.creationDate
-      });
+      return parseHumanBeingDTO(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["humans"] });

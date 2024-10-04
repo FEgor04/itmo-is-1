@@ -2,10 +2,8 @@ import z from "zod";
 import { MoodSchema } from "../enums/mood";
 import { WeaponTypeSchema } from "../enums/weapon-type";
 import { BaseCarSchema } from "../car/model";
-import {
-  MUST_BE_INT_CONFIG,
-  REQUIRED_CONFIG,
-} from "@/shared/zod";
+import { MUST_BE_INT_CONFIG, REQUIRED_CONFIG } from "@/shared/zod";
+import { HumanBeingDto } from "@/shared/api.gen";
 
 export const BaseHumanBeingSchema = z.object({
   id: z.number().gt(0),
@@ -18,7 +16,8 @@ export const BaseHumanBeingSchema = z.object({
   realHero: z.boolean(),
   hasToothpick: z.boolean(),
   mood: MoodSchema,
-  impactSpeed: z.coerce.number(MUST_BE_INT_CONFIG)
+  impactSpeed: z.coerce
+    .number(MUST_BE_INT_CONFIG)
     .max(108, "Значение должно быть меньше 108")
     .optional(),
   weaponType: WeaponTypeSchema,
@@ -39,5 +38,29 @@ export const FetchedHumanBeingSchemaKeys = z.enum([
   "impactSpeed",
   "weaponType",
 ]);
+
+export function parseHumanBeingDTO(data: HumanBeingDto) {
+  return FetchedHumanBeingSchema.parse({
+    name: data.name,
+    coordinates: {
+      x: data.x,
+      y: data.y,
+    },
+    // TODO: fix car after https://github.com/FEgor04/itmo-is-1/issues/22
+    car: {
+      id: data.carId,
+      model: "",
+      brand: "",
+      color: "",
+      cool: false,
+    },
+    mood: data.mood,
+    impactSpeed: data.impactSpeed,
+    weaponType: data.weaponType,
+    realHero: data.realHero,
+    hasToothpick: data.hasToothpick,
+    creationDate: data.creationDate,
+  });
+}
 
 export type FetchedHumanBeing = z.infer<typeof FetchedHumanBeingSchema>;
