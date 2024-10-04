@@ -79,7 +79,20 @@ export function useCreateHumanBeingMutation() {
       return parseHumanBeingDTO(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["humans"] });
+      return queryClient.invalidateQueries({ queryKey: ["humans"] });
+    },
+  });
+}
+
+export function useDeleteHumanBeingMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      await ApiInstance.humans.deleteHuman(id);
+      return;
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["humans"] });
     },
   });
 }
