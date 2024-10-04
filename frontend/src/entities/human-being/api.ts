@@ -15,6 +15,7 @@ import {
 } from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
 import { CarIDSchema } from "../car/model";
+import { ApiInstance } from "@/shared/instance";
 
 export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
   SortingQuerySchema(FetchedHumanBeingSchemaKeys),
@@ -77,9 +78,39 @@ export function useCreateHumanBeingMutation() {
   return useMutation({
     mutationFn: async (valuesRaw: z.infer<typeof CreateHumanBeingSchema>) => {
       const values = CreateHumanBeingSchema.parse(valuesRaw);
-      await new Promise((res) => setTimeout(res, 2000));
-      console.log("Creating human being ", values);
-      return values;
+      const { data } = await ApiInstance.humans.createHuman({
+        name: values.name,
+        carId: values.car,
+        x: values.coordinates.x,
+        y: values.coordinates.y,
+        mood: values.mood,
+        realHero: values.realHero,
+        hasToothpick: values.hasToothpick,
+        // TODO: remove ?? after https://github.com/FEgor04/itmo-is-1/issues/21
+        impactSpeed: values.impactSpeed ?? -1,
+        weaponType: values.weaponType,
+      });
+      return FetchedHumanBeingSchema.parse({
+        name: data.name,
+        coordinates: {
+          x: data.x,
+          y: data.y,
+        },
+        // TODO: fix car after https://github.com/FEgor04/itmo-is-1/issues/22
+        car: {
+          id: data.carId,
+          model: "",
+          brand: "",
+          color: "",
+          cool: false,
+        },
+        mood: data.mood,
+        impactSpeed: data.impactSpeed,
+        weaponType: data.weaponType,
+        realHero: data.realHero,
+        hasToothpick: data.hasToothpick,
+        creationDate: data.creationDate
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["humans"] });
