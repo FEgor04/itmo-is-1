@@ -180,6 +180,16 @@ export interface CreateCarDTO {
   cool: boolean;
 }
 
+export interface SignupRequest {
+  username: string;
+  password: string;
+}
+
+export interface AdminRequestDto {
+  username: string;
+  password: string;
+}
+
 export interface PaginatedResponseHumanBeingDto {
   /** @format int32 */
   page: number;
@@ -350,11 +360,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetHumanById
      * @summary Get a human by ID
      * @request GET:/humans/{id}
+     * @secure
      */
     getHumanById: (id: number, params: RequestParams = {}) =>
       this.request<HumanBeingDto, HumanBeingDto>({
         path: `/humans/${id}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -366,12 +378,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name UpdateHuman
      * @summary Update human information
      * @request PUT:/humans/{id}
+     * @secure
      */
     updateHuman: (id: number, data: HumanBeingDto, params: RequestParams = {}) =>
       this.request<HumanBeingDto, HumanBeingDto>({
         path: `/humans/${id}`,
         method: "PUT",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -384,11 +398,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name DeleteHuman
      * @summary Delete a human
      * @request DELETE:/humans/{id}
+     * @secure
      */
     deleteHuman: (id: number, params: RequestParams = {}) =>
       this.request<void, void>({
         path: `/humans/${id}`,
         method: "DELETE",
+        secure: true,
         ...params,
       }),
 
@@ -398,6 +414,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags Human Management
      * @name GetAllHumans
      * @request GET:/humans
+     * @secure
      */
     getAllHumans: (
       query: {
@@ -415,6 +432,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/humans`,
         method: "GET",
         query: query,
+        secure: true,
         ...params,
       }),
 
@@ -425,12 +443,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name CreateHuman
      * @summary Create a new human
      * @request POST:/humans
+     * @secure
      */
     createHuman: (data: CreateHumanBeingDto, params: RequestParams = {}) =>
       this.request<HumanBeingDto, HumanBeingDto>({
         path: `/humans`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -444,11 +464,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetCarById
      * @summary Get a car by ID
      * @request GET:/cars/{id}
+     * @secure
      */
     getCarById: (id: number, params: RequestParams = {}) =>
       this.request<CarDTO, CarDTO>({
         path: `/cars/${id}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -460,12 +482,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name UpdateCar
      * @summary Update car information
      * @request PUT:/cars/{id}
+     * @secure
      */
     updateCar: (id: number, data: CarDTO, params: RequestParams = {}) =>
       this.request<CarDTO, CarDTO>({
         path: `/cars/${id}`,
         method: "PUT",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -478,11 +502,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name DeleteCar
      * @summary Delete a car
      * @request DELETE:/cars/{id}
+     * @secure
      */
     deleteCar: (id: number, params: RequestParams = {}) =>
       this.request<void, void>({
         path: `/cars/${id}`,
         method: "DELETE",
+        secure: true,
         ...params,
       }),
 
@@ -492,6 +518,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags Car Management
      * @name GetAllCars
      * @request GET:/cars
+     * @secure
      */
     getAllCars: (
       query: {
@@ -510,6 +537,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/cars`,
         method: "GET",
         query: query,
+        secure: true,
         ...params,
       }),
 
@@ -520,14 +548,81 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name CreateCar
      * @summary Create a new car
      * @request POST:/cars
+     * @secure
      */
     createCar: (data: CreateCarDTO, params: RequestParams = {}) =>
       this.request<CarDTO, CarDTO>({
         path: `/cars`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+  };
+  api = {
+    /**
+     * @description Sign up user
+     *
+     * @tags User Management
+     * @name Signup
+     * @summary Sign up user
+     * @request POST:/api/signup
+     */
+    signup: (data: SignupRequest, params: RequestParams = {}) =>
+      this.request<string, string>({
+        path: `/api/signup`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description Submit admin request
+     *
+     * @tags User Management
+     * @name SubmitAdminRequest
+     * @summary Submit admin request
+     * @request POST:/api/admin-requests/submit
+     */
+    submitAdminRequest: (data: AdminRequestDto, params: RequestParams = {}) =>
+      this.request<string, string>({
+        path: `/api/admin-requests/submit`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description Approve admin request
+     *
+     * @tags User Management
+     * @name ApproveAdminRequest
+     * @summary Approve admin request
+     * @request POST:/api/admin-requests/approve/{id}
+     */
+    approveAdminRequest: (id: number, params: RequestParams = {}) =>
+      this.request<string, string>({
+        path: `/api/admin-requests/approve/${id}`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * @description Get current user
+     *
+     * @tags User Management
+     * @name Me
+     * @summary Get current user
+     * @request GET:/api/me
+     */
+    me: (params: RequestParams = {}) =>
+      this.request<string, string>({
+        path: `/api/me`,
+        method: "GET",
         ...params,
       }),
   };
