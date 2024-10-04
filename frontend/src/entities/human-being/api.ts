@@ -96,3 +96,36 @@ export function useDeleteHumanBeingMutation() {
     },
   });
 }
+
+export const EditHumanBeingSchema = BaseHumanBeingSchema.omit({
+  creationDate: true,
+}).extend({
+  car: CarIDSchema,
+});
+
+export function useEditHumanBeingMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (valuesRaw: z.infer<typeof EditHumanBeingSchema>) => {
+      const values = EditHumanBeingSchema.parse(valuesRaw);
+      const { data } = await ApiInstance.humans.updateHuman(values.id, {
+        name: values.name,
+        carId: values.car,
+        x: values.coordinates.x,
+        y: values.coordinates.y,
+        mood: values.mood,
+        realHero: values.realHero,
+        hasToothpick: values.hasToothpick,
+        // TODO: remove ?? after https://github.com/FEgor04/itmo-is-1/issues/21
+        impactSpeed: values.impactSpeed ?? -1,
+        weaponType: values.weaponType,
+        // TODO: remove entirely after https://github.com/FEgor04/itmo-is-1/issues/29
+        creationDate: ""
+      });
+      return parseHumanBeingDTO(data);
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["humans"] });
+    },
+  });
+}
