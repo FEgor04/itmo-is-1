@@ -120,7 +120,7 @@ export function useEditHumanBeingMutation() {
         impactSpeed: values.impactSpeed ?? -1,
         weaponType: values.weaponType,
         // TODO: remove entirely after https://github.com/FEgor04/itmo-is-1/issues/29
-        creationDate: ""
+        creationDate: new Date().toISOString(),
       });
       return parseHumanBeingDTO(data);
     },
