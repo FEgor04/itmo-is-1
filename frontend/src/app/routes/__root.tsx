@@ -14,17 +14,9 @@ type RouterContext = {
 
 import {
   Car,
-  Home,
-  LineChart,
   LogOut,
-  Package,
-  Package2,
   PanelLeft,
-  Search,
-  Settings,
-  ShoppingCart,
   User,
-  Users2,
 } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
@@ -181,6 +173,7 @@ export function Dashboard() {
         </header>
         <main className="flex-1 items-start p-4 sm:px-6 sm:py-0">
           <Outlet />
+          <TanStackRouterDevtools />
         </main>
       </div>
     </div>
