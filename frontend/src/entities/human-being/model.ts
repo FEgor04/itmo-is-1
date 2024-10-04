@@ -1,25 +1,30 @@
 import z from "zod";
 import { MoodSchema } from "../enums/mood";
 import { WeaponTypeSchema } from "../enums/weapon-type";
-import { CarSchema } from "../car/model";
+import { BaseCarSchema } from "../car/model";
+import { MUST_BE_INT_CONFIG, REQUIRED_CONFIG } from "@/shared/zod";
+import { HumanBeingDto } from "@/shared/api.gen";
 
 export const BaseHumanBeingSchema = z.object({
   id: z.number().gt(0),
-  name: z.string().min(1),
+  name: z.string(REQUIRED_CONFIG).min(1, REQUIRED_CONFIG),
   coordinates: z.object({
-    x: z.number().optional(),
-    y: z.number(),
+    x: z.coerce.number(MUST_BE_INT_CONFIG),
+    y: z.coerce.number(MUST_BE_INT_CONFIG),
   }),
-  creationDate: z.coerce.date(),
-  realHero: z.boolean().optional(),
-  hasToothpick: z.boolean().optional(),
+  creationDate: z.coerce.date(REQUIRED_CONFIG),
+  realHero: z.boolean(),
+  hasToothpick: z.boolean(),
   mood: MoodSchema,
-  impactSpeed: z.number().max(108).optional(),
+  impactSpeed: z.coerce
+    .number(MUST_BE_INT_CONFIG)
+    .max(108, "Значение должно быть меньше 108")
+    .optional(),
   weaponType: WeaponTypeSchema,
 });
 
 export const FetchedHumanBeingSchema = BaseHumanBeingSchema.extend({
-  car: CarSchema,
+  car: BaseCarSchema,
 });
 export const FetchedHumanBeingSchemaKeys = z.enum([
   "id",
@@ -33,5 +38,30 @@ export const FetchedHumanBeingSchemaKeys = z.enum([
   "impactSpeed",
   "weaponType",
 ]);
+
+export function parseHumanBeingDTO(data: HumanBeingDto) {
+  return FetchedHumanBeingSchema.parse({
+    id: data.id,
+    name: data.name,
+    coordinates: {
+      x: data.x,
+      y: data.y,
+    },
+    // TODO: fix car after https://github.com/FEgor04/itmo-is-1/issues/22
+    car: {
+      id: data.carId,
+      model: "",
+      brand: "",
+      color: "",
+      cool: false,
+    },
+    mood: data.mood,
+    impactSpeed: data.impactSpeed,
+    weaponType: data.weaponType,
+    realHero: data.realHero,
+    hasToothpick: data.hasToothpick,
+    creationDate: data.creationDate,
+  });
+}
 
 export type FetchedHumanBeing = z.infer<typeof FetchedHumanBeingSchema>;

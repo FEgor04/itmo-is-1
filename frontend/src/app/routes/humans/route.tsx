@@ -4,12 +4,15 @@ import {
 } from "@/entities/human-being/api";
 import { FetchedHumanBeingSchemaKeys } from "@/entities/human-being/model";
 import { useHumanBeingTable } from "@/entities/human-being/table";
+import { CreateHumanBeingDialogContent } from "@/entities/human-being/ui/create";
+import { Button } from "@/shared/ui/button";
 import { DataTable } from "@/shared/ui/data-table";
+import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { PaginationFooter } from "@/shared/ui/pagination";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
-import { SearchIcon } from "lucide-react";
+import { PlusCircle, SearchIcon } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
@@ -82,7 +85,18 @@ function Page() {
 
   return (
     <div className="space-y-4">
-      <header>
+      <header className="flex items-center justify-between">
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                <PlusCircle className="mr-2 size-4" />
+                Создать
+              </Button>
+            </DialogTrigger>
+            <CreateHumanBeingDialogContent />
+          </Dialog>
+        </div>
         <div className="inline-flex items-center">
           <span className="inline-flex h-8 items-center rounded rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
             <SearchIcon className="mr-2 size-4" />

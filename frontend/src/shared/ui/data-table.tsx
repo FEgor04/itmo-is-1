@@ -29,7 +29,7 @@ export function DataTable<TData>({ table }: DataTableProps<TData>) {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableColumnHeader header={header} />
+                <TableColumnHeader key={header.column.id} header={header} />
               ))}
             </TableRow>
           ))}

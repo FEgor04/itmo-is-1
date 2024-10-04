@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
+import java.util.*
 
 @RestController
 @RequestMapping("/humans")
@@ -103,7 +104,7 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
                 name = humanBeingDto.name,
                 x = humanBeingDto.x,
                 y = humanBeingDto.y,
-                creationDate = humanBeingDto.creationDate,
+                creationDate = LocalDate.now(),
                 realHero = humanBeingDto.realHero,
                 hasToothpick = humanBeingDto.hasToothpick,
                 carId = humanBeingDto.carId,

@@ -51,9 +51,6 @@ data class CreateHumanBeingDto(
     @Schema(description = "The Y coordinate of the human being's location", example = "56.78")
     val y: Double,
 
-    @Schema(description = "The date of creation of the human being record", example = "2023-10-01")
-    val creationDate: LocalDate,
-
     @Schema(description = "Indicates if the human being is a real hero", example = "true")
     val realHero: Boolean,
 
