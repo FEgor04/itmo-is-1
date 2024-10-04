@@ -16,6 +16,7 @@ import {
   Car,
   Home,
   LineChart,
+  LogOut,
   Package,
   Package2,
   PanelLeft,
@@ -101,11 +102,11 @@ export function Dashboard() {
                 href="#"
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
-                <Settings className="h-5 w-5" />
-                <span className="sr-only">Настройки</span>
+                <LogOut className="h-5 w-5" />
+                <span className="sr-only">Выйти</span>
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">Настройки</TooltipContent>
+            <TooltipContent side="right">Выйти</TooltipContent>
           </Tooltip>
         </nav>
       </aside>
@@ -122,31 +123,37 @@ export function Dashboard() {
               <nav className="grid gap-6 text-lg font-medium">
                 <Link
                   href="#"
-                  className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+                  className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full border border-primary text-lg font-semibold text-primary-foreground md:text-base"
                 >
-                  <img src={webMonkeyIcon} className="size-5" />
+                  <img src={webMonkeyIcon} className="size-6" />
                   <span className="sr-only">Вебмакакинг</span>
                 </Link>
                 <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                  to="/humans"
+                  search={{
+                    page: 1,
+                    pageSize: 10,
+                    sortBy: "id",
+                    sortDirection: "asc",
+                  }}
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground data-[state=active]:text-foreground"
                 >
                   <User className="h-5 w-5" />
                   Люди
                 </Link>
                 <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-foreground"
+                  to="/cars"
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground data-[state=active]:text-foreground"
                 >
                   <Car className="h-5 w-5" />
                   Машины
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground data-[state=active]:text-foreground"
                 >
-                  <LineChart className="h-5 w-5" />
-                  Settings
+                  <LogOut className="h-5 w-5" />
+                  Выйти
                 </Link>
               </nav>
             </SheetContent>
