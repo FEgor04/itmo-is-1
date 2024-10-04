@@ -10,5 +10,7 @@ export const BaseCarSchema = z.object({
   color: z.string(),
   cool: z.boolean(),
 });
+export type Car = z.infer<typeof BaseCarSchema>;
 
-export const CarSchemaKeys = BaseCarSchema.keyof()
+export const CarSchemaKeys = BaseCarSchema.keyof();
+export type CarKeys = z.infer<typeof CarSchemaKeys>;
