@@ -25,13 +25,13 @@ import {
 import { PrincipalProfile } from "@/entities/principal/profile";
 
 function LocationTitle() {
-  const location = useLocation();
-  if (location.href.includes("/cars")) {
-    return "Машины";
-  }
-  if (location.href.includes("/humans")) {
-    return "Люди";
-  }
+  const { pathname } = useLocation();
+  const map: Record<string, string> = {
+    "/cars": "Машины",
+    "/humans": "Люди",
+    "/requests": "Заявки",
+  };
+  return pathname in map ? map[pathname] : "";
 }
 
 export function Dashboard() {
