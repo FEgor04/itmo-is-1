@@ -1,0 +1,77 @@
+---
+x-healthcheck: &healthcheck
+  interval: 10s
+  timeout: 5s
+  retries: 5
+  start_period: 15s
+
+x-healthy: &healthy
+  condition: service_healthy
+
+services:
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.entrypoints=webSecure
+      - traefik.http.routers.frontend.rule=PathPrefix(`/`)&&Host(`${HOST}`)
+      - traefik.http.services.frontend.loadbalancer.server.port=80
+      - traefik.http.routers.frontend.tls=true
+      - traefik.http.routers.frontend.tls.certresolver=letsEncrypt
+  backend:
+    image: ${BACKEND_IMAGE}
+    environment:
+      - POSTGRES_HOST=postgres:5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD-SHELL", "THC_PATH=/actuator/health /workspace/health-check"]
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.entrypoints=webSecure
+      - traefik.http.routers.backend.rule=PathPrefix(`/api`)&&Host(`${HOST}`)
+      - traefik.http.services.backend.loadbalancer.server.port=8080
+      - traefik.http.routers.backend.tls=true
+      - traefik.http.routers.backend.tls.certresolver=letsEncrypt
+    depends_on:
+      postgres:
+        condition: "service_healthy"
+  postgres:
+    image: ${POSTGRES_IMAGE}
+    healthcheck:
+      <<: *healthcheck
+      start_period: 1s
+      test:
+        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  ingress:
+    image: ${TRAEFIK_IMAGE}
+    ports:
+      - 80:80
+      - 443:443
+      - 8001:8001
+    labels:
+      - "traefik.enable=false"
+    volumes:
+      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/letsEncrypt:/letsEncrypt
+    depends_on:
+      frontend:
+        <<: *healthy
+      backend:
+        <<: *healthy
+
+volumes:
+  pgdata:
+    driver: local
