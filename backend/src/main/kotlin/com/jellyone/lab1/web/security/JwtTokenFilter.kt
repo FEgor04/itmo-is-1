@@ -32,6 +32,12 @@ class JwtTokenFilter(
         val httpRequest = servletRequest as HttpServletRequest
         var bearerToken = httpRequest.getHeader("Authorization")
 
+        val uri = httpRequest.requestURI
+        if(!uri.contains("/api")) {
+            logger.info("Request to static, passing it")
+            filterChain.doFilter(servletRequest, servletResponse)
+            return
+        }
         if (allowedPaths.any { httpRequest.requestURI.contains(it) }) {
             logger.info("Request to /login or /register. Passing it on without checking JWT")
             filterChain.doFilter(servletRequest, servletResponse)
