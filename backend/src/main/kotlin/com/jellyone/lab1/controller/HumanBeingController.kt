@@ -6,6 +6,7 @@ import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.HumanBeingService
+import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -133,7 +134,7 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun updateHuman(@PathVariable id: Long, @RequestBody humanBeingDto: HumanBeingDto): ResponseEntity<HumanBeingDto> {
+    fun updateHuman(@PathVariable id: Long, @RequestBody humanBeingDto: PutHumanBeingDto): ResponseEntity<HumanBeingDto> {
         val updatedHuman = humanBeingService.updateHuman(id, humanBeingDto)
         return if (updatedHuman != null) {
             ResponseEntity.ok(updatedHuman)
