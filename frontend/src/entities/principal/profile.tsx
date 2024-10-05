@@ -11,9 +11,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getPrincipalQueryOptions } from "./api";
 import { Link } from "@tanstack/react-router";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { useSignOutMutation } from "@/shared/auth";
 
 export function PrincipalProfile() {
   const { data, isError } = useQuery(getPrincipalQueryOptions());
+  const { mutate, isPending } = useSignOutMutation();
 
   if (isError) {
     return (
@@ -43,7 +45,9 @@ export function PrincipalProfile() {
         <DropdownMenuSeparator />
         <DropdownMenuItem>Заявки</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Выйти</DropdownMenuItem>
+        <DropdownMenuItem disabled={isPending} onClick={() => mutate()}>
+          Выйти
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

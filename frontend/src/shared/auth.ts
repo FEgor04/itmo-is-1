@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { ApiInstance } from "./instance";
 import axios from "axios";
+import { clear } from "console";
 
 export function setSession(session: {
   accessToken: string;
@@ -17,6 +18,11 @@ export function getAccessToken() {
 
 export function getRefreshToken() {
   return localStorage.getItem("refreshToken");
+}
+
+function clearSession() {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
 }
 
 ApiInstance.instance.interceptors.request.use(
@@ -43,7 +49,6 @@ ApiInstance.instance.interceptors.response.use(
     if (err.response) {
       // Access Token was expired
       if (err.response.status === 401 && !originalConfig._retry) {
-        console.log("Refreshing token");
         originalConfig._retry = true;
         try {
           const previousRefreshToken = getRefreshToken();
@@ -57,6 +62,7 @@ ApiInstance.instance.interceptors.response.use(
           return ApiInstance.instance(originalConfig);
         } catch (_error) {
           return Promise.reject(_error);
+          clearSession();
         }
       }
     }
@@ -114,6 +120,16 @@ export function useSignUpMutation() {
         refreshToken: data.refreshToken,
         accessToken: data.accessToken,
       });
+      queryClient.clear();
+    },
+  });
+}
+
+export function useSignOutMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      clearSession();
       queryClient.clear();
     },
   });
