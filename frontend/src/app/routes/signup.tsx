@@ -1,4 +1,4 @@
-import { SignInSchema } from "@/shared/auth";
+import { SignInSchema, useSignUpMutation } from "@/shared/auth";
 import { Button } from "@/shared/ui/button";
 import {
   Card,
@@ -8,12 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
-import { FormField, FormItem } from "@/shared/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute } from "@tanstack/react-router";
-import { Form, useForm } from "react-hook-form";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { AxiosError } from "axios";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export const Route = createFileRoute("/signup")({
@@ -26,9 +27,22 @@ function Page() {
   const form = useForm<Values>({
     resolver: zodResolver(schema),
   });
+  const { mutate, error, isPending } = useSignUpMutation();
+  const navigate = useNavigate();
 
   function onSubmit(data: Values) {
     console.log(data);
+    mutate(data, {
+      onSuccess: () => {
+        navigate({
+          to: "/humans",
+          search: {
+            page: 1,
+            pageSize: 25,
+          },
+        });
+      },
+    });
   }
 
   return (
@@ -40,7 +54,7 @@ function Page() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form id="signup">
+            <form id="signup" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="username"
@@ -63,6 +77,9 @@ function Page() {
               />
             </form>
           </Form>
+          {error && (
+            <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>
+          )}
         </CardContent>
         <CardFooter>
           <Button type="submit" form="signup">
@@ -72,4 +89,14 @@ function Page() {
       </Card>
     </div>
   );
+}
+
+function SignUpError({ error }: { error: Error }) {
+  if (!(error instanceof AxiosError)) {
+    return <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>;
+  }
+  if (error.response?.status === 409) {
+    return <FormMessage>Такой пользователь уже существует</FormMessage>;
+  }
+  return <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>;
 }
