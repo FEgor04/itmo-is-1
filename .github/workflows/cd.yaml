@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [ "main", "62-cd-to-custom-server" ]
+    branches: [ "main" ]
 
 jobs:
   image-frontend:
