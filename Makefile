@@ -34,3 +34,9 @@ dev-up:
 
 dev-down:
 	docker compose -f docker-compose.dev.yaml down
+
+prod-up:
+	docker compose -f docker-compose.yaml up
+
+prod-down:
+	docker compose -f docker-compose.yaml down
