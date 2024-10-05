@@ -46,7 +46,7 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
     ) = humanBeingService.getAllHumans(
         page,
         pageSize,
-        HumanBeingRepository.HumanBeingFields.entries.find { it.dbName == sortBy }!!,
+        HumanBeingRepository.HumanBeingFields.entries.find { it.entityName == sortBy }!!,
         sortDirection == "asc",
         name
     ).map { HumanBeingMapper.toDto(it) }
