@@ -3,6 +3,7 @@ package com.jellyone.lab1.controller
 import com.jellyone.lab1.service.AuthService
 import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.web.dto.GetMeResponse
+import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -20,8 +21,7 @@ import java.security.Principal
 @Tag(name = "User Management")
 @SecurityRequirement(name = "JWT")
 class UserController(
-    private val userService: UserService,
-    private val authService: AuthService
+    private val userService: UserService
 ) {
 
     @GetMapping("/me")

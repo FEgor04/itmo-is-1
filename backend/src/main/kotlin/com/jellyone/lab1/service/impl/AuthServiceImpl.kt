@@ -1,11 +1,13 @@
 package com.jellyone.lab1.service.impl
 
 import com.jellyone.lab1.domain.User
+import com.jellyone.lab1.domain.enums.Role
 import com.jellyone.lab1.service.AuthService
 import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.web.security.JwtTokenProvider
 import com.jellyone.lab1.web.dto.auth.JwtRequest
 import com.jellyone.lab1.web.dto.auth.JwtResponse
+import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service

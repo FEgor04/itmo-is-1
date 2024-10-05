@@ -2,6 +2,7 @@ package com.jellyone.lab1.service
 
 import com.jellyone.lab1.domain.User
 import com.jellyone.lab1.domain.enums.AdminRequestStatus
+import java.security.Principal
 
 interface UserService {
     fun registerUser(username: String, password: String)

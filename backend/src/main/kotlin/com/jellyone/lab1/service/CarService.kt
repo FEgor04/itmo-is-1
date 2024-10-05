@@ -1,13 +1,18 @@
 package com.jellyone.lab1.service
 
 import com.jellyone.lab1.domain.Car
+import com.jellyone.lab1.domain.enums.Role
+import com.jellyone.lab1.exception.OwnerPermissionsConflictException
 import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.mapper.CarMapper
 import com.jellyone.lab1.repository.CarRepository
 import org.springframework.stereotype.Service
 
 @Service
-class CarService(private val carRepository: CarRepository) {
+class CarService(
+    private val carRepository: CarRepository,
+    private val userService: UserService
+) {
 
     fun getAllCars(
         page: Int,
@@ -33,12 +38,30 @@ class CarService(private val carRepository: CarRepository) {
         )
     }
 
-    fun updateCar(id: Long, car: Car): Car? {
-        return carRepository.update(car) ?: throw ResourceNotFoundException("Car not found with id ${id}")
+
+    fun updateCar(id: Long, car: Car, username: String): Car? {
+        val user = userService.getByUsername(username)
+        if (!checkOwner(user.id, car.ownerId, user.role)) {
+            throw OwnerPermissionsConflictException()
+        }
+        return carRepository.update(car.copy(ownerId = user.id))
+            ?: throw ResourceNotFoundException("Car not found with id ${id}")
     }
 
-    fun deleteCar(id: Long): Boolean {
+    fun deleteCar(id: Long, username: String): Boolean {
+        val user = userService.getByUsername(username)
+        if (!checkOwner(user.id, id, user.role)) {
+            throw OwnerPermissionsConflictException()
+        }
         return carRepository.deleteById(id)
+    }
+
+
+    fun checkOwner(userId: Long, ownerId: Long, userRole: Role): Boolean {
+        if (userRole == Role.ADMIN) {
+            return true
+        }
+        return ownerId == userId
     }
 
 

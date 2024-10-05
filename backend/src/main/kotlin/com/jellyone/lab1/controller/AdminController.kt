@@ -3,9 +3,8 @@ package com.jellyone.lab1.controller
 import com.jellyone.lab1.mapper.RequestAdminMapper
 import com.jellyone.lab1.repository.AdminRequestRepository
 import com.jellyone.lab1.repository.map
-import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.service.impl.UserServiceImpl
-import com.jellyone.lab1.web.dto.AdminRequestDto
+import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -14,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
@@ -23,7 +23,7 @@ import java.security.Principal
 @SecurityRequirement(name = "JWT")
 class AdminController(
     private val userService: UserServiceImpl,
-    private val adminRequestAdminMapper: RequestAdminMapper,
+    private val adminRequestAdminMapper: RequestAdminMapper
 ) {
 
     @PostMapping("/submit")
@@ -47,6 +47,7 @@ class AdminController(
         return ResponseEntity.ok(userService.requestAdmin(user.username, user.password))
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/approve/{username}")
     @Operation(summary = "Approve admin request", description = "Approve admin request")
     @ApiResponses(
@@ -68,6 +69,7 @@ class AdminController(
         return ResponseEntity.ok("Admin request approved")
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/rejected/{username}")
     @Operation(summary = "Rejected admin request", description = "Rejected admin request")
     @ApiResponses(
@@ -89,6 +91,7 @@ class AdminController(
         return ResponseEntity.ok("Admin request rejected")
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
     @Operation(summary = "Get all admin requests", description = "Returns all admin requests")
     @ApiResponses(

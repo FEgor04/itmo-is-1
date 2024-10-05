@@ -11,14 +11,17 @@ import com.jellyone.lab1.repository.AdminRequestRepository
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.UserRepository
 import com.jellyone.lab1.service.UserService
+import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.security.Principal
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val adminRequestRepository: AdminRequestRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val autenticationFacade: IAuthenticationFacade
 ) : UserService {
 
     override fun registerUser(username: String, password: String) {
@@ -52,7 +55,7 @@ class UserServiceImpl(
                 password = password,
                 role = Role.ADMIN
             )
-
+            autenticationFacade.setAdminRole()
             userRepository.update(user)
             return "Admin registered successfully"
         }
