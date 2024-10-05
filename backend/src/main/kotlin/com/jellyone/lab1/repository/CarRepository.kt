@@ -72,6 +72,7 @@ class CarRepository(private val dsl: DSLContext) {
             .set(DSL.field("model"), car.model)
             .set(DSL.field("brand"), car.brand)
             .set(DSL.field("cool"), car.cool)
+            .set(DSL.field("owner_id"), car.ownerId)
             .returning(DSL.field("id"))
             .fetchOne()
 
@@ -88,6 +89,7 @@ class CarRepository(private val dsl: DSLContext) {
             .set(DSL.field("model"), car.model)
             .set(DSL.field("brand"), car.brand)
             .set(DSL.field("cool"), car.cool)
+            .set(DSL.field("owner_id"), car.ownerId)
             .where(DSL.field("id").eq(car.id))
             .execute()
 

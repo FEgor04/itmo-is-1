@@ -21,9 +21,16 @@ class CarService(private val carRepository: CarRepository) {
     fun getCarById(id: Long?) = id?.let { carRepository.findById(it) }
 
     fun createCar(car: CreateCarRequest): Car {
-        val savedCar =
-            carRepository.save(Car(null, color = car.color, model = car.model, brand = car.brand, cool = car.cool))
-        return savedCar
+        return carRepository.save(
+            Car(
+                null,
+                color = car.color,
+                model = car.model,
+                brand = car.brand,
+                cool = car.cool,
+                ownerId = car.ownerId
+            )
+        )
     }
 
     fun updateCar(id: Long, car: Car): Car? {
@@ -34,10 +41,12 @@ class CarService(private val carRepository: CarRepository) {
         return carRepository.deleteById(id)
     }
 
+
     data class CreateCarRequest(
         val color: String,
         val model: String,
         val brand: String,
-        val cool: Boolean
+        val cool: Boolean,
+        val ownerId: Long
     )
 }

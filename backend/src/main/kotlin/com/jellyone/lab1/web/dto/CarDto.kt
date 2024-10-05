@@ -18,7 +18,10 @@ data class CarDTO(
     val brand: String,
 
     @Schema(description = "Indicates if the car is cool", example = "true")
-    val cool: Boolean
+    val cool: Boolean,
+
+    @Schema(description = "The owner of the car", example = "1")
+    val ownerId: Long
 )
 
 @Schema(description = "DTO for read operations on Car")

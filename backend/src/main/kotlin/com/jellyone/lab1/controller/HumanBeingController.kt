@@ -8,6 +8,7 @@ import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.CarService
 import com.jellyone.lab1.service.HumanBeingService
+import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 import java.time.LocalDate
 
 @RestController
@@ -28,7 +30,8 @@ import java.time.LocalDate
 class HumanBeingController(
     private val humanBeingService: HumanBeingService,
     private val carService: CarService,
-    private val humanBeingMapper: HumanBeingMapper
+    private val humanBeingMapper: HumanBeingMapper,
+    private val userService: UserService
 ) {
 
     @ApiResponses(
@@ -105,7 +108,10 @@ class HumanBeingController(
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun createHuman(@RequestBody humanBeingDto: CreateHumanBeingDto): ResponseEntity<HumanBeingDto> {
+    fun createHuman(
+        @RequestBody humanBeingDto: CreateHumanBeingDto,
+        principal: Principal
+    ): ResponseEntity<HumanBeingDto> {
         val createdHuman = humanBeingService.createHuman(
             HumanBeingService.CreateHumanBeingRequest(
                 name = humanBeingDto.name,
@@ -117,7 +123,8 @@ class HumanBeingController(
                 carId = humanBeingDto.carId,
                 mood = humanBeingDto.mood,
                 impactSpeed = humanBeingDto.impactSpeed,
-                weaponType = humanBeingDto.weaponType
+                weaponType = humanBeingDto.weaponType,
+                ownerId = userService.getUserIdByUsername(principal.name)
             )
         )
         val car = carService.getCarById(humanBeingDto.carId)
@@ -146,9 +153,11 @@ class HumanBeingController(
     )
     fun updateHuman(
         @PathVariable id: Long,
-        @RequestBody humanBeingDto: PutHumanBeingDto
+        @RequestBody humanBeingDto: PutHumanBeingDto,
+        principal: Principal
     ): ResponseEntity<HumanBeingDto> {
-        val humanBeing = humanBeingService.updateHuman(id, humanBeingDto)
+        val ownerId = userService.getUserIdByUsername(principal.name)
+        val humanBeing = humanBeingService.updateHuman(id, humanBeingDto, ownerId)
             ?: throw ResourceNotFoundException("humanBeing not found with id $id")
         val car =
             carService.getCarById(humanBeing.car.id) ?: throw ResourceNotFoundException("Car not found with id $id")

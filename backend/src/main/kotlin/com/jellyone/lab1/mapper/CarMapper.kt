@@ -12,7 +12,8 @@ object CarMapper {
             color = car.color,
             model = car.model,
             brand = car.brand,
-            cool = car.cool
+            cool = car.cool,
+            ownerId = car.ownerId
         )
     }
 
@@ -22,7 +23,8 @@ object CarMapper {
             color = carDto.color,
             model = carDto.model,
             brand = carDto.brand,
-            cool = carDto.cool
+            cool = carDto.cool,
+            ownerId = carDto.ownerId
         )
     }
 }

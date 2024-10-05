@@ -14,5 +14,6 @@ data class HumanBeing(
     val car: Car,
     val mood: Mood? = null,
     val impactSpeed: Long? = null,
-    val weaponType: WeaponType
+    val weaponType: WeaponType,
+    val ownerId: Long
 )

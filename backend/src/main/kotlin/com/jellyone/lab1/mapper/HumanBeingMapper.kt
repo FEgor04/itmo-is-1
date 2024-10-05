@@ -25,7 +25,8 @@ class HumanBeingMapper(
             car = carMapper.toDto(car),
             mood = humanBeing.mood,
             impactSpeed = humanBeing.impactSpeed,
-            weaponType = humanBeing.weaponType
+            weaponType = humanBeing.weaponType,
+            ownerId = humanBeing.ownerId
         )
     }
 
@@ -40,11 +41,17 @@ class HumanBeingMapper(
             car = car,
             mood = humanBeingDto.mood,
             impactSpeed = humanBeingDto.impactSpeed,
-            weaponType = humanBeingDto.weaponType
+            weaponType = humanBeingDto.weaponType,
+            ownerId = humanBeingDto.ownerId
         )
     }
 
-    fun fromPutHumanBeingToEntity(humanBeingDto: PutHumanBeingDto, date: LocalDate, car: Car): HumanBeing {
+    fun fromPutHumanBeingToEntity(
+        humanBeingDto: PutHumanBeingDto,
+        date: LocalDate,
+        car: Car,
+        ownerId: Long
+    ): HumanBeing {
         return HumanBeing(
             id = humanBeingDto.id,
             name = humanBeingDto.name,
@@ -55,7 +62,8 @@ class HumanBeingMapper(
             car = car,
             mood = humanBeingDto.mood,
             impactSpeed = humanBeingDto.impactSpeed,
-            weaponType = humanBeingDto.weaponType
+            weaponType = humanBeingDto.weaponType,
+            ownerId = ownerId
         )
     }
 
@@ -72,7 +80,8 @@ class HumanBeingMapper(
             car = car,
             mood = humanBeingDto.mood,
             impactSpeed = humanBeingDto.impactSpeed,
-            weaponType = humanBeingDto.weaponType
+            weaponType = humanBeingDto.weaponType,
+            ownerId = humanBeingDto.ownerId
         )
     }
 }

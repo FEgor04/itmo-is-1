@@ -28,13 +28,13 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         sortBy: HumanBeingFields,
         sortAsc: Boolean,
         name: String?,
-        impactSpeedLT : Double?
+        impactSpeedLT: Double?
     ): PaginatedResponse<HumanBeing> {
         val dslWhere =
             DSL.field("lower(name)")
                 .contains(name?.lowercase() ?: "")
                 .let {
-                    if(impactSpeedLT != null) {
+                    if (impactSpeedLT != null) {
                         it.and(DSL.field("impact_speed").lessThan(impactSpeedLT))
                     } else {
                         it
@@ -56,7 +56,8 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             DSL.field("car_id"),
             DSL.field("mood"),
             DSL.field("impact_speed"),
-            DSL.field("weapon_type")
+            DSL.field("weapon_type"),
+            DSL.field("owner_id")
         )
             .from("human_being")
             .where(dslWhere)
@@ -89,7 +90,8 @@ class HumanBeingRepository(private val dsl: DSLContext) {
                 car = car,
                 mood = result.get("mood")?.let { Mood.valueOf(it as String) },
                 impactSpeed = result.get("impact_speed") as Long,
-                weaponType = WeaponType.valueOf(result.get("weapon_type") as String)
+                weaponType = WeaponType.valueOf(result.get("weapon_type") as String),
+                ownerId = result.get("owner_id") as Long
             )
         }
 
@@ -113,6 +115,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             .set(DSL.field("mood"), humanBeing.mood?.name)
             .set(DSL.field("impact_speed"), humanBeing.impactSpeed)
             .set(DSL.field("weapon_type"), humanBeing.weaponType.name)
+            .set(DSL.field("owner_id"), humanBeing.ownerId)
             .returning(DSL.field("id"))
             .fetchOne()
 
@@ -135,6 +138,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             .set(DSL.field("mood"), humanBeing.mood?.name)
             .set(DSL.field("impact_speed"), humanBeing.impactSpeed)
             .set(DSL.field("weapon_type"), humanBeing.weaponType.name)
+            .set(DSL.field("owner_id"), humanBeing.ownerId)
             .where(DSL.field("id").eq(humanBeing.id))
             .execute()
 
@@ -167,7 +171,8 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             car = car,
             mood = result.get("mood")?.let { Mood.valueOf(it as String) },
             impactSpeed = result.get("impact_speed") as Long,
-            weaponType = WeaponType.valueOf(result.get("weapon_type") as String)
+            weaponType = WeaponType.valueOf(result.get("weapon_type") as String),
+            ownerId = result.get("owner_id") as Long
         )
     }
 
