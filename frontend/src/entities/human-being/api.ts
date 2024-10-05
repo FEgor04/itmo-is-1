@@ -34,7 +34,7 @@ export const getHumansQueryOptions = (
   return queryOptions({
     queryKey: ["humans", "list", validated],
     queryFn: async () => {
-      const { data } = await ApiInstance.humans.getAllHumans({
+      const { data } = await ApiInstance.api.getAllHumans({
         page: validated.page,
         pageSize: validated.pageSize,
         // @ts-expect-error fix after https://github.com/FEgor04/itmo-is-1/issues/23
@@ -64,7 +64,7 @@ export function useCreateHumanBeingMutation() {
   return useMutation({
     mutationFn: async (valuesRaw: z.infer<typeof CreateHumanBeingSchema>) => {
       const values = CreateHumanBeingSchema.parse(valuesRaw);
-      const { data } = await ApiInstance.humans.createHuman({
+      const { data } = await ApiInstance.api.createHuman({
         name: values.name,
         carId: values.car,
         x: values.coordinates.x,
@@ -72,8 +72,7 @@ export function useCreateHumanBeingMutation() {
         mood: values.mood,
         realHero: values.realHero,
         hasToothpick: values.hasToothpick,
-        // TODO: remove ?? after https://github.com/FEgor04/itmo-is-1/issues/21
-        impactSpeed: values.impactSpeed ?? -1,
+        impactSpeed: values.impactSpeed,
         weaponType: values.weaponType,
       });
       return parseHumanBeingDTO(data);
@@ -88,7 +87,7 @@ export function useDeleteHumanBeingMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      await ApiInstance.humans.deleteHuman(id);
+      await ApiInstance.api.deleteHuman(id);
       return;
     },
     onSuccess: () => {
@@ -108,7 +107,7 @@ export function useEditHumanBeingMutation() {
   return useMutation({
     mutationFn: async (valuesRaw: z.infer<typeof EditHumanBeingSchema>) => {
       const values = EditHumanBeingSchema.parse(valuesRaw);
-      const { data } = await ApiInstance.humans.updateHuman(values.id, {
+      const { data } = await ApiInstance.api.updateHuman(values.id, {
         name: values.name,
         carId: values.car,
         x: values.coordinates.x,
@@ -116,11 +115,8 @@ export function useEditHumanBeingMutation() {
         mood: values.mood,
         realHero: values.realHero,
         hasToothpick: values.hasToothpick,
-        // TODO: remove ?? after https://github.com/FEgor04/itmo-is-1/issues/21
-        impactSpeed: values.impactSpeed ?? -1,
+        impactSpeed: values.impactSpeed,
         weaponType: values.weaponType,
-        // TODO: remove entirely after https://github.com/FEgor04/itmo-is-1/issues/29
-        creationDate: new Date().toISOString(),
       });
       return parseHumanBeingDTO(data);
     },

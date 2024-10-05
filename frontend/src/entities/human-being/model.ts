@@ -47,14 +47,7 @@ export function parseHumanBeingDTO(data: HumanBeingDto) {
       x: data.x,
       y: data.y,
     },
-    // TODO: fix car after https://github.com/FEgor04/itmo-is-1/issues/22
-    car: {
-      id: data.carId,
-      model: "",
-      brand: "",
-      color: "",
-      cool: false,
-    },
+    car: data.car,
     mood: data.mood,
     impactSpeed: data.impactSpeed,
     weaponType: data.weaponType,

@@ -77,12 +77,10 @@ function Page() {
               />
             </form>
           </Form>
-          {error && (
-            <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>
-          )}
+          {error && <SignUpError error={error} />}
         </CardContent>
         <CardFooter>
-          <Button type="submit" form="signup">
+          <Button type="submit" form="signup" disabled={isPending}>
             Отправить
           </Button>
         </CardFooter>

@@ -35,11 +35,11 @@ export function PrincipalProfile() {
           size="icon"
           className="ml-auto overflow-hidden rounded-full"
         >
-          {data[0]}
+          {data.username[0]}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{data}</DropdownMenuLabel>
+        <DropdownMenuLabel>{data.username}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Заявки</DropdownMenuItem>
         <DropdownMenuSeparator />
