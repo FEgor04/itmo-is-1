@@ -57,3 +57,29 @@ export const getAdminRequests = (query: getAdminRequests) => {
     },
   });
 };
+
+export function useApproveAdminRequestMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (username: string) => {
+      await ApiInstance.api.approveAdminRequest(username);
+      return;
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
+    },
+  });
+}
+
+export function useRejectAdminRequestMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (username: string) => {
+      await ApiInstance.api.rejectedAdminRequest(username);
+      return;
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
+    },
+  });
+}

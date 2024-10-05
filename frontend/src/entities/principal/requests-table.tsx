@@ -9,6 +9,10 @@ import {
 } from "@tanstack/react-table";
 import { Check, Cross, X } from "lucide-react";
 import { z } from "zod";
+import {
+  useApproveAdminRequestMutation,
+  useRejectAdminRequestMutation,
+} from "./api";
 
 const requestsColumns: Array<ColumnDef<AdminRequest>> = [
   {
@@ -46,17 +50,31 @@ const requestsColumns: Array<ColumnDef<AdminRequest>> = [
   {
     id: "actions",
     header: "",
-    cell: ({ row }) => <Actions request={row.original} />,
+    cell: ({ row }) => {row.original.status == "PENDING" && <Actions request={row.original} />},
   },
 ];
 
 function Actions({ request }: { request: AdminRequest }) {
+  const { mutate: approve, isPending: isApprovePending } =
+    useApproveAdminRequestMutation();
+  const { mutate: reject, isPending: isRejectPending } =
+    useRejectAdminRequestMutation();
+  const isPending = isApprovePending || isRejectPending;
   return (
     <div className="flex items-center gap-2">
-      <Button className="size-8 bg-green-600 p-0 text-white hover:bg-green-600/80">
+      <Button
+        className="size-8 bg-green-600 p-0 text-white hover:bg-green-600/80"
+        disabled={isPending}
+        onClick={() => approve(request.username)}
+      >
         <Check className="h-4 w-4" />
       </Button>
-      <Button className="size-8 p-0" variant="outline">
+      <Button
+        className="size-8 p-0"
+        variant="outline"
+        disabled={isPending}
+        onClick={() => reject(request.username)}
+      >
         <X className="h-4 w-4" />
       </Button>
     </div>
