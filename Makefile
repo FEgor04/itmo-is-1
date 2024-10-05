@@ -3,9 +3,8 @@ include .env
 FRONTEND_IMAGE_NAME ?= is1-frontend
 BACKEND_IMAGE_NAME ?= is1-backend
 
-FRONTEND_VERSION ?= 0.1.2
+FRONTEND_VERSION ?= 0.1.3
 BACKEND_VERSION ?= 0.1.5
-
 
 REGISTRY_URI ?= registry
 
