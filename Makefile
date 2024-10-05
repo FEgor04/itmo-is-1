@@ -20,13 +20,13 @@ all: build-backend build-frontend
 build-backend: backend
 	cd backend && ./gradlew bootBuildImage --imageName=${BACKEND_IMAGE}
 
-push-backend: build-backend
+push-backend: 
 	docker push ${BACKEND_IMAGE}
 
 build-frontend: frontend
 	cd frontend && docker build . -t ${FRONTEND_IMAGE}
 
-push-frontend: build-frontend
+push-frontend: 
 	docker push ${FRONTEND_IMAGE}
 
 dev-up:

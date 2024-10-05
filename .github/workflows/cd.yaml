@@ -17,10 +17,10 @@ jobs:
       - name: create stub .env
         run: touch .env
       - name: Docker login
-        run: echo ${{ secrets.DOCKER_TOKEN }} docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
+        run: echo ${{ secrets.DOCKER_TOKEN }} docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin docker.io
       - name: Build frontend
         run: REGISTRY_URI=${{ secrets.DOCKER_REGISTRY }} make build-frontend
-      - name: Build frontend
+      - name: Push frontend
         run: REGISTRY_URI=${{ secrets.DOCKER_REGISTRY }} make push-frontend
 
 
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Docker login
-        run: echo ${{ secrets.DOCKER_TOKEN }} docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
+        run: echo ${{ secrets.DOCKER_TOKEN }} docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin docker.io
       - name: create stub .env
         run: touch .env
       - name: Build backend
