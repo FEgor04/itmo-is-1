@@ -3,7 +3,7 @@ include .env
 FRONTEND_IMAGE_NAME ?= is1-frontend
 BACKEND_IMAGE_NAME ?= is1-backend
 
-FRONTEND_VERSION ?= 0.1.0
+FRONTEND_VERSION ?= 0.1.2
 BACKEND_VERSION ?= 0.1.3
 
 REGISTRY_URI ?= registry
@@ -34,3 +34,9 @@ dev-up:
 
 dev-down:
 	docker compose -f docker-compose.dev.yaml down
+
+prod-up:
+	docker compose -f docker-compose.yaml up
+
+prod-down:
+	docker compose -f docker-compose.yaml down

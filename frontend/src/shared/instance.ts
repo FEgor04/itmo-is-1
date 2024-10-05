@@ -1,3 +1,3 @@
 import { Api } from "./api.gen";
 
-export const ApiInstance = new Api({ baseURL: "" });
+export const ApiInstance = new Api({ baseURL: "/" });

@@ -37,6 +37,10 @@ export const FetchedHumanBeingSchemaKeys = z.enum([
   "mood",
   "impactSpeed",
   "weaponType",
+  "car_model",
+  "car_brand",
+  "car_cool",
+  "car_color",
 ]);
 
 export function parseHumanBeingDTO(data: HumanBeingDto) {

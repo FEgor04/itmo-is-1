@@ -73,6 +73,22 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
     },
   },
   {
+    accessorKey: "car.brand",
+    header: "Модель автомобиля",
+  },
+  {
+    accessorKey: "car.model",
+    header: "Брэнд автомобиля",
+  },
+  {
+    accessorKey: "car.color",
+    header: "Цвет автомобиля",
+  },
+  {
+    accessorKey: "car.cool",
+    header: "Крутая?",
+  },
+  {
     id: "actions",
     header: "",
     cell: ({ row }) => <Actions humanBeing={row.original} />,

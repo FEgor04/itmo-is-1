@@ -39,7 +39,7 @@ export const getHumansQueryOptions = (
         page: validated.page,
         pageSize: validated.pageSize,
         // @ts-expect-error fix after https://github.com/FEgor04/itmo-is-1/issues/23
-        sortBy: validated.sortBy ?? "id",
+        sortBy: (validated.sortBy ?? "id").replace("_", "."),
         sortDirection: validated.sortDirection ?? "asc",
         name: validated.name,
         impactSpeedLT: validated.impactSpeedLowerThan,
