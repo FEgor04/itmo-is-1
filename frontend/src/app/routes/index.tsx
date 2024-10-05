@@ -19,14 +19,14 @@ function Page() {
           </span>
         </p>
       </section>
-      <section className="mx-auto flex items-center justify-evenly text-2xl">
+      <section className="mx-auto flex flex-col items-center justify-evenly gap-8 text-2xl">
         <ul className="list-inside list-disc space-y-4 text-muted-foreground">
           <li>Kotlin🔥 Spring Boot 🤢</li>
           <li>React🥰 TypeScript😍</li>
           <li>React Query😊 Tailwind CSS😇</li>
-          <li>PostgreSQL😎  Jooq🐂💩</li>
+          <li>PostgreSQL😎 Jooq🐂💩</li>
         </ul>
-        <div className="flex">
+        <div className="flex gap-4">
           <Button asChild>
             <Link to="/signup">Регистрация</Link>
           </Button>
