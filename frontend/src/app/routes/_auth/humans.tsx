@@ -55,7 +55,7 @@ function Page() {
   }
 
   const table = useHumanBeingTable(
-    data.values,
+    data.values ?? [],
     sortingState,
     (updaterOrValue) => {
       if (typeof updaterOrValue == "function") {

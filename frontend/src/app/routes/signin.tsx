@@ -34,7 +34,7 @@ function Page() {
     console.log(data);
     mutate(data, {
       onSuccess: () => {
-        navigate({
+        return navigate({
           to: "/humans",
           search: {
             page: 1,

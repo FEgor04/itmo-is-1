@@ -13,7 +13,7 @@ import { SortingQuerySchema } from "@/shared/sorting";
 import { ApiInstance } from "@/shared/instance";
 
 export const GetCarsQuerySchema = PaginatedQuerySchema.merge(
-  SortingQuerySchema(CarSchemaKeys.exclude(["ownerId"])),
+  SortingQuerySchema(CarSchemaKeys),
 ).extend({
   brand: z.string().min(1).optional().catch(undefined),
   model: z.string().min(1).optional().catch(undefined),
@@ -81,6 +81,8 @@ export function useEditCarMutation() {
         color: values.color,
         cool: values.cool,
         id: values.id,
+        // @ts-expect-error fix
+        ownerId: undefined,
       });
       return data;
     },
