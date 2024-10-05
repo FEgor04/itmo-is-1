@@ -54,8 +54,8 @@ export function PrincipalProfile() {
               to: "/requests",
               search: {
                 page: 1,
-                pageSize: 10
-              }
+                pageSize: 10,
+              },
             })
           }
         >

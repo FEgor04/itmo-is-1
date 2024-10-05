@@ -68,7 +68,7 @@ function AdminPage() {
           пользователей.
         </CardContent>
       </Card>
-      <main className="max-w-lg mx-auto space-y-4">
+      <main className="mx-auto max-w-lg space-y-4">
         <DataTable table={table} />
         <PaginationFooter
           query={search}
