@@ -30,13 +30,13 @@ push-frontend:
 	docker push ${FRONTEND_IMAGE}
 
 dev-up:
-	docker compose -f docker-compose.dev.yaml up
+	docker compose -f docker-compose.dev.yaml up -d
 
 dev-down:
 	docker compose -f docker-compose.dev.yaml down
 
 prod-up:
-	docker compose -f docker-compose.yaml up
+	docker compose -f docker-compose.yaml up -d
 
 prod-down:
 	docker compose -f docker-compose.yaml down
