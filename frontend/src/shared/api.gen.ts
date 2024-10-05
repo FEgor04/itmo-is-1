@@ -316,6 +316,21 @@ export interface PaginatedResponseCarDTO {
   values: Array<CarDTO>;
 }
 
+export interface AdminRequestDto {
+  username: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "NO_REQUEST";
+}
+
+export interface PaginatedResponseAdminRequestDto {
+  /** @format int32 */
+  page: number;
+  /** @format int32 */
+  pageSize: number;
+  /** @format int32 */
+  total: number;
+  values: Array<AdminRequestDto>;
+}
+
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -843,6 +858,38 @@ export class Api<
       this.request<GetMeResponse, GetMeResponse>({
         path: `/api/me`,
         method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Returns all admin requests
+     *
+     * @tags Admin Management
+     * @name GetAllAdminRequests
+     * @summary Get all admin requests
+     * @request GET:/api/admin/requests
+     * @secure
+     */
+    getAllAdminRequests: (
+      query: {
+        /** @format int32 */
+        page: number;
+        /** @format int32 */
+        pageSize: number;
+        sortBy: "username" | "status";
+        sortDirection: "asc" | "desc";
+        username?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        PaginatedResponseAdminRequestDto,
+        PaginatedResponseAdminRequestDto
+      >({
+        path: `/api/admin/requests`,
+        method: "GET",
+        query: query,
         secure: true,
         ...params,
       }),

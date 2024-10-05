@@ -48,7 +48,19 @@ export function PrincipalProfile() {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>{data.username}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Заявки</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() =>
+            navigate({
+              to: "/requests",
+              search: {
+                page: 1,
+                pageSize: 10,
+              },
+            })
+          }
+        >
+          Заявки
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           disabled={isPending}
