@@ -26,6 +26,8 @@ export function PrincipalProfile() {
         <Link to="/signin">Войти</Link>
       </Button>
     );
+  } else if (isError && noButtonLocations.includes(location.pathname)) {
+    return <></>;
   }
 
   if (data == undefined) {

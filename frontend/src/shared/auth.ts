@@ -60,8 +60,8 @@ ApiInstance.instance.interceptors.response.use(
 
           return ApiInstance.instance(originalConfig);
         } catch (_error) {
-          return Promise.reject(_error);
           clearSession();
+          return Promise.reject(_error);
         }
       }
     }
