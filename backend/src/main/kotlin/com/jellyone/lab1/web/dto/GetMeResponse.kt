@@ -9,6 +9,9 @@ data class GetMeResponse(
     @Schema(description = "The username of the user", example = "John Doe")
     val username: String,
 
+    @Schema(description = "The ID of the user", example = "1")
+    val id: Long,
+
     @Schema(description = "The role of the user", example = "ADMIN")
     val role: Role,
 

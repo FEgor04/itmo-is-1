@@ -43,7 +43,7 @@ class UserController(
     fun me(principal: Principal): GetMeResponse {
         val user = userService.getByUsername(principal.name)
         val adminRequestStatus = userService.getAdminRequestStatus(principal.name)
-        return GetMeResponse(principal.name, user.role, adminRequestStatus)
+        return GetMeResponse(principal.name, user.id, user.role, adminRequestStatus)
     }
 
 }
