@@ -24,8 +24,9 @@ class HumanBeingService(
         pageSize: Int,
         sortBy: HumanBeingRepository.HumanBeingFields,
         sortAsc: Boolean,
-        name: String?
-    ) = humanBeingRepository.findAll(page, pageSize, sortBy, sortAsc, name);
+        name: String?,
+        impactSpeedLT : Double?,
+    ) = humanBeingRepository.findAll(page, pageSize, sortBy, sortAsc, name, impactSpeedLT);
 
 
     fun getHumanById(id: Long): HumanBeing? {

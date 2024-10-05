@@ -48,12 +48,14 @@ class HumanBeingController(
         @Schema(allowableValues = ["asc", "desc"])
         sortDirection: String,
         name: String?,
+        impactSpeedLT : Double?
     ) = humanBeingService.getAllHumans(
         page,
         pageSize,
         HumanBeingRepository.HumanBeingFields.entries.find { it.entityName == sortBy }!!,
         sortDirection == "asc",
-        name
+        name,
+        impactSpeedLT
     ).map { humanBeingMapper.toDto(it, carService.getCarById(it.car.id)!!) }
 
 
