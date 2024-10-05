@@ -7,6 +7,7 @@ import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository
+import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -38,13 +39,13 @@ class HumanBeingService(
         return HumanBeingMapper.toDto(savedHumanBeing)
     }
 
-    fun updateHuman(id: Long, humanBeingDto: HumanBeingDto): HumanBeingDto? {
+    fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto): HumanBeingDto? {
         val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
 
         val car: Car = carRepository.findById(humanBeingDto.carId)
             ?: throw IllegalArgumentException("Car not found with id ${humanBeingDto.carId}")
 
-        val humanBeing = HumanBeingMapper.toEntity(humanBeingDto.copy(id = existingHumanBeing.id), car)
+        val humanBeing = HumanBeingMapper.fromPutHumanBeingToEntity(humanBeingDto.copy(id = existingHumanBeing.id),existingHumanBeing.creationDate, car)
         val updatedHumanBeing = humanBeingRepository.update(humanBeing) ?: return null
         return HumanBeingMapper.toDto(updatedHumanBeing)
     }
@@ -62,7 +63,7 @@ class HumanBeingService(
         val hasToothpick: Boolean,
         val carId: Long,
         val mood: Mood?,
-        val impactSpeed: Long,
+        val impactSpeed: Long?,
         val weaponType: WeaponType
     )
 }

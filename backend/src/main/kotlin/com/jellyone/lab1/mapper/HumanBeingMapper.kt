@@ -5,6 +5,8 @@ import com.jellyone.lab1.domain.Coordinates
 import com.jellyone.lab1.domain.HumanBeing
 import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.service.HumanBeingService
+import com.jellyone.lab1.web.dto.PutHumanBeingDto
+import java.time.LocalDate
 
 object HumanBeingMapper {
     fun toDto(humanBeing: HumanBeing): HumanBeingDto {
@@ -29,6 +31,21 @@ object HumanBeingMapper {
             name = humanBeingDto.name,
             coordinates = Coordinates(humanBeingDto.x, humanBeingDto.y),
             creationDate = humanBeingDto.creationDate,
+            realHero = humanBeingDto.realHero,
+            hasToothpick = humanBeingDto.hasToothpick,
+            car = car,
+            mood = humanBeingDto.mood,
+            impactSpeed = humanBeingDto.impactSpeed,
+            weaponType = humanBeingDto.weaponType
+        )
+    }
+
+    fun fromPutHumanBeingToEntity(humanBeingDto: PutHumanBeingDto, date: LocalDate, car: Car): HumanBeing {
+        return HumanBeing(
+            id = humanBeingDto.id,
+            name = humanBeingDto.name,
+            coordinates = Coordinates(humanBeingDto.x, humanBeingDto.y),
+            creationDate = date,
             realHero = humanBeingDto.realHero,
             hasToothpick = humanBeingDto.hasToothpick,
             car = car,
