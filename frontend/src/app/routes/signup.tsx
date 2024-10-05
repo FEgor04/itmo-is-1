@@ -76,8 +76,8 @@ function Page() {
                 )}
               />
             </form>
+            {error && <SignUpError error={error} />}
           </Form>
-          {error && <SignUpError error={error} />}
         </CardContent>
         <CardFooter>
           <Button type="submit" form="signup" disabled={isPending}>

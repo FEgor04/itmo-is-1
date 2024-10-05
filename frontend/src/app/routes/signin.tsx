@@ -1,4 +1,8 @@
-import { SignUpSchema, useSignUpMutation } from "@/shared/auth";
+import {
+  SignUpSchema,
+  useSignInMutation,
+  useSignUpMutation,
+} from "@/shared/auth";
 import { Button } from "@/shared/ui/button";
 import {
   Card,
@@ -27,7 +31,7 @@ function Page() {
   const form = useForm<Values>({
     resolver: zodResolver(schema),
   });
-  const { mutate, error, isPending } = useSignUpMutation();
+  const { mutate, error, isPending } = useSignInMutation();
   const navigate = useNavigate();
 
   function onSubmit(data: Values) {
@@ -56,7 +60,11 @@ function Page() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form id="signin" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              id="signin"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="username"
@@ -64,6 +72,7 @@ function Page() {
                   <FormItem>
                     <Label>Имя пользователя</Label>
                     <Input required {...field} />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -74,12 +83,13 @@ function Page() {
                   <FormItem>
                     <Label>Пароль</Label>
                     <Input type="password" required {...field} />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
+              {error && <SignInError error={error} />}
             </form>
           </Form>
-          {error && <SignInError error={error} />}
         </CardContent>
         <CardFooter>
           <Button type="submit" form="signin" disabled={isPending}>
@@ -99,7 +109,7 @@ function SignInError({ error }: { error: Error }) {
     return <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>;
   }
   if (error.response?.status === 401) {
-    return <FormMessage>Такой пользователь уже существует</FormMessage>;
+    return <FormMessage>Неверный логин или пароль</FormMessage>;
   }
   return <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>;
 }

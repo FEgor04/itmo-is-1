@@ -9,7 +9,7 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { getPrincipalQueryOptions } from "./api";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { useSignOutMutation } from "@/shared/auth";
 
@@ -17,6 +17,7 @@ export function PrincipalProfile() {
   const { data, isError } = useQuery(getPrincipalQueryOptions());
   const { mutate, isPending } = useSignOutMutation();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const noButtonLocations = ["/signin", "/signup"];
   if (isError && !noButtonLocations.includes(location.pathname)) {
@@ -47,7 +48,12 @@ export function PrincipalProfile() {
         <DropdownMenuSeparator />
         <DropdownMenuItem>Заявки</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled={isPending} onClick={() => mutate()}>
+        <DropdownMenuItem
+          disabled={isPending}
+          onClick={() =>
+            mutate(void 0, { onSuccess: () => navigate({ to: "/signin" }) })
+          }
+        >
           Выйти
         </DropdownMenuItem>
       </DropdownMenuContent>
