@@ -1,7 +1,6 @@
 import {
   SignUpSchema,
   useSignInMutation,
-  useSignUpMutation,
 } from "@/shared/auth";
 import { Button } from "@/shared/ui/button";
 import {

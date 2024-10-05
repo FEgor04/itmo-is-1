@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { ApiInstance } from "./instance";
 import axios from "axios";
-import { clear } from "console";
 
 export function setSession(session: {
   accessToken: string;
@@ -143,7 +142,7 @@ async function refreshAccessTokenFn(
   refreshToken: string,
 ): Promise<SessionData> {
   const { data: rawValues } = await axios.post<{ access: string }>(
-    "/api/v1/refresh",
+    "/api/refresh",
     refreshToken,
   );
   return RefreshTokenResponseSchema.parse(rawValues);
