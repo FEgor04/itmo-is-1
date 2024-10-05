@@ -316,19 +316,27 @@ export interface PaginatedResponseCarDTO {
   values: Array<CarDTO>;
 }
 
-import type {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  HeadersDefaults,
-  ResponseType,
-} from "axios";
+export interface AdminRequestDto {
+  username: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "NO_REQUEST";
+}
+
+export interface PaginatedResponseAdminRequestDto {
+  /** @format int32 */
+  page: number;
+  /** @format int32 */
+  pageSize: number;
+  /** @format int32 */
+  total: number;
+  values: Array<AdminRequestDto>;
+}
+
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams
-  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
+export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -343,13 +351,9 @@ export interface FullRequestParams
   body?: unknown;
 }
 
-export type RequestParams = Omit<
-  FullRequestParams,
-  "body" | "method" | "query" | "path"
->;
+export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
-export interface ApiConfig<SecurityDataType = unknown>
-  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -371,16 +375,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private secure?: boolean;
   private format?: ResponseType;
 
-  constructor({
-    securityWorker,
-    secure,
-    format,
-    ...axiosConfig
-  }: ApiConfig<SecurityDataType> = {}) {
-    this.instance = axios.create({
-      ...axiosConfig,
-      baseURL: axiosConfig.baseURL || "http://localhost:8080",
-    });
+  constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "http://localhost:8080" });
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
@@ -390,10 +386,7 @@ export class HttpClient<SecurityDataType = unknown> {
     this.securityData = data;
   };
 
-  protected mergeRequestParams(
-    params1: AxiosRequestConfig,
-    params2?: AxiosRequestConfig,
-  ): AxiosRequestConfig {
+  protected mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
     const method = params1.method || (params2 && params2.method);
 
     return {
@@ -401,11 +394,7 @@ export class HttpClient<SecurityDataType = unknown> {
       ...params1,
       ...(params2 || {}),
       headers: {
-        ...((method &&
-          this.instance.defaults.headers[
-            method.toLowerCase() as keyof HeadersDefaults
-          ]) ||
-          {}),
+        ...((method && this.instance.defaults.headers[method.toLowerCase() as keyof HeadersDefaults]) || {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
@@ -426,15 +415,11 @@ export class HttpClient<SecurityDataType = unknown> {
     }
     return Object.keys(input || {}).reduce((formData, key) => {
       const property = input[key];
-      const propertyContent: any[] =
-        property instanceof Array ? property : [property];
+      const propertyContent: any[] = property instanceof Array ? property : [property];
 
       for (const formItem of propertyContent) {
         const isFileType = formItem instanceof Blob || formItem instanceof File;
-        formData.append(
-          key,
-          isFileType ? formItem : this.stringifyFormItem(formItem),
-        );
+        formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem));
       }
 
       return formData;
@@ -458,21 +443,11 @@ export class HttpClient<SecurityDataType = unknown> {
     const requestParams = this.mergeRequestParams(params, secureParams);
     const responseFormat = format || this.format || undefined;
 
-    if (
-      type === ContentType.FormData &&
-      body &&
-      body !== null &&
-      typeof body === "object"
-    ) {
+    if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
       body = this.createFormData(body as Record<string, unknown>);
     }
 
-    if (
-      type === ContentType.Text &&
-      body &&
-      body !== null &&
-      typeof body !== "string"
-    ) {
+    if (type === ContentType.Text && body && body !== null && typeof body !== "string") {
       body = JSON.stringify(body);
     }
 
@@ -497,9 +472,7 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * Sample API of the First lab
  */
-export class Api<
-  SecurityDataType extends unknown,
-> extends HttpClient<SecurityDataType> {
+export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   api = {
     /**
      * @description Returns a human by its ID
@@ -528,11 +501,7 @@ export class Api<
      * @request PUT:/api/humans/{id}
      * @secure
      */
-    updateHuman: (
-      id: number,
-      data: PutHumanBeingDto,
-      params: RequestParams = {},
-    ) =>
+    updateHuman: (id: number, data: PutHumanBeingDto, params: RequestParams = {}) =>
       this.request<HumanBeingDto, HumanBeingDto>({
         path: `/api/humans/${id}`,
         method: "PUT",
@@ -629,15 +598,7 @@ export class Api<
         page: number;
         /** @format int32 */
         pageSize: number;
-        sortBy:
-          | "id"
-          | "name"
-          | "creationDate"
-          | "realHero"
-          | "hasToothpick"
-          | "mood"
-          | "impactSpeed"
-          | "weaponType";
+        sortBy: "id" | "name" | "creationDate" | "realHero" | "hasToothpick" | "mood" | "impactSpeed" | "weaponType";
         sortDirection: "asc" | "desc";
         name?: string;
         /** @format double */
@@ -645,10 +606,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<
-        PaginatedResponseHumanBeingDto,
-        PaginatedResponseHumanBeingDto
-      >({
+      this.request<PaginatedResponseHumanBeingDto, PaginatedResponseHumanBeingDto>({
         path: `/api/humans`,
         method: "GET",
         query: query,
@@ -843,6 +801,35 @@ export class Api<
       this.request<GetMeResponse, GetMeResponse>({
         path: `/api/me`,
         method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Returns all admin requests
+     *
+     * @tags Admin Management
+     * @name GetAllAdminRequests
+     * @summary Get all admin requests
+     * @request GET:/api/admin/requests
+     * @secure
+     */
+    getAllAdminRequests: (
+      query: {
+        /** @format int32 */
+        page: number;
+        /** @format int32 */
+        pageSize: number;
+        sortBy: "username" | "status";
+        sortDirection: "asc" | "desc";
+        username?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<PaginatedResponseAdminRequestDto, PaginatedResponseAdminRequestDto>({
+        path: `/api/admin/requests`,
+        method: "GET",
+        query: query,
         secure: true,
         ...params,
       }),
