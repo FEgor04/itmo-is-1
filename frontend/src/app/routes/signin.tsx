@@ -1,7 +1,4 @@
-import {
-  SignUpSchema,
-  useSignInMutation,
-} from "@/shared/auth";
+import { SignUpSchema, useSignInMutation } from "@/shared/auth";
 import { Button } from "@/shared/ui/button";
 import {
   Card,

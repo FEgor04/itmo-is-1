@@ -1,38 +1,38 @@
-import { getCarsQueryOptions, GetCarsQuerySchema } from '@/entities/car/api'
-import { CreateCarDialogContent } from '@/entities/car/create'
-import { CarKeys } from '@/entities/car/model'
-import { useCarTable } from '@/entities/car/table'
-import { Button } from '@/shared/ui/button'
-import { DataTable } from '@/shared/ui/data-table'
-import { Dialog, DialogTrigger } from '@/shared/ui/dialog'
-import { Input } from '@/shared/ui/input'
-import { PaginationFooter } from '@/shared/ui/pagination'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { SortingState } from '@tanstack/react-table'
-import { PlusCircle, SearchIcon } from 'lucide-react'
-import { useState } from 'react'
-import { useDebouncedCallback } from 'use-debounce'
-import { z } from 'zod'
+import { getCarsQueryOptions, GetCarsQuerySchema } from "@/entities/car/api";
+import { CreateCarDialogContent } from "@/entities/car/create";
+import { CarKeys } from "@/entities/car/model";
+import { useCarTable } from "@/entities/car/table";
+import { Button } from "@/shared/ui/button";
+import { DataTable } from "@/shared/ui/data-table";
+import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
+import { Input } from "@/shared/ui/input";
+import { PaginationFooter } from "@/shared/ui/pagination";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { SortingState } from "@tanstack/react-table";
+import { PlusCircle, SearchIcon } from "lucide-react";
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import { z } from "zod";
 
-const SearchSchema = GetCarsQuerySchema
-export const Route = createFileRoute('/_auth/cars')({
+const SearchSchema = GetCarsQuerySchema;
+export const Route = createFileRoute("/_auth/cars")({
   component: Page,
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
-    return context.queryClient.ensureQueryData(getCarsQueryOptions(deps))
+    return context.queryClient.ensureQueryData(getCarsQueryOptions(deps));
   },
-})
+});
 
 function Page() {
-  const search = Route.useSearch()
-  const initialData = Route.useLoaderData()
+  const search = Route.useSearch();
+  const initialData = Route.useLoaderData();
   const { data } = useQuery({
     ...getCarsQueryOptions(search),
     initialData,
-  })
-  const navigate = Route.useNavigate()
+  });
+  const navigate = Route.useNavigate();
   function setQuery(
     updater: (
       prev: z.infer<typeof SearchSchema>,
@@ -40,50 +40,50 @@ function Page() {
   ) {
     navigate({
       search: (prev) => updater(prev),
-    })
+    });
   }
   const sortingState = [
     {
-      id: search.sortBy ?? 'id',
-      desc: search.sortDirection == 'desc',
+      id: search.sortBy ?? "id",
+      desc: search.sortDirection == "desc",
     },
-  ]
+  ];
   const table = useCarTable(data.values, sortingState, (updaterOrValue) => {
-    let newValue: SortingState
-    if (typeof updaterOrValue == 'function') {
-      newValue = updaterOrValue(sortingState)
+    let newValue: SortingState;
+    if (typeof updaterOrValue == "function") {
+      newValue = updaterOrValue(sortingState);
     } else {
-      newValue = updaterOrValue
+      newValue = updaterOrValue;
     }
     if (newValue.length == 0) {
       setQuery((prev) => ({
         ...prev,
         sortBy: undefined,
         sortDirection: undefined,
-      }))
-      return
+      }));
+      return;
     }
     setQuery((prev) => ({
       ...prev,
       sortBy: newValue[0].id as CarKeys,
-      sortDirection: newValue[0].desc ? 'desc' : 'asc',
-    }))
-  })
+      sortDirection: newValue[0].desc ? "desc" : "asc",
+    }));
+  });
 
   const debouncedSetBrand = useDebouncedCallback((brand: string) => {
     setQuery((prev) => ({
       ...prev,
       brand,
-    }))
-  }, 200)
+    }));
+  }, 200);
 
   const debouncedSetModel = useDebouncedCallback((model: string) => {
     setQuery((prev) => ({
       ...prev,
       model,
-    }))
-  }, 200)
-  const [open, setOpen] = useState(false)
+    }));
+  }, 200);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -127,5 +127,5 @@ function Page() {
       </main>
       <PaginationFooter query={search} setQuery={setQuery} total={data.total} />
     </div>
-  )
+  );
 }

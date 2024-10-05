@@ -1,40 +1,51 @@
 import { Badge } from "@/shared/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
 import { REQUIRED_CONFIG } from "@/shared/zod";
 import { z } from "zod";
 
-export const WeaponTypeSchema = z.enum(["AXE", "PISTOL", "MACHINE_GUN"], REQUIRED_CONFIG)
+export const WeaponTypeSchema = z.enum(
+  ["AXE", "PISTOL", "MACHINE_GUN"],
+  REQUIRED_CONFIG,
+);
 
-export type WeaponType = z.infer<typeof WeaponTypeSchema>
+export type WeaponType = z.infer<typeof WeaponTypeSchema>;
 
 export const WeaponTypeTranslation = {
-    AXE: "Топор",
-    PISTOL: "Пистолет",
-    MACHINE_GUN: "Пулемет"
-} satisfies Record<WeaponType, string>
+  AXE: "Топор",
+  PISTOL: "Пистолет",
+  MACHINE_GUN: "Пулемет",
+} satisfies Record<WeaponType, string>;
 
 const WeaponTypeStyle = {
-    AXE: "bg-red-200 text-red-600 hover:bg-red-300",
-    PISTOL: "bg-blue-200 text-blue-600 hover:bg-blue-300",
-    MACHINE_GUN: "bg-gray-200 text-gray-600 hover:bg-gray-300",
-  } satisfies Record<WeaponType, string>;
-  
-  export function WeaponTypeBadge({ value }: { value: WeaponType }) {
-    return (
-      <Badge
-        className={WeaponTypeStyle[value]}
-      >
-        {WeaponTypeTranslation[value]}
-      </Badge>
-    );
-  }
+  AXE: "bg-red-200 text-red-600 hover:bg-red-300",
+  PISTOL: "bg-blue-200 text-blue-600 hover:bg-blue-300",
+  MACHINE_GUN: "bg-gray-200 text-gray-600 hover:bg-gray-300",
+} satisfies Record<WeaponType, string>;
+
+export function WeaponTypeBadge({ value }: { value: WeaponType }) {
+  return (
+    <Badge className={WeaponTypeStyle[value]}>
+      {WeaponTypeTranslation[value]}
+    </Badge>
+  );
+}
 
 type Props = {
   value: WeaponType | undefined;
   onChange: (value: WeaponType) => void;
 } & Omit<React.ComponentProps<typeof Select>, "value" | "onChange">;
 
-export const SelectWeaponType: React.FC<Props> = ({ value, onChange, ...props }) => {
+export const SelectWeaponType: React.FC<Props> = ({
+  value,
+  onChange,
+  ...props
+}) => {
   return (
     <Select
       value={value}

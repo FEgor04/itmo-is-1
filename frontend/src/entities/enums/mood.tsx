@@ -9,7 +9,10 @@ import {
 import { REQUIRED_CONFIG } from "@/shared/zod";
 import React from "react";
 import z from "zod";
-export const MoodSchema = z.enum(["SORROW", "APATHY", "CALM", "FRENZY"], REQUIRED_CONFIG);
+export const MoodSchema = z.enum(
+  ["SORROW", "APATHY", "CALM", "FRENZY"],
+  REQUIRED_CONFIG,
+);
 
 type Mood = z.infer<typeof MoodSchema>;
 
