@@ -24,13 +24,13 @@ services:
   backend:
     image: ${BACKEND_IMAGE}
     environment:
-      - POSTGRES_HOST=postgres:5432
+      - HOST=postgres:5432
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    healthcheck:
-      <<: *healthcheck
-      test: ["CMD-SHELL", "THC_PATH=/actuator/health /workspace/health-check"]
+      - securityJwtSecret=${securityJwtSecret}
+      - securityJwtAccess=${securityJwtAccess}
+      - securityJwtRefresh=${securityJwtRefresh}
     labels:
       - traefik.enable=true
       - traefik.http.routers.backend.entrypoints=webSecure
@@ -68,8 +68,6 @@ services:
       - ./traefik/letsEncrypt:/letsEncrypt
     depends_on:
       frontend:
-        <<: *healthy
-      backend:
         <<: *healthy
 
 volumes:
