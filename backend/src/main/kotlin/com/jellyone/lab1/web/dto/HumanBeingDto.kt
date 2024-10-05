@@ -29,7 +29,7 @@ data class HumanBeingDto(
     val hasToothpick: Boolean,
 
     @Schema(description = "The ID of the car associated with the human being", example = "100")
-    val carId: Long,
+    val car: CarDTO,
 
     @Schema(description = "The mood of the human being", example = "APATHY")
     val mood: Mood?,

@@ -5,6 +5,7 @@ import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.map
+import com.jellyone.lab1.service.CarService
 import com.jellyone.lab1.service.HumanBeingService
 import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import io.swagger.v3.oas.annotations.Operation
@@ -23,7 +24,11 @@ import java.time.LocalDate
 @RequestMapping("api/humans")
 @Tag(name = "Human Management")
 @SecurityRequirement(name = "JWT")
-class HumanBeingController(private val humanBeingService: HumanBeingService) {
+class HumanBeingController(
+    private val humanBeingService: HumanBeingService,
+    private val carService: CarService,
+    private val humanBeingMapper: HumanBeingMapper
+) {
 
     @ApiResponses(
         value = [
@@ -49,7 +54,7 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
         HumanBeingRepository.HumanBeingFields.entries.find { it.entityName == sortBy }!!,
         sortDirection == "asc",
         name
-    ).map { HumanBeingMapper.toDto(it) }
+    ).map { humanBeingMapper.toDto(it, carService.getCarById(it.car.id)!!) }
 
 
     @GetMapping("/{id}")
@@ -71,12 +76,12 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
         ]
     )
     fun getHumanById(@PathVariable id: Long): ResponseEntity<HumanBeingDto> {
-        val humanDto = humanBeingService.getHumanById(id)
-        return if (humanDto != null) {
-            ResponseEntity.ok(humanDto)
-        } else {
-            ResponseEntity.notFound().build()
-        }
+        val humanBeing =
+            humanBeingService.getHumanById(id) ?: throw IllegalArgumentException("HumanBeing not found with id $id")
+        val car =
+            carService.getCarById(humanBeing.car.id) ?: throw IllegalArgumentException("Car not found with id $id")
+        val updatedHuman = humanBeingMapper.toDto(humanBeing, car);
+        return ResponseEntity.ok(updatedHuman)
     }
 
     @PostMapping
@@ -112,7 +117,9 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
                 weaponType = humanBeingDto.weaponType
             )
         )
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdHuman)
+        val car = carService.getCarById(humanBeingDto.carId)
+            ?: throw IllegalArgumentException("Car not found with id ${humanBeingDto.carId}")
+        return ResponseEntity.status(HttpStatus.CREATED).body(humanBeingMapper.toDto(createdHuman, car))
     }
 
     @PutMapping("/{id}")
@@ -134,13 +141,16 @@ class HumanBeingController(private val humanBeingService: HumanBeingService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun updateHuman(@PathVariable id: Long, @RequestBody humanBeingDto: PutHumanBeingDto): ResponseEntity<HumanBeingDto> {
-        val updatedHuman = humanBeingService.updateHuman(id, humanBeingDto)
-        return if (updatedHuman != null) {
-            ResponseEntity.ok(updatedHuman)
-        } else {
-            ResponseEntity.notFound().build()
-        }
+    fun updateHuman(
+        @PathVariable id: Long,
+        @RequestBody humanBeingDto: PutHumanBeingDto
+    ): ResponseEntity<HumanBeingDto> {
+        val humanBeing = humanBeingService.updateHuman(id, humanBeingDto)
+            ?: throw IllegalArgumentException("humanBeing not found with id $id")
+        val car =
+            carService.getCarById(humanBeing.car.id) ?: throw IllegalArgumentException("Car not found with id $id")
+        val updatedHuman = humanBeingMapper.toDto(humanBeing, car);
+        return ResponseEntity.ok(updatedHuman)
     }
 
     @DeleteMapping("/{id}")
