@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/humans")
+@RequestMapping("api/humans")
 @Tag(name = "Human Management")
 @SecurityRequirement(name = "JWT")
 class HumanBeingController(private val humanBeingService: HumanBeingService) {

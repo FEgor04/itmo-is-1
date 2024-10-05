@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/cars")
+@RequestMapping("/api/cars")
 @Tag(name = "Car Management")
 @SecurityRequirement(name = "JWT")
 class CarController(private val carService: CarService) {

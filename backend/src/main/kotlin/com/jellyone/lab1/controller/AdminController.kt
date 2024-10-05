@@ -12,13 +12,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 @Tag(name = "Admin Management")
 class AdminController(
     private val userService: UserService,
 ) {
 
-    @PostMapping("/admin-requests/submit")
+    @PostMapping("/requests/submit")
     @Operation(summary = "Submit admin request", description = "Submit admin request")
     @ApiResponses(
         value = [ApiResponse(
@@ -38,7 +38,7 @@ class AdminController(
         return ResponseEntity.ok(userService.requestAdmin(request.username, request.password))
     }
 
-    @PostMapping("/admin-requests/approve/{id}")
+    @PostMapping("/requests/approve/{id}")
     @Operation(summary = "Approve admin request", description = "Approve admin request")
     @ApiResponses(
         value = [ApiResponse(
