@@ -55,9 +55,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="mood" type="varchar(255)"/>
-            <column name="impact_speed" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="impact_speed" type="bigint"/>
             <column name="weapon_type" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
