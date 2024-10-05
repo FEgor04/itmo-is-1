@@ -1,10 +1,15 @@
 import { ApiInstance } from "@/shared/instance";
 import {
+  PaginatedQuerySchema,
+  PaginatedResponseSchema,
+} from "@/shared/pagination";
+import {
   queryOptions,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import { z } from "zod";
+import { AdminRequestSchema } from "./requests-table";
 
 const GetMeResponseSchema = z.object({
   username: z.string(),
@@ -32,3 +37,23 @@ export function useSendAdminRequestMutation() {
     },
   });
 }
+
+const getAdminRequestsQuerySchema = PaginatedQuerySchema;
+type getAdminRequests = z.infer<typeof getAdminRequestsQuerySchema>;
+const GetAdminRequestsResponseSchema =
+  PaginatedResponseSchema(AdminRequestSchema);
+export const getAdminRequests = (query: getAdminRequests) => {
+  const validated = getAdminRequestsQuerySchema.parse(query);
+  return queryOptions({
+    queryKey: ["admin-requests", query],
+    queryFn: async () => {
+      const { data } = await ApiInstance.api.getAllAdminRequests({
+        page: validated.page,
+        pageSize: validated.pageSize,
+        sortBy: "username",
+        sortDirection: "asc",
+      });
+      return GetAdminRequestsResponseSchema.parse(data);
+    },
+  });
+};

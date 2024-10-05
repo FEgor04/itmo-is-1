@@ -1,7 +1,9 @@
 import {
+  getAdminRequests,
   getPrincipalQueryOptions,
   useSendAdminRequestMutation,
 } from "@/entities/principal/api";
+import { useRequestsTable } from "@/entities/principal/requests-table";
 import { PaginatedQuerySchema } from "@/shared/pagination";
 import { Button } from "@/shared/ui/button";
 import {
@@ -12,24 +14,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
+import { DataTable } from "@/shared/ui/data-table";
+import { PaginationFooter } from "@/shared/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 
 const SearchSchema = PaginatedQuerySchema;
 
 export const Route = createFileRoute("/_auth/requests")({
   component: Page,
   validateSearch: SearchSchema,
-  loader: async ({ context }) => {
-    const me = await context.queryClient.ensureQueryData(
-      getPrincipalQueryOptions(),
-    );
-    return me;
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context, deps }) => {
+    const me = context.queryClient.ensureQueryData(getPrincipalQueryOptions());
+    const data = context.queryClient.ensureQueryData(getAdminRequests(deps));
+    return Promise.all([me, data]);
   },
 });
 
 function Page() {
-  const me = Route.useLoaderData();
+  const [me] = Route.useLoaderData();
   if (me.role == "ADMIN") {
     return <AdminPage />;
   }
@@ -37,8 +42,23 @@ function Page() {
 }
 
 function AdminPage() {
+  const [_, initialData] = Route.useLoaderData();
+  const search = Route.useSearch();
+  const { data } = useQuery({ ...getAdminRequests(search), initialData });
+  const table = useRequestsTable(data.values);
+  const navigate = Route.useNavigate();
+  function setQuery(
+    updater: (
+      previous: z.infer<typeof SearchSchema>,
+    ) => z.infer<typeof SearchSchema>,
+  ) {
+    void navigate({
+      search: updater,
+    });
+  }
+
   return (
-    <div>
+    <div className="space-y-8">
       <Card className="mx-auto max-w-lg bg-green-500 text-slate-50">
         <CardHeader>
           <CardTitle>🎉 Congratulations!</CardTitle>
@@ -49,12 +69,20 @@ function AdminPage() {
           пользователей.
         </CardContent>
       </Card>
+      <main className="max-w-lg mx-auto space-y-4">
+        <DataTable table={table} />
+        <PaginationFooter
+          query={search}
+          setQuery={setQuery}
+          total={data.total}
+        />
+      </main>
     </div>
   );
 }
 
 function UserPage() {
-  const initialData = Route.useLoaderData();
+  const [initialData] = Route.useLoaderData();
   const { data: me } = useQuery({ ...getPrincipalQueryOptions(), initialData });
   if (me.adminRequestStatus == "NO_REQUEST") {
     return <NoRequestCard />;
