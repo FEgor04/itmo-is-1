@@ -26,7 +26,7 @@ push-backend: build-backend
 build-frontend: frontend
 	cd frontend && docker build . -t ${FRONTEND_IMAGE}
 
-push-frontend: build-backend
+push-frontend: build-frontend
 	docker push ${FRONTEND_IMAGE}
 
 dev-up:
