@@ -38,7 +38,10 @@ data class HumanBeingDto(
     val impactSpeed: Long?,
 
     @Schema(description = "The type of weapon the human being has", example = "PISTOL")
-    val weaponType: WeaponType
+    val weaponType: WeaponType,
+
+    @Schema(description = "The owner of the car", example = "1")
+    val ownerId: Long
 )
 
 data class CreateHumanBeingDto(

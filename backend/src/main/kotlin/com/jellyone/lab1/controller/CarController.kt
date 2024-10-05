@@ -4,6 +4,7 @@ import com.jellyone.lab1.mapper.CarMapper
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.CarService
+import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.web.dto.CarDTO
 import com.jellyone.lab1.web.dto.CreateCarDTO
 import io.swagger.v3.oas.annotations.Operation
@@ -16,12 +17,13 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/cars")
 @Tag(name = "Car Management")
 @SecurityRequirement(name = "JWT")
-class CarController(private val carService: CarService) {
+class CarController(private val carService: CarService, private val userService: UserService) {
 
     @ApiResponses(
         value = [
@@ -93,13 +95,15 @@ class CarController(private val carService: CarService) {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun createCar(@RequestBody carDto: CreateCarDTO): ResponseEntity<CarDTO> {
+    fun createCar(@RequestBody carDto: CreateCarDTO, principal: Principal): ResponseEntity<CarDTO> {
+
         val createdCar = carService.createCar(
             CarService.CreateCarRequest(
                 model = carDto.model,
                 brand = carDto.brand,
                 color = carDto.color,
-                cool = carDto.cool
+                cool = carDto.cool,
+                ownerId = userService.getUserIdByUsername(principal.name)
             )
         )
         return ResponseEntity.status(HttpStatus.CREATED).body(CarMapper.toDto(createdCar))

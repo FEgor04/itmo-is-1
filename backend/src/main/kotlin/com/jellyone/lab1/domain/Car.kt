@@ -5,5 +5,6 @@ data class Car(
     val color: String = "",
     val model: String = "",
     val brand: String = "",
-    val cool: Boolean = false
+    val cool: Boolean = false,
+    val ownerId: Long
 )

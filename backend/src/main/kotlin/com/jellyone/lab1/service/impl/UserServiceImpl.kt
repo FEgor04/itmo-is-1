@@ -96,6 +96,11 @@ class UserServiceImpl(
         return adminRequestRepository.findAdminRequestStatusByUsername(username);
     }
 
+    override fun getUserIdByUsername(username: String): Long {
+        val user = userRepository.findByUsername(username)
+        return user?.id ?: throw ResourceNotFoundException("User not found")
+    }
+
 
     override fun getByUserId(id: Long) = userRepository.findById(id)
 

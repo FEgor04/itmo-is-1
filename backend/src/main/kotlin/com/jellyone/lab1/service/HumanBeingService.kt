@@ -38,12 +38,11 @@ class HumanBeingService(
         val car: Car = carRepository.findById(humanBeing.carId)
             ?: throw ResourceNotFoundException("Car not found with id ${humanBeing.carId}")
 
-        val humanBeing = humanBeingMapper.fromCreateHumanBeingRequestToEntity(humanBeing, car)
-        return humanBeingRepository.save(humanBeing)
+        return humanBeingRepository.save(humanBeingMapper.fromCreateHumanBeingRequestToEntity(humanBeing, car))
 
     }
 
-    fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto): HumanBeing? {
+    fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto, ownerId: Long): HumanBeing? {
         val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
 
         val car: Car = carRepository.findById(humanBeingDto.carId)
@@ -52,7 +51,8 @@ class HumanBeingService(
         val humanBeing = humanBeingMapper.fromPutHumanBeingToEntity(
             humanBeingDto.copy(id = existingHumanBeing.id),
             existingHumanBeing.creationDate,
-            car
+            car,
+            ownerId
         )
         return humanBeingRepository.update(humanBeing) ?: return null
     }
@@ -71,6 +71,7 @@ class HumanBeingService(
         val carId: Long,
         val mood: Mood?,
         val impactSpeed: Long?,
-        val weaponType: WeaponType
+        val weaponType: WeaponType,
+        val ownerId: Long
     )
 }
