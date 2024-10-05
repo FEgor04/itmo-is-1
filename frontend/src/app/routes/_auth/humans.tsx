@@ -13,7 +13,7 @@ import { PaginationFooter } from "@/shared/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
-import { PlusCircle, SearchIcon } from "lucide-react";
+import { Gauge, PlusCircle, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
@@ -85,6 +85,14 @@ function Page() {
       name: name && name?.length > 0 ? name : undefined,
     }));
   }, 500);
+
+  const setImpactSpeed = useDebouncedCallback((value: string | undefined) => {
+    setQuery((prev) => ({
+      ...prev,
+      impactSpeedLowerThan:
+        value && value?.length > 0 ? parseInt(value) : undefined,
+    }));
+  }, 500);
   const [createOpen, setCreateOpen] = useState(false);
 
   return (
@@ -103,16 +111,30 @@ function Page() {
             />
           </Dialog>
         </div>
-        <div className="inline-flex items-center">
-          <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
-            <SearchIcon className="mr-2 size-4" />
-            Имя
-          </span>
-          <Input
-            className="h-8 rounded-l-none ring-0"
-            defaultValue={query.name}
-            onChange={(e) => setNameFilter(e.target.value)}
-          />
+        <div className="space-x-2">
+          <div className="inline-flex items-center">
+            <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
+              <SearchIcon className="mr-2 size-4" />
+              Имя
+            </span>
+            <Input
+              className="h-8 rounded-l-none ring-0"
+              defaultValue={query.name}
+              onChange={(e) => setNameFilter(e.target.value)}
+            />
+          </div>
+          <div className="inline-flex items-center">
+            <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
+              <Gauge className="mr-2 size-4" />
+              Скорость
+            </span>
+            <Input
+              type="number"
+              className="h-8 rounded-l-none ring-0"
+              defaultValue={query.impactSpeedLowerThan}
+              onChange={(e) => setImpactSpeed(e.target.value)}
+            />
+          </div>
         </div>
       </header>
       <main>

@@ -640,6 +640,8 @@ export class Api<
           | "weaponType";
         sortDirection: "asc" | "desc";
         name?: string;
+        /** @format double */
+        impactSpeedLT?: number;
       },
       params: RequestParams = {},
     ) =>

@@ -27,11 +27,19 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         pageSize: Int,
         sortBy: HumanBeingFields,
         sortAsc: Boolean,
-        name: String?
+        name: String?,
+        impactSpeedLT : Double?
     ): PaginatedResponse<HumanBeing> {
         val dslWhere =
             DSL.field("lower(name)")
                 .contains(name?.lowercase() ?: "")
+                .let {
+                    if(impactSpeedLT != null) {
+                        it.and(DSL.field("impact_speed").lessThan(impactSpeedLT))
+                    } else {
+                        it
+                    }
+                }
         val total = dsl.fetchCount(
             dsl.selectFrom("human_being")
                 .where(dslWhere)
