@@ -41,6 +41,7 @@ function Page() {
 }
 
 function AdminPage() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, initialData] = Route.useLoaderData();
   const search = Route.useSearch();
   const { data } = useQuery({ ...getAdminRequests(search), initialData });
