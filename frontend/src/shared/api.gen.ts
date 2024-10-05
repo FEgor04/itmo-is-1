@@ -170,6 +170,30 @@ export interface HumanBeingDto {
   ownerId: number;
 }
 
+/** DTO for read operations on Car */
+export interface UpdateCarDTO {
+  /**
+   * The color of the car
+   * @example "Red"
+   */
+  color: string;
+  /**
+   * The model of the car
+   * @example "Civic"
+   */
+  model: string;
+  /**
+   * The brand of the car
+   * @example "Honda"
+   */
+  brand: string;
+  /**
+   * Indicates if the car is cool
+   * @example true
+   */
+  cool: boolean;
+}
+
 export interface CreateHumanBeingDto {
   /**
    * The name of the human being
@@ -574,7 +598,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/api/cars/{id}
      * @secure
      */
-    updateCar: (id: number, data: CarDTO, params: RequestParams = {}) =>
+    updateCar: (id: number, data: UpdateCarDTO, params: RequestParams = {}) =>
       this.request<CarDTO, CarDTO>({
         path: `/api/cars/${id}`,
         method: "PUT",

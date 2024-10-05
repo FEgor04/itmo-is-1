@@ -80,9 +80,6 @@ export function useEditCarMutation() {
         model: values.model,
         color: values.color,
         cool: values.cool,
-        id: values.id,
-        // @ts-expect-error fix
-        ownerId: undefined,
       });
       return data;
     },
