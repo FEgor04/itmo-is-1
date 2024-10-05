@@ -49,13 +49,14 @@ class CarService(
 
     fun updateCar(id: Long, car: Car, username: String): Car? {
         val user = userService.getByUsername(username)
-        if (!checkOwner(user.id, car.ownerId, user.role)) {
+        val carFromDb = carRepository.findById(id) ?: return null;
+        if (!checkOwner(user.id, carFromDb.ownerId, user.role)) {
             throw OwnerPermissionsConflictException()
         }
 
         logsService.carsLogsSave(CarsLogs(0, id, LogAction.UPDATED,username, LocalDateTime.now()))
 
-        return carRepository.update(car.copy(ownerId = user.id))
+        return carRepository.update(car.copy(ownerId = user.id, id = carFromDb.id))
             ?: throw ResourceNotFoundException("Car not found with id ${id}")
 
     }

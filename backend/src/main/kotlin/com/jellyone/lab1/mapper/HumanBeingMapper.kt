@@ -5,6 +5,7 @@ import com.jellyone.lab1.domain.Coordinates
 import com.jellyone.lab1.domain.HumanBeing
 import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.service.HumanBeingService
+import com.jellyone.lab1.web.dto.CarDTO
 import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -82,6 +83,17 @@ class HumanBeingMapper(
             impactSpeed = humanBeingDto.impactSpeed,
             weaponType = humanBeingDto.weaponType,
             ownerId = humanBeingDto.ownerId
+        )
+    }
+
+    fun toEntity(carDto: CarDTO): Car {
+        return Car(
+            id = carDto.id,
+            color = carDto.color,
+            model = carDto.model,
+            brand = carDto.brand,
+            cool = carDto.cool,
+            ownerId = carDto.ownerId
         )
     }
 }
