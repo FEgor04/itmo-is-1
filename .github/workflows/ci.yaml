@@ -29,14 +29,8 @@ jobs:
       run: pnpm run build
     - name: Linter
       run: pnpm run lint
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend
-        path: ./frontend/dist
 
   build-backend:
-    needs: build-frontend
     defaults:
       run:
         working-directory: ./backend
@@ -59,12 +53,5 @@ jobs:
         name: frontend
         path: ./backend/src/main/resources/static
       
-    - name: Build boot jar
-      run: ./gradlew bootJar
-
-    - name: Upload jar
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend
-        path: ./backend/build/libs/*.jar
-      
+    - name: Build
+      run: ./gradlew build
