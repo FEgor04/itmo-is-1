@@ -174,15 +174,15 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         return date.toLocalDate()
     }
 
-    enum class HumanBeingFields(val dbName: String) {
-        ID("id"),
-        NAME("name"),
-        CREATION_DATE("creation_date"),
-        REAL_HERO("real_hero"),
-        HAS_TOOTHPICK("has_toothpick"),
-        CAR_ID("car_id"),
-        MOOD("mood"),
-        IMPACT_SPEED("impact_speed"),
-        WEAPON_TYPE("weapon_type"),
+    enum class HumanBeingFields(val dbName: String, val entityName: String) {
+        ID("id", "id"),
+        NAME("name", "name"),
+        CREATION_DATE("creation_date", "creationDate"),
+        REAL_HERO("real_hero", "realHero"),
+        HAS_TOOTHPICK("has_toothpick", "hasToothpick"),
+        CAR_ID("car_id", "carId"),
+        MOOD("mood", "mood"),
+        IMPACT_SPEED("impact_speed", "impactSpeed"),
+        WEAPON_TYPE("weapon_type", "weaponType"),
     }
 }
