@@ -9,8 +9,9 @@ export const BaseCarSchema = z.object({
   model: z.string(),
   color: z.string(),
   cool: z.boolean(),
+  ownerId: z.number(),
 });
 export type Car = z.infer<typeof BaseCarSchema>;
 
-export const CarSchemaKeys = BaseCarSchema.keyof();
+export const CarSchemaKeys = BaseCarSchema.keyof().exclude(["ownerId"]);
 export type CarKeys = z.infer<typeof CarSchemaKeys>;

@@ -1,9 +1,9 @@
+import { HumanBeingDto } from "@/shared/api.gen";
+import { MUST_BE_INT_CONFIG, REQUIRED_CONFIG } from "@/shared/zod";
 import z from "zod";
+import { BaseCarSchema } from "../car/model";
 import { MoodSchema } from "../enums/mood";
 import { WeaponTypeSchema } from "../enums/weapon-type";
-import { BaseCarSchema } from "../car/model";
-import { MUST_BE_INT_CONFIG, REQUIRED_CONFIG } from "@/shared/zod";
-import { HumanBeingDto } from "@/shared/api.gen";
 
 export const BaseHumanBeingSchema = z.object({
   id: z.number().gt(0),
@@ -21,6 +21,7 @@ export const BaseHumanBeingSchema = z.object({
     .max(108, "Значение должно быть меньше 108")
     .optional(),
   weaponType: WeaponTypeSchema,
+  ownerId: z.number(),
 });
 
 export const FetchedHumanBeingSchema = BaseHumanBeingSchema.extend({
@@ -58,6 +59,7 @@ export function parseHumanBeingDTO(data: HumanBeingDto) {
     realHero: data.realHero,
     hasToothpick: data.hasToothpick,
     creationDate: data.creationDate,
+    ownerId: data.ownerId,
   });
 }
 

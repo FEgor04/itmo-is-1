@@ -12,6 +12,7 @@ import { z } from "zod";
 import { AdminRequestSchema } from "./requests-table";
 
 const GetMeResponseSchema = z.object({
+  id: z.number(),
   username: z.string(),
   role: z.enum(["USER", "ADMIN"]),
   adminRequestStatus: z.enum(["PENDING", "APPROVED", "REJECTED", "NO_REQUEST"]),

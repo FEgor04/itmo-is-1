@@ -21,6 +21,8 @@ import { useDeleteHumanBeingMutation } from "./api";
 import { useState } from "react";
 import { Dialog } from "@/shared/ui/dialog";
 import { EditHumanBeingDialogContent } from "./ui/edit";
+import { useQuery } from "@tanstack/react-query";
+import { getPrincipalQueryOptions } from "../principal/api";
 
 const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
   {
@@ -97,7 +99,9 @@ const HumanBeingTableDef: Array<ColumnDef<FetchedHumanBeing>> = [
 
 function Actions({ humanBeing }: { humanBeing: FetchedHumanBeing }) {
   const [isEditOpen, setEditOpen] = useState(false);
+  const { data: me } = useQuery(getPrincipalQueryOptions());
   const { mutate, isPending } = useDeleteHumanBeingMutation();
+  const canEdit = humanBeing.ownerId === me?.id || me?.role == "ADMIN";
   return (
     <>
       <DropdownMenu>
@@ -111,12 +115,15 @@ function Actions({ humanBeing }: { humanBeing: FetchedHumanBeing }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem onClick={() => setEditOpen(true)}>
+          <DropdownMenuItem
+            disabled={!canEdit}
+            onClick={() => setEditOpen(true)}
+          >
             Редактировать
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            disabled={isPending}
+            disabled={isPending || !canEdit}
             onClick={() => mutate(humanBeing.id)}
           >
             Удалить

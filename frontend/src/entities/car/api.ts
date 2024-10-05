@@ -80,7 +80,6 @@ export function useEditCarMutation() {
         model: values.model,
         color: values.color,
         cool: values.cool,
-        id: values.id,
       });
       return data;
     },
