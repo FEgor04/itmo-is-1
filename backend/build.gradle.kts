@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.jellyone"
-version = "0.0.1-SNAPSHOT"
+version = System.getenv("BACKEND_VERSION") ?: "latest"
 
 java {
 	toolchain {

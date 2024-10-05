@@ -40,3 +40,11 @@ prod-up:
 
 prod-down:
 	docker compose -f docker-compose.yaml down
+
+build-frontend-dist:
+	cd frontend && pnpm run build
+
+build-backend-jar: build-frontend-dist
+	cp -r frontend/dist/* backend/src/main/resources/static && \
+		cd backend && ./gradlew bootJar
+
