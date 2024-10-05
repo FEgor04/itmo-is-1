@@ -6,10 +6,14 @@ import com.jellyone.lab1.domain.HumanBeing
 import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.service.HumanBeingService
 import com.jellyone.lab1.web.dto.PutHumanBeingDto
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 
-object HumanBeingMapper {
-    fun toDto(humanBeing: HumanBeing): HumanBeingDto {
+@Component
+class HumanBeingMapper(
+    private val carMapper: CarMapper
+) {
+    fun toDto(humanBeing: HumanBeing, car: Car): HumanBeingDto {
         return HumanBeingDto(
             id = humanBeing.id,
             name = humanBeing.name,
@@ -18,7 +22,7 @@ object HumanBeingMapper {
             creationDate = humanBeing.creationDate,
             realHero = humanBeing.realHero,
             hasToothpick = humanBeing.hasToothpick,
-            carId = humanBeing.car.id!!,
+            car = carMapper.toDto(car),
             mood = humanBeing.mood,
             impactSpeed = humanBeing.impactSpeed,
             weaponType = humanBeing.weaponType
@@ -55,7 +59,10 @@ object HumanBeingMapper {
         )
     }
 
-    fun fromCreateHumanBeingRequestToEntity(humanBeingDto: HumanBeingService.CreateHumanBeingRequest, car: Car): HumanBeing {
+    fun fromCreateHumanBeingRequestToEntity(
+        humanBeingDto: HumanBeingService.CreateHumanBeingRequest,
+        car: Car
+    ): HumanBeing {
         return HumanBeing(
             name = humanBeingDto.name,
             coordinates = Coordinates(humanBeingDto.x, humanBeingDto.y),

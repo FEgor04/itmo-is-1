@@ -15,7 +15,7 @@ class CarService(private val carRepository: CarRepository) {
                    modelFilter: String?,
                    brandFilter: String?,) = carRepository.findAll(page, pageSize, sortBy, sortAsc, modelFilter, brandFilter)
 
-    fun getCarById(id: Long) = carRepository.findById(id)
+    fun getCarById(id: Long?) = id?.let { carRepository.findById(it) }
 
     fun createCar(car: CreateCarRequest): Car {
         val savedCar =
