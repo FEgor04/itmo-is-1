@@ -46,7 +46,8 @@ class HumanBeingController(
         pageSize: Int,
         @Schema(
             allowableValues = ["id", "name", "creationDate", "realHero", "hasToothpick",
-                "mood", "impactSpeed", "weaponType"]
+                "mood", "impactSpeed", "weaponType","coordinates.x","coordinates.y",
+            "carId","car.brand","car.model","car.cool","car.color"]
         )
         sortBy: String,
         @Schema(allowableValues = ["asc", "desc"])

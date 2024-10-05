@@ -35,7 +35,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
                 .contains(name?.lowercase() ?: "")
                 .let {
                     if (impactSpeedLT != null) {
-                        it.and(DSL.field("impact_speed").lessThan(impactSpeedLT))
+                        it.and(DSL.field("human_being.impact_speed").lessThan(impactSpeedLT))
                     } else {
                         it
                     }
@@ -46,7 +46,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         )
 
         val records = dsl.select(
-            DSL.field("id"),
+            DSL.field("human_being.id"),
             DSL.field("name"),
             DSL.field("x"),
             DSL.field("y"),
@@ -57,41 +57,43 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             DSL.field("mood"),
             DSL.field("impact_speed"),
             DSL.field("weapon_type"),
-            DSL.field("owner_id")
+            DSL.field("human_being.owner_id"),
+            DSL.field("car.id"),
+            DSL.field("car.brand"),
+            DSL.field("car.model"),
+            DSL.field("car.cool"),
+            DSL.field("car.color"),
+            DSL.field("car.owner_id")
         )
             .from("human_being")
-            .where(dslWhere)
+            .join(DSL.table("car")).on(DSL.field("human_being.car_id").eq(DSL.field("car.id")))
             .orderBy(DSL.field(sortBy.dbName).let {
                 if (sortAsc) it.asc() else it.desc()
             })
-            .limit(pageSize)
             .offset((page - 1) * pageSize)
+            .limit(pageSize)
             .fetch()
 
 
-        // Преобразуем каждую запись в HumanBeing
         val values = records.map { result ->
-            val coordinates = Coordinates(
-                x = result.get("x") as Double,
-                y = result.get("y") as Double
-            )
-
-            val carId = result.get("car_id") as Long?
-            val car = carId?.let { fetchCarById(it) } ?: throw IllegalArgumentException("Car ID cannot be null")
-
-
             HumanBeing(
-                id = result.get("id") as Long,
+                id = result.get("human_being.id") as Long,
                 name = result.get("name") as String,
-                coordinates = coordinates,
+                coordinates = Coordinates(result.get("x") as Double, result.get("y") as Double),
                 creationDate = getLocalDateFromSqlDate(result.get("creation_date") as Date),
                 realHero = result.get("real_hero") as Boolean,
                 hasToothpick = result.get("has_toothpick") as Boolean,
-                car = car,
+                car = Car(
+                    result.get("car_id") as Long, result.get("car.brand") as String,
+                    result.get("car.model") as String,
+                    result.get("car.color") as String,
+                    result.get("car.cool") as Boolean,
+                    result.get("car.owner_id") as Long
+                ),
                 mood = result.get("mood")?.let { Mood.valueOf(it as String) },
                 impactSpeed = result.get("impact_speed") as Long,
                 weaponType = WeaponType.valueOf(result.get("weapon_type") as String),
-                ownerId = result.get("owner_id") as Long
+                ownerId = result.get("human_being.owner_id") as Long
             )
         }
 
@@ -197,5 +199,11 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         MOOD("mood", "mood"),
         IMPACT_SPEED("impact_speed", "impactSpeed"),
         WEAPON_TYPE("weapon_type", "weaponType"),
+        X("x", "coordinates.x"),
+        Y("y", "coordinates.y"),
+        CAR_BRAND("car.brand", "car.brand"),
+        CAR_MODEL("car.model", "car.model"),
+        CAR_COOL("car.cool", "car.cool"),
+        CAR_COLOR("car.color", "car.color")
     }
 }
