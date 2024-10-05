@@ -7,6 +7,7 @@ import com.jellyone.lab1.service.CarService
 import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.web.dto.CarDTO
 import com.jellyone.lab1.web.dto.CreateCarDTO
+import com.jellyone.lab1.web.dto.UpdateCarDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -128,8 +129,8 @@ class CarController(private val carService: CarService, private val userService:
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun updateCar(@PathVariable id: Long, @RequestBody carDto: CarDTO, principal: Principal): ResponseEntity<CarDTO> {
-        val updatedCar = carService.updateCar(id, CarMapper.toEntity(carDto), principal.name)
+    fun updateCar(@PathVariable id: Long, @RequestBody carDto: UpdateCarDTO, principal: Principal): ResponseEntity<CarDTO> {
+        val updatedCar = carService.updateCar(id, CarMapper.toEntityFromUpdate(carDto), principal.name)
         return if (updatedCar != null) {
             ResponseEntity.ok(CarMapper.toDto(updatedCar))
         } else {

@@ -38,3 +38,18 @@ data class CreateCarDTO(
     @Schema(description = "Indicates if the car is cool", example = "true")
     val cool: Boolean
 )
+
+@Schema(description = "DTO for read operations on Car")
+data class UpdateCarDTO(
+    @Schema(description = "The color of the car", example = "Red")
+    val color: String,
+
+    @Schema(description = "The model of the car", example = "Civic")
+    val model: String,
+
+    @Schema(description = "The brand of the car", example = "Honda")
+    val brand: String,
+
+    @Schema(description = "Indicates if the car is cool", example = "true")
+    val cool: Boolean,
+)
