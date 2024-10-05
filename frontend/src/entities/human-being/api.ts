@@ -22,6 +22,7 @@ export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
   SortingQuerySchema(FetchedHumanBeingSchemaKeys),
 ).extend({
   name: z.string().min(1).optional().catch(undefined),
+  impactSpeedLowerThan: z.number().optional().catch(undefined),
 });
 export const GetHumansResponseSchema = PaginatedResponseSchema(
   FetchedHumanBeingSchema,
@@ -41,6 +42,7 @@ export const getHumansQueryOptions = (
         sortBy: validated.sortBy ?? "id",
         sortDirection: validated.sortDirection ?? "asc",
         name: validated.name,
+        impactSpeedLT: validated.impactSpeedLowerThan,
       });
       return GetHumansResponseSchema.parse({
         values: data.values.map(parseHumanBeingDTO),
