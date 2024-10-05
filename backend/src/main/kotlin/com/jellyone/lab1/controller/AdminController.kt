@@ -7,13 +7,16 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/admin")
 @Tag(name = "Admin Management")
+@SecurityRequirement(name = "JWT")
 class AdminController(
     private val userService: UserService,
 ) {
@@ -34,11 +37,12 @@ class AdminController(
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun submitAdminRequest(@RequestBody request: AdminRequestDto): ResponseEntity<String> {
-        return ResponseEntity.ok(userService.requestAdmin(request.username, request.password))
+    fun submitAdminRequest(principal: Principal): ResponseEntity<String> {
+        val user = userService.getByUsername(principal.name)
+        return ResponseEntity.ok(userService.requestAdmin(user.username, user.password))
     }
 
-    @PostMapping("/requests/approve/{id}")
+    @PostMapping("/requests/approve/{username}")
     @Operation(summary = "Approve admin request", description = "Approve admin request")
     @ApiResponses(
         value = [ApiResponse(
@@ -54,8 +58,29 @@ class AdminController(
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun approveAdminRequest(@PathVariable id: Long): ResponseEntity<String> {
-        userService.approveAdminRequest(id)
+    fun approveAdminRequest(@PathVariable username: String): ResponseEntity<String> {
+        userService.approveAdminRequest(username)
         return ResponseEntity.ok("Admin request approved")
+    }
+
+    @PostMapping("/requests/rejected/{username}")
+    @Operation(summary = "Rejected admin request", description = "Rejected admin request")
+    @ApiResponses(
+        value = [ApiResponse(
+            responseCode = "200",
+            description = "Admin request successfully rejected",
+            content = [
+                Content(
+                    schema = Schema(implementation = String::class)
+                )
+            ],
+        ),
+            ApiResponse(responseCode = "400", description = "Bad request"),
+            ApiResponse(responseCode = "500", description = "Internal server error")
+        ]
+    )
+    fun rejectedAdminRequest(@PathVariable username: String): ResponseEntity<String> {
+        userService.rejecteAdminRequest(username)
+        return ResponseEntity.ok("Admin request rejected")
     }
 }

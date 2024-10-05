@@ -45,4 +45,18 @@ class UserRepository(private val dsl: DSLContext) {
             .set(DSL.field("role"), user.role.name)
             .execute()
     }
+
+    fun update(user: User): User? {
+        if (findByUsername(user.username) != null) {
+            dsl.update(DSL.table("users"))
+                .set(DSL.field("username"), user.username)
+                .set(DSL.field("password"), user.password)
+                .set(DSL.field("role"), user.role.name)
+                .where(DSL.field("username").eq(user.username))
+                .execute()
+            return user
+        } else {
+            return null
+        }
+    }
 }
