@@ -156,8 +156,8 @@ class HumanBeingController(
         @RequestBody humanBeingDto: PutHumanBeingDto,
         principal: Principal
     ): ResponseEntity<HumanBeingDto> {
-        val ownerId = userService.getUserIdByUsername(principal.name)
-        val humanBeing = humanBeingService.updateHuman(id, humanBeingDto, ownerId)
+
+        val humanBeing = humanBeingService.updateHuman(id, humanBeingDto, principal.name)
             ?: throw ResourceNotFoundException("humanBeing not found with id $id")
         val car =
             carService.getCarById(humanBeing.car.id) ?: throw ResourceNotFoundException("Car not found with id $id")
@@ -174,8 +174,8 @@ class HumanBeingController(
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun deleteHuman(@PathVariable id: Long): ResponseEntity<Void> {
-        return if (humanBeingService.deleteHuman(id)) {
+    fun deleteHuman(@PathVariable id: Long, principal: Principal): ResponseEntity<Void> {
+        return if (humanBeingService.deleteHuman(id, principal.name)) {
             ResponseEntity.noContent().build()
         } else {
             ResponseEntity.notFound().build()

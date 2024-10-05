@@ -3,7 +3,9 @@ package com.jellyone.lab1.service
 import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.domain.HumanBeing
 import com.jellyone.lab1.domain.enums.Mood
+import com.jellyone.lab1.domain.enums.Role
 import com.jellyone.lab1.domain.enums.WeaponType
+import com.jellyone.lab1.exception.OwnerPermissionsConflictException
 import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
@@ -17,7 +19,8 @@ import java.time.LocalDate
 class HumanBeingService(
     private val humanBeingRepository: HumanBeingRepository,
     private val carRepository: CarRepository,
-    private val humanBeingMapper: HumanBeingMapper
+    private val humanBeingMapper: HumanBeingMapper,
+    private val userService: UserService
 ) {
 
     fun getAllHumans(
@@ -42,7 +45,12 @@ class HumanBeingService(
 
     }
 
-    fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto, ownerId: Long): HumanBeing? {
+    fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto, username: String): HumanBeing? {
+        val owner = userService.getByUsername(username)
+        if (!checkOwner(id, owner.id, owner.role)) {
+            throw OwnerPermissionsConflictException()
+        }
+
         val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
 
         val car: Car = carRepository.findById(humanBeingDto.carId)
@@ -52,13 +60,25 @@ class HumanBeingService(
             humanBeingDto.copy(id = existingHumanBeing.id),
             existingHumanBeing.creationDate,
             car,
-            ownerId
+            owner.id
         )
-        return humanBeingRepository.update(humanBeing) ?: return null
+        return humanBeingRepository.update(humanBeing)
     }
 
-    fun deleteHuman(id: Long): Boolean {
+    fun deleteHuman(id: Long, username: String): Boolean {
+        val user = userService.getByUsername(username)
+        if (!checkOwner(id, user.id, user.role)) {
+            throw OwnerPermissionsConflictException()
+        }
         return humanBeingRepository.deleteById(id)
+    }
+
+
+    fun checkOwner(userId: Long, ownerId: Long, userRole: Role): Boolean {
+        if (userRole == Role.ADMIN) {
+            return true
+        }
+        return ownerId == userId
     }
 
     data class CreateHumanBeingRequest(
@@ -74,4 +94,5 @@ class HumanBeingService(
         val weaponType: WeaponType,
         val ownerId: Long
     )
+
 }

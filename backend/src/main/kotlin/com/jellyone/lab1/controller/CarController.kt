@@ -128,8 +128,8 @@ class CarController(private val carService: CarService, private val userService:
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun updateCar(@PathVariable id: Long, @RequestBody carDto: CarDTO): ResponseEntity<CarDTO> {
-        val updatedCar = carService.updateCar(id, CarMapper.toEntity(carDto))
+    fun updateCar(@PathVariable id: Long, @RequestBody carDto: CarDTO, principal: Principal): ResponseEntity<CarDTO> {
+        val updatedCar = carService.updateCar(id, CarMapper.toEntity(carDto), principal.name)
         return if (updatedCar != null) {
             ResponseEntity.ok(CarMapper.toDto(updatedCar))
         } else {
@@ -146,8 +146,8 @@ class CarController(private val carService: CarService, private val userService:
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun deleteCar(@PathVariable id: Long): ResponseEntity<Void> {
-        return if (carService.deleteCar(id)) {
+    fun deleteCar(@PathVariable id: Long, principal: Principal): ResponseEntity<Void> {
+        return if (carService.deleteCar(id, principal.name)) {
             ResponseEntity.noContent().build()
         } else {
             ResponseEntity.notFound().build()

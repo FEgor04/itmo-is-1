@@ -1,9 +1,10 @@
 package com.jellyone.lab1.configuration
 
+import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.web.security.JwtTokenFilter
 import com.jellyone.lab1.web.security.JwtTokenProvider
 import com.jellyone.lab1.web.security.expression.CustomSecurityExpressionHandler
-import lombok.RequiredArgsConstructor
+import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,7 +27,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity()
 class ApplicationConfig(
     @Lazy private val tokenProvider: JwtTokenProvider,
-    private val applicationContext: ApplicationContext
+    private val applicationContext: ApplicationContext,
+    private val authenticationFacade: IAuthenticationFacade,
+    @Lazy private val userService: UserService
 ) {
 
     @Bean
@@ -57,7 +60,7 @@ class ApplicationConfig(
             }
             .anonymous { it.disable() }
             .addFilterBefore(
-                JwtTokenFilter(tokenProvider),
+                JwtTokenFilter(tokenProvider, authenticationFacade, userService),
                 UsernamePasswordAuthenticationFilter::class.java
             )
 

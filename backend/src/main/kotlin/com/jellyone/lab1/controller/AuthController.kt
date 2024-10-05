@@ -7,6 +7,7 @@ import com.jellyone.lab1.web.dto.SignInRequest
 import com.jellyone.lab1.web.dto.SignUpRequest
 import com.jellyone.lab1.web.dto.auth.JwtRequest
 import com.jellyone.lab1.web.dto.auth.JwtResponse
+import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -20,6 +21,7 @@ import jakarta.validation.constraints.NotBlank
 import lombok.RequiredArgsConstructor
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 
 @RestController
