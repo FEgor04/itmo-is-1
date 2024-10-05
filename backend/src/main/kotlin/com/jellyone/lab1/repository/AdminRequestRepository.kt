@@ -34,6 +34,44 @@ class AdminRequestRepository(private val dsl: DSLContext) {
         } ?: throw NoSuchElementException("Request with ID $id not found.")
     }
 
+    fun findAll(
+        page: Int,
+        pageSize: Int,
+        sortBy: AdminRequestFields,
+        sortAsc: Boolean,
+        username: String?,
+    ): PaginatedResponse<AdminRequest> {
+        val dslWhere =
+            DSL.field("lower(username)")
+                .contains(username?.lowercase() ?: "")
+        val total = dsl.fetchCount(
+            dsl.selectFrom("admin_requests")
+                .where(
+                    dslWhere
+                )
+        )
+        val values = dsl.selectFrom("admin_requests")
+            .where(
+                dslWhere
+            )
+            .orderBy(DSL.field(sortBy.dbName).let {
+                if (sortAsc) {
+                    it.asc()
+                } else {
+                    it.desc()
+                }
+            })
+            .limit(pageSize)
+            .offset((page - 1) * pageSize)
+            .fetchInto(AdminRequest::class.java)
+        return PaginatedResponse(
+            page,
+            pageSize,
+            total,
+            values,
+        )
+    }
+
     fun update(request: AdminRequest) {
         val rowsUpdated = dsl.update(DSL.table("admin_requests"))
             .set(DSL.field("username"), request.username)
@@ -55,7 +93,7 @@ class AdminRequestRepository(private val dsl: DSLContext) {
 
         return result?.let {
             AdminRequestStatus.valueOf(it.value4() as String)
-        } ?:  AdminRequestStatus.NO_REQUEST
+        } ?: AdminRequestStatus.NO_REQUEST
     }
 
     fun findAdminRequestByUsername(username: String): AdminRequest {
@@ -72,5 +110,12 @@ class AdminRequestRepository(private val dsl: DSLContext) {
                 AdminRequestStatus.valueOf(it.value4() as String)
             )
         } ?: throw NoSuchElementException("Request with username $username not found.")
+    }
+
+    enum class AdminRequestFields(val dbName: String) {
+        ID("id"),
+        USERNAME("username"),
+        PASSWORD("password"),
+        STATUS("status"),
     }
 }

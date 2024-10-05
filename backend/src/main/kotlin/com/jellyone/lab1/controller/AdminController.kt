@@ -1,6 +1,10 @@
 package com.jellyone.lab1.controller
 
+import com.jellyone.lab1.mapper.RequestAdminMapper
+import com.jellyone.lab1.repository.AdminRequestRepository
+import com.jellyone.lab1.repository.map
 import com.jellyone.lab1.service.UserService
+import com.jellyone.lab1.service.impl.UserServiceImpl
 import com.jellyone.lab1.web.dto.AdminRequestDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -14,14 +18,15 @@ import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/requests")
 @Tag(name = "Admin Management")
 @SecurityRequirement(name = "JWT")
 class AdminController(
-    private val userService: UserService,
+    private val userService: UserServiceImpl,
+    private val adminRequestAdminMapper: RequestAdminMapper,
 ) {
 
-    @PostMapping("/requests/submit")
+    @PostMapping("/submit")
     @Operation(summary = "Submit admin request", description = "Submit admin request")
     @ApiResponses(
         value = [ApiResponse(
@@ -42,7 +47,7 @@ class AdminController(
         return ResponseEntity.ok(userService.requestAdmin(user.username, user.password))
     }
 
-    @PostMapping("/requests/approve/{username}")
+    @PostMapping("/approve/{username}")
     @Operation(summary = "Approve admin request", description = "Approve admin request")
     @ApiResponses(
         value = [ApiResponse(
@@ -63,7 +68,7 @@ class AdminController(
         return ResponseEntity.ok("Admin request approved")
     }
 
-    @PostMapping("/requests/rejected/{username}")
+    @PostMapping("/rejected/{username}")
     @Operation(summary = "Rejected admin request", description = "Rejected admin request")
     @ApiResponses(
         value = [ApiResponse(
@@ -83,4 +88,32 @@ class AdminController(
         userService.rejecteAdminRequest(username)
         return ResponseEntity.ok("Admin request rejected")
     }
+
+    @GetMapping("")
+    @Operation(summary = "Get all admin requests", description = "Returns all admin requests")
+    @ApiResponses(
+        value = [ApiResponse(
+            responseCode = "200",
+            description = "All admin requests successfully retrieved",
+        ),
+            ApiResponse(responseCode = "400", description = "Bad request"),
+            ApiResponse(responseCode = "500", description = "Internal server error")
+        ]
+    )
+    fun getAllAdminRequests(
+        page: Int,
+        pageSize: Int,
+        @Schema(allowableValues = ["username", "status"])
+        sortBy: String,
+        @Schema(allowableValues = ["asc", "desc"])
+        sortDirection: String,
+        username: String?,
+    ) = userService.getAllAdminRequests(
+        page,
+        pageSize,
+        AdminRequestRepository.AdminRequestFields.entries.find { it.dbName == sortBy }!!,
+        sortDirection == "asc",
+        username
+    ).map { adminRequestAdminMapper.toDto(it) }
+
 }

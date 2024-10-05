@@ -6,6 +6,7 @@ import com.jellyone.lab1.domain.User
 import com.jellyone.lab1.domain.enums.AdminRequestStatus
 import com.jellyone.lab1.domain.enums.Role
 import com.jellyone.lab1.repository.AdminRequestRepository
+import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.UserRepository
 import com.jellyone.lab1.service.UserService
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -80,9 +81,14 @@ class UserServiceImpl(
         }
     }
 
-    fun updateUser(id: Long, user: User): User? {
-        return userRepository.update(user) ?: throw IllegalArgumentException("User not found with id ${id}")
-    }
+    fun getAllAdminRequests(
+        page: Int,
+        pageSize: Int,
+        sortBy: AdminRequestRepository.AdminRequestFields,
+        sortAsc: Boolean,
+        username: String?,
+    ) = adminRequestRepository.findAll(page, pageSize, sortBy, sortAsc, username)
+
 
     override fun getAdminRequestStatus(username: String): AdminRequestStatus {
         return adminRequestRepository.findAdminRequestStatusByUsername(username);
