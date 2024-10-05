@@ -101,7 +101,7 @@ function Actions({ humanBeing }: { humanBeing: FetchedHumanBeing }) {
   const [isEditOpen, setEditOpen] = useState(false);
   const { data: me } = useQuery(getPrincipalQueryOptions());
   const { mutate, isPending } = useDeleteHumanBeingMutation();
-  const canEdit = humanBeing.ownerId === 123 || me?.role == "ADMIN";
+  const canEdit = humanBeing.ownerId === me?.id || me?.role == "ADMIN";
   return (
     <>
       <DropdownMenu>

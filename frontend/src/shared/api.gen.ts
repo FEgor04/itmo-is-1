@@ -251,6 +251,21 @@ export interface SignUpRequest {
   password: string;
 }
 
+/** JWT Response */
+export interface JwtResponse {
+  /**
+   * User ID
+   * @format int64
+   */
+  id: number;
+  /** Username */
+  username: string;
+  /** Access token */
+  accessToken: string;
+  /** Refresh token */
+  refreshToken: string;
+}
+
 /** Error message model */
 export interface ErrorMessage {
   /**
@@ -269,21 +284,6 @@ export interface ErrorMessage {
   message: string;
 }
 
-/** JWT Response */
-export interface JwtResponse {
-  /**
-   * User ID
-   * @format int64
-   */
-  id: number;
-  /** Username */
-  username: string;
-  /** Access token */
-  accessToken: string;
-  /** Refresh token */
-  refreshToken: string;
-}
-
 export interface SignInRequest {
   username: string;
   password: string;
@@ -296,6 +296,12 @@ export interface GetMeResponse {
    * @example "John Doe"
    */
   username: string;
+  /**
+   * The ID of the user
+   * @format int64
+   * @example 1
+   */
+  id: number;
   /**
    * The role of the user
    * @example "ADMIN"
