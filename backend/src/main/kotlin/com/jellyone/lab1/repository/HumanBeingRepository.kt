@@ -45,6 +45,9 @@ class HumanBeingRepository(private val dsl: DSLContext) {
                 .where(dslWhere)
         )
 
+        if(total == 0) {
+            return PaginatedResponse(page, pageSize, total, emptyList())
+        }
         val records = dsl.select(
             DSL.field("human_being.id"),
             DSL.field("name"),
@@ -190,7 +193,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
     }
 
     enum class HumanBeingFields(val dbName: String, val entityName: String) {
-        ID("id", "id"),
+        ID("human_being.id", "id"),
         NAME("name", "name"),
         CREATION_DATE("creation_date", "creationDate"),
         REAL_HERO("real_hero", "realHero"),
