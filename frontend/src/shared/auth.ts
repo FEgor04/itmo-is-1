@@ -74,7 +74,7 @@ const SignInResponseSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
 });
-const SignInSchema = z.object({
+export const SignInSchema = z.object({
   username: z.string(),
   password: z.string(),
 });
@@ -98,7 +98,7 @@ export function useSignInMutation() {
   });
 }
 
-const SignUpSchema = SignInSchema;
+export const SignUpSchema = SignInSchema;
 type SignUp = z.infer<typeof SignUpSchema>;
 
 export function useSignUpMutation() {
