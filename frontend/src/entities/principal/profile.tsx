@@ -9,15 +9,17 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { getPrincipalQueryOptions } from "./api";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { useSignOutMutation } from "@/shared/auth";
 
 export function PrincipalProfile() {
   const { data, isError } = useQuery(getPrincipalQueryOptions());
   const { mutate, isPending } = useSignOutMutation();
+  const location = useLocation();
 
-  if (isError) {
+  const noButtonLocations = ["/signin", "/signup"];
+  if (isError && !noButtonLocations.includes(location.pathname)) {
     return (
       <Button asChild>
         <Link to="/signin">Войти</Link>

@@ -12,7 +12,7 @@ import { Form, FormField, FormItem, FormMessage } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -82,6 +82,9 @@ function Page() {
         <CardFooter>
           <Button type="submit" form="signup" disabled={isPending}>
             Отправить
+          </Button>
+          <Button asChild variant="link">
+            <Link to="/signin">Войти</Link>
           </Button>
         </CardFooter>
       </Card>

@@ -132,7 +132,9 @@ export function Dashboard() {
           <h1 className="text-2xl font-bold">
             <LocationTitle />
           </h1>
+          <div className="ml-auto">
           <PrincipalProfile />
+</div>
         </header>
         <main className="flex-1 items-start p-4 sm:px-6 sm:py-0">
           <Outlet />
