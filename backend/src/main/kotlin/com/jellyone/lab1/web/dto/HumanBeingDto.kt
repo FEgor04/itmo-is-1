@@ -35,7 +35,7 @@ data class HumanBeingDto(
     val mood: Mood?,
 
     @Schema(description = "The impact speed of the human being", example = "150")
-    val impactSpeed: Long,
+    val impactSpeed: Long?,
 
     @Schema(description = "The type of weapon the human being has", example = "PISTOL")
     val weaponType: WeaponType

@@ -38,7 +38,7 @@ data class HumanBeing(
     val mood: Mood? = null,
 
     @Column(name = "impact_speed", nullable = false)
-    val impactSpeed: Long,
+    val impactSpeed: Long? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "weapon_type", nullable = false)
