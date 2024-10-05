@@ -19,6 +19,8 @@ import { useState } from "react";
 import { EditCarDialogContent } from "./edit";
 import { Dialog } from "@/shared/ui/dialog";
 import { useDeleteCarMutation } from "./api";
+import { getPrincipalQueryOptions } from "../principal/api";
+import { useQuery } from "@tanstack/react-query";
 
 const carColumns: Array<ColumnDef<Car>> = [
   {
@@ -50,6 +52,8 @@ const carColumns: Array<ColumnDef<Car>> = [
 
 function Actions({ car }: { car: Car }) {
   const [open, setEditOpen] = useState(false);
+  const { data: me } = useQuery(getPrincipalQueryOptions());
+  const canEdit = car.ownerId === 123 || me?.role == "ADMIN";
   const { mutate, isPending } = useDeleteCarMutation();
   return (
     <DropdownMenu>
@@ -63,11 +67,11 @@ function Actions({ car }: { car: Car }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem onClick={() => setEditOpen(true)}>
+        <DropdownMenuItem disabled={!canEdit} onClick={() => setEditOpen(true)}>
           Редактировать
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled={isPending} onClick={() => mutate(car.id)}>
+        <DropdownMenuItem disabled={isPending || !canEdit} onClick={() => mutate(car.id)}>
           Удалить
         </DropdownMenuItem>
       </DropdownMenuContent>

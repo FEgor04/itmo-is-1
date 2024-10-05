@@ -13,7 +13,7 @@ import { SortingQuerySchema } from "@/shared/sorting";
 import { ApiInstance } from "@/shared/instance";
 
 export const GetCarsQuerySchema = PaginatedQuerySchema.merge(
-  SortingQuerySchema(CarSchemaKeys),
+  SortingQuerySchema(CarSchemaKeys.exclude(["ownerId"])),
 ).extend({
   brand: z.string().min(1).optional().catch(undefined),
   model: z.string().min(1).optional().catch(undefined),

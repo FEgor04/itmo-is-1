@@ -9,6 +9,7 @@ export const BaseCarSchema = z.object({
   model: z.string(),
   color: z.string(),
   cool: z.boolean(),
+  ownerId: z.number(),
 });
 export type Car = z.infer<typeof BaseCarSchema>;
 
