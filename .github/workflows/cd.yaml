@@ -22,7 +22,6 @@ jobs:
         
 
   image-backend:
-    needs: build-frontend
     defaults:
       run:
         working-directory: ./backend
