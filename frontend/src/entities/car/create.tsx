@@ -17,7 +17,9 @@ import { Checkbox } from "@/shared/ui/checkbox";
 export function CreateCarDialogContent({ onClose }: { onClose: () => void }) {
   const form = useForm<z.infer<typeof CreateCarSchema>>({
     resolver: zodResolver(CreateCarSchema),
-    defaultValues: {},
+    defaultValues: {
+      cool: false,
+    },
   });
   const { mutate, isPending } = useCreateCarMutation();
 
