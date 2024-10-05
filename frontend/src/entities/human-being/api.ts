@@ -101,6 +101,7 @@ export function useDeleteHumanBeingMutation() {
 
 export const EditHumanBeingSchema = BaseHumanBeingSchema.omit({
   creationDate: true,
+  ownerId: true,
 }).extend({
   car: CarIDSchema,
 });
