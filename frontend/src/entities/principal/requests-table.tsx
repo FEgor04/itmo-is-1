@@ -3,11 +3,9 @@ import { Button } from "@/shared/ui/button";
 import {
   ColumnDef,
   getCoreRowModel,
-  OnChangeFn,
-  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { Check, Cross, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { z } from "zod";
 import {
   useApproveAdminRequestMutation,
@@ -50,7 +48,11 @@ const requestsColumns: Array<ColumnDef<AdminRequest>> = [
   {
     id: "actions",
     header: "",
-    cell: ({ row }) => {row.original.status == "PENDING" && <Actions request={row.original} />},
+    cell: ({ row }) => {
+      return (
+        row.original.status == "PENDING" && <Actions request={row.original} />
+      );
+    },
   },
 ];
 
