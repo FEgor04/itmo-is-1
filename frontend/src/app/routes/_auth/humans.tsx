@@ -1,48 +1,48 @@
 import {
   getHumansQueryOptions,
   GetHumansQuerySchema,
-} from "@/entities/human-being/api";
-import { FetchedHumanBeingSchemaKeys } from "@/entities/human-being/model";
-import { useHumanBeingTable } from "@/entities/human-being/table";
-import { CreateHumanBeingDialogContent } from "@/entities/human-being/ui/create";
-import { Button } from "@/shared/ui/button";
-import { DataTable } from "@/shared/ui/data-table";
-import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
-import { Input } from "@/shared/ui/input";
-import { PaginationFooter } from "@/shared/ui/pagination";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { SortingState } from "@tanstack/react-table";
-import { PlusCircle, SearchIcon } from "lucide-react";
-import { useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
-import { z } from "zod";
+} from '@/entities/human-being/api'
+import { FetchedHumanBeingSchemaKeys } from '@/entities/human-being/model'
+import { useHumanBeingTable } from '@/entities/human-being/table'
+import { CreateHumanBeingDialogContent } from '@/entities/human-being/ui/create'
+import { Button } from '@/shared/ui/button'
+import { DataTable } from '@/shared/ui/data-table'
+import { Dialog, DialogTrigger } from '@/shared/ui/dialog'
+import { Input } from '@/shared/ui/input'
+import { PaginationFooter } from '@/shared/ui/pagination'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { SortingState } from '@tanstack/react-table'
+import { PlusCircle, SearchIcon } from 'lucide-react'
+import { useState } from 'react'
+import { useDebouncedCallback } from 'use-debounce'
+import { z } from 'zod'
 
-const SearchSchema = GetHumansQuerySchema;
+const SearchSchema = GetHumansQuerySchema
 
-export const Route = createFileRoute("/humans")({
+export const Route = createFileRoute('/_auth/humans')({
   component: Page,
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
-    return context.queryClient.ensureQueryData(getHumansQueryOptions(deps));
+    return context.queryClient.ensureQueryData(getHumansQueryOptions(deps))
   },
-});
+})
 
 function Page() {
-  const query = Route.useSearch();
-  const navigate = Route.useNavigate();
-  const initialData = Route.useLoaderData();
-  const { data } = useQuery({ ...getHumansQueryOptions(query), initialData });
+  const query = Route.useSearch()
+  const navigate = Route.useNavigate()
+  const initialData = Route.useLoaderData()
+  const { data } = useQuery({ ...getHumansQueryOptions(query), initialData })
   const sortingState: SortingState =
     query.sortDirection && query.sortBy
       ? [
           {
-            desc: query.sortDirection == "desc",
+            desc: query.sortDirection == 'desc',
             id: query.sortBy,
           },
         ]
-      : [];
+      : []
 
   function setQuery(
     updater: (
@@ -51,41 +51,41 @@ function Page() {
   ) {
     void navigate({
       search: updater,
-    });
+    })
   }
 
   const table = useHumanBeingTable(
     data.values,
     sortingState,
     (updaterOrValue) => {
-      if (typeof updaterOrValue == "function") {
-        const newSorting = updaterOrValue(sortingState);
+      if (typeof updaterOrValue == 'function') {
+        const newSorting = updaterOrValue(sortingState)
         if (newSorting.length > 0) {
           setQuery((prev) => ({
             ...prev,
             sortBy: newSorting[0].id as z.infer<
               typeof FetchedHumanBeingSchemaKeys
             >,
-            sortDirection: newSorting[0].desc ? "desc" : "asc",
-          }));
+            sortDirection: newSorting[0].desc ? 'desc' : 'asc',
+          }))
         } else {
           setQuery((prev) => ({
             ...prev,
             sortBy: undefined,
             sortDirection: undefined,
-          }));
+          }))
         }
       }
     },
-  );
+  )
 
   const setNameFilter = useDebouncedCallback((name: string | undefined) => {
     setQuery((prev) => ({
       ...prev,
       name: name && name?.length > 0 ? name : undefined,
-    }));
-  }, 500);
-  const [createOpen, setCreateOpen] = useState(false);
+    }))
+  }, 500)
+  const [createOpen, setCreateOpen] = useState(false)
 
   return (
     <div className="space-y-4">
@@ -120,5 +120,5 @@ function Page() {
       </main>
       <PaginationFooter query={query} setQuery={setQuery} total={data.total} />
     </div>
-  );
+  )
 }
