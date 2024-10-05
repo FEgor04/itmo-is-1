@@ -35,6 +35,7 @@ function LocationTitle() {
 }
 
 export function Dashboard() {
+  const { pathname } = useLocation();
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -48,6 +49,7 @@ export function Dashboard() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
+                data-active={pathname.includes("/humans")}
                 to="/humans"
                 search={{
                   page: 1,
@@ -55,7 +57,7 @@ export function Dashboard() {
                   sortBy: "id",
                   sortDirection: "asc",
                 }}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[status=active]:bg-accent md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[active=true]:bg-accent md:h-8 md:w-8"
               >
                 <User className="h-5 w-5" />
               </Link>
@@ -65,6 +67,7 @@ export function Dashboard() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
+                data-active={pathname.includes("/cars")}
                 to="/cars"
                 search={{
                   page: 1,
@@ -72,7 +75,7 @@ export function Dashboard() {
                   sortBy: "id",
                   sortDirection: "asc",
                 }}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[status=active]:bg-accent md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[active=true]:bg-accent md:h-8 md:w-8"
               >
                 <Car className="h-5 w-5" />
                 <span className="sr-only">Машины</span>
