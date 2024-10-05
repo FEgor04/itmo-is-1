@@ -20,7 +20,7 @@ import { z } from "zod";
 
 const SearchSchema = GetHumansQuerySchema;
 
-export const Route = createFileRoute("/humans")({
+export const Route = createFileRoute("/_auth/humans")({
   component: Page,
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,

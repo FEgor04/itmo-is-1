@@ -11,11 +11,7 @@ import {
   TableRow,
 } from "@/shared/ui/table";
 import { Button } from "./button";
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronsUpDown,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 
 interface DataTableProps<TData> {
   table: RTable<TData>;

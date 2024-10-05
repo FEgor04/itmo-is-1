@@ -1,4 +1,4 @@
-import { SignUpSchema, useSignInMutation } from "@/shared/auth";
+import { SignInSchema, useSignUpMutation } from "@/shared/auth";
 import { Button } from "@/shared/ui/button";
 import {
   Card,
@@ -17,17 +17,17 @@ import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-export const Route = createFileRoute("/signin")({
+export const Route = createFileRoute("/signup")({
   component: Page,
 });
-const schema = SignUpSchema;
+const schema = SignInSchema;
 type Values = z.infer<typeof schema>;
 
 function Page() {
   const form = useForm<Values>({
     resolver: zodResolver(schema),
   });
-  const { mutate, error, isPending } = useSignInMutation();
+  const { mutate, error, isPending } = useSignUpMutation();
   const navigate = useNavigate();
 
   function onSubmit(data: Values) {
@@ -49,18 +49,12 @@ function Page() {
     <div>
       <Card className="mx-auto mt-8 max-w-lg">
         <CardHeader>
-          <CardTitle>Вход</CardTitle>
-          <CardDescription>
-            На этой странице вы можете войти в систему
-          </CardDescription>
+          <CardTitle>Регистрация</CardTitle>
+          <CardDescription>Регистрация нового пользователя</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form
-              id="signin"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4"
-            >
+            <form id="signup" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="username"
@@ -68,7 +62,6 @@ function Page() {
                   <FormItem>
                     <Label>Имя пользователя</Label>
                     <Input required {...field} />
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -79,20 +72,19 @@ function Page() {
                   <FormItem>
                     <Label>Пароль</Label>
                     <Input type="password" required {...field} />
-                    <FormMessage />
                   </FormItem>
                 )}
               />
-              {error && <SignInError error={error} />}
             </form>
+            {error && <SignUpError error={error} />}
           </Form>
         </CardContent>
         <CardFooter>
-          <Button type="submit" form="signin" disabled={isPending}>
-            Войти
+          <Button type="submit" form="signup" disabled={isPending}>
+            Отправить
           </Button>
           <Button asChild variant="link">
-            <Link to="/signup">Зарегистрироваться</Link>
+            <Link to="/signin">Войти</Link>
           </Button>
         </CardFooter>
       </Card>
@@ -100,12 +92,12 @@ function Page() {
   );
 }
 
-function SignInError({ error }: { error: Error }) {
+function SignUpError({ error }: { error: Error }) {
   if (!(error instanceof AxiosError)) {
     return <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>;
   }
-  if (error.response?.status === 401) {
-    return <FormMessage>Неверный логин или пароль</FormMessage>;
+  if (error.response?.status === 409) {
+    return <FormMessage>Такой пользователь уже существует</FormMessage>;
   }
   return <FormMessage>Не удалось зарегистрировать пользователя</FormMessage>;
 }

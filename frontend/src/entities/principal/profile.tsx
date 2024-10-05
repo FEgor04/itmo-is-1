@@ -9,18 +9,25 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { getPrincipalQueryOptions } from "./api";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { useSignOutMutation } from "@/shared/auth";
 
 export function PrincipalProfile() {
   const { data, isError } = useQuery(getPrincipalQueryOptions());
+  const { mutate, isPending } = useSignOutMutation();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  if (isError) {
+  const noButtonLocations = ["/signin", "/signup"];
+  if (isError && !noButtonLocations.includes(location.pathname)) {
     return (
       <Button asChild>
         <Link to="/signin">Войти</Link>
       </Button>
     );
+  } else if (isError && noButtonLocations.includes(location.pathname)) {
+    return <></>;
   }
 
   if (data == undefined) {
@@ -35,15 +42,22 @@ export function PrincipalProfile() {
           size="icon"
           className="ml-auto overflow-hidden rounded-full"
         >
-          {data[0]}
+          {data.username[0]}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{data}</DropdownMenuLabel>
+        <DropdownMenuLabel>{data.username}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Заявки</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Выйти</DropdownMenuItem>
+        <DropdownMenuItem
+          disabled={isPending}
+          onClick={() =>
+            mutate(void 0, { onSuccess: () => navigate({ to: "/signin" }) })
+          }
+        >
+          Выйти
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

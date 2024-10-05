@@ -4,4 +4,3 @@ export const MUST_BE_INT_CONFIG = {
 export const REQUIRED_CONFIG = {
   message: "Значение обязательно для ввода",
 };
-

@@ -27,7 +27,7 @@ export const getCarsQueryOptions = (
   return queryOptions({
     queryKey: ["cars", "list", validated],
     queryFn: async () => {
-      const { data } = await ApiInstance.cars.getAllCars({
+      const { data } = await ApiInstance.api.getAllCars({
         page: validated.page,
         pageSize: validated.pageSize,
         sortBy: validated.sortBy ?? "id",
@@ -52,7 +52,7 @@ export function useCreateCarMutation() {
   return useMutation({
     mutationFn: async (valuesRaw: z.infer<typeof CreateCarSchema>) => {
       const values = CreateCarSchema.parse(valuesRaw);
-      const { data } = await ApiInstance.cars.createCar({
+      const { data } = await ApiInstance.api.createCar({
         brand: values.brand,
         model: values.model,
         color: values.color,
@@ -75,7 +75,7 @@ export function useEditCarMutation() {
   return useMutation({
     mutationFn: async (valuesRaw: z.infer<typeof UpdateCarSchema>) => {
       const values = UpdateCarSchema.parse(valuesRaw);
-      const { data } = await ApiInstance.cars.updateCar(values.id, {
+      const { data } = await ApiInstance.api.updateCar(values.id, {
         brand: values.brand,
         model: values.model,
         color: values.color,
@@ -94,7 +94,7 @@ export function useDeleteCarMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      const { data } = await ApiInstance.cars.deleteCar(id);
+      const { data } = await ApiInstance.api.deleteCar(id);
       return data;
     },
     onSuccess: () => {

@@ -1,7 +1,4 @@
-import {
-  getCarsQueryOptions,
-  GetCarsQuerySchema,
-} from "@/entities/car/api";
+import { getCarsQueryOptions, GetCarsQuerySchema } from "@/entities/car/api";
 import { CreateCarDialogContent } from "@/entities/car/create";
 import { CarKeys } from "@/entities/car/model";
 import { useCarTable } from "@/entities/car/table";
@@ -19,7 +16,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
 const SearchSchema = GetCarsQuerySchema;
-export const Route = createFileRoute("/cars")({
+export const Route = createFileRoute("/_auth/cars")({
   component: Page,
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
