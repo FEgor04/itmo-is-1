@@ -1,0 +1,28 @@
+api:
+  dashboard: true
+  insecure: true
+
+providers:
+  docker:
+    exposedByDefault: false
+
+log:
+  level: INFO
+
+accessLog: {}
+
+entryPoints:
+  web:
+    address: ":80"
+  webSecure:
+    address: ":443"
+  traefik:
+    address: ":8001"
+
+certificatesResolvers:
+  letsEncrypt:
+    acme:
+      storage: /letsEncrypt/acme.json
+      email: "fegor2004@gmail.com"
+      httpChallenge:
+        entryPoint: "web"
