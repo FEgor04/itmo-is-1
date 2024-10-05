@@ -5,6 +5,8 @@ import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.domain.User
 import com.jellyone.lab1.domain.enums.AdminRequestStatus
 import com.jellyone.lab1.domain.enums.Role
+import com.jellyone.lab1.exception.ResourceAlreadyExistsException
+import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.repository.AdminRequestRepository
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.UserRepository
@@ -21,7 +23,7 @@ class UserServiceImpl(
 
     override fun registerUser(username: String, password: String) {
         if (userRepository.findByUsername(username) != null) {
-            throw RuntimeException("User already exists")
+            throw ResourceAlreadyExistsException("User already exists")
         }
 
         val user = User(
@@ -98,12 +100,12 @@ class UserServiceImpl(
     override fun getByUserId(id: Long) = userRepository.findById(id)
 
     override fun getByUsername(username: String): User {
-        return userRepository.findByUsername(username) ?: throw RuntimeException("User not found")
+        return userRepository.findByUsername(username) ?: throw ResourceNotFoundException("User not found")
     }
 
     override fun checkPassword(username: String, password: String): Boolean {
         val user = userRepository.findByUsername(username)
-            ?: throw RuntimeException("User not found")
+            ?: throw ResourceNotFoundException("User not found")
 
         return user.password == passwordEncoder.encode(password)
     }
