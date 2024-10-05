@@ -1,5 +1,9 @@
 import { ApiInstance } from "@/shared/instance";
-import { queryOptions } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { z } from "zod";
 
 const GetMeResponseSchema = z.object({
@@ -15,3 +19,16 @@ export const getPrincipalQueryOptions = () =>
       return GetMeResponseSchema.parse(data);
     },
   });
+
+export function useSendAdminRequestMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await ApiInstance.api.submitAdminRequest();
+      return data;
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["principal"] });
+    },
+  });
+}
