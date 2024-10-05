@@ -3,13 +3,12 @@ include .env
 FRONTEND_IMAGE_NAME ?= is1-frontend
 BACKEND_IMAGE_NAME ?= is1-backend
 
-FRONTEND_VERSION ?= 0.1.4
-BACKEND_VERSION ?= 0.1.5
+VERSION ?= 0.2.0
 
 REGISTRY_URI ?= registry
 
-FRONTEND_IMAGE = ${REGISTRY_URI}/${FRONTEND_IMAGE_NAME}:${FRONTEND_VERSION}
-BACKEND_IMAGE = ${REGISTRY_URI}/${BACKEND_IMAGE_NAME}:${BACKEND_VERSION}
+FRONTEND_IMAGE = ${REGISTRY_URI}/${FRONTEND_IMAGE_NAME}:${VERSION}
+BACKEND_IMAGE = ${REGISTRY_URI}/${BACKEND_IMAGE_NAME}:${VERSION}
 POSTGRES_IMAGE=postgres
 TRAEFIK_IMAGE=traefik:3.2
 
@@ -48,3 +47,6 @@ build-backend-jar: build-frontend-dist
 	cp -r frontend/dist/* backend/src/main/resources/static && \
 		cd backend && ./gradlew bootJar
 
+deploy-helios:
+	cd ansible && \
+		ansible-playbook helios.yaml --extra-vars "version=${VERSION}"

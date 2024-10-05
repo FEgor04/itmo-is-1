@@ -1,0 +1,19 @@
+- name: Deploy to helios
+  hosts: prod
+  tasks:
+    - name: Make sure lab1 directory exists
+      ansible.builtin.file:
+        path: /home/studs/s367581/is/lab1
+        state: directory
+    - name: Copy lab1 jar to prod
+      ansible.builtin.copy:
+        src: ../backend/build/libs/lab1-{{version}}.jar
+        dest: /home/studs/s367581/is/lab1/lab1-{{version}}.jar
+    - name: Kill previous version
+      ansible.builtin.shell:
+        cmd: kill `cat /home/studs/s367581/is/lab1/pidfile` && rm /home/studs/s367581/is/lab1/pidfile
+        removes: /home/studs/s367581/is/lab1/pidfile
+    - name: Start new version
+      ansible.builtin.shell:
+        chdir: /home/studs/s367581/is/lab1
+        cmd: ./start.sh
