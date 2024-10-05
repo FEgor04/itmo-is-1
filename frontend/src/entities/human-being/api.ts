@@ -57,6 +57,7 @@ export const getHumansQueryOptions = (
 export const CreateHumanBeingSchema = BaseHumanBeingSchema.omit({
   id: true,
   creationDate: true,
+  ownerId: true,
 }).extend({
   car: CarIDSchema,
 });
