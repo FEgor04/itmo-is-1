@@ -1,5 +1,6 @@
 package com.jellyone.lab1.controller
 
+import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.web.dto.CreateHumanBeingDto
 import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
@@ -48,7 +49,7 @@ class HumanBeingController(
         @Schema(allowableValues = ["asc", "desc"])
         sortDirection: String,
         name: String?,
-        impactSpeedLT : Double?
+        impactSpeedLT: Double?
     ) = humanBeingService.getAllHumans(
         page,
         pageSize,
@@ -79,9 +80,9 @@ class HumanBeingController(
     )
     fun getHumanById(@PathVariable id: Long): ResponseEntity<HumanBeingDto> {
         val humanBeing =
-            humanBeingService.getHumanById(id) ?: throw IllegalArgumentException("HumanBeing not found with id $id")
+            humanBeingService.getHumanById(id) ?: throw ResourceNotFoundException("HumanBeing not found with id $id")
         val car =
-            carService.getCarById(humanBeing.car.id) ?: throw IllegalArgumentException("Car not found with id $id")
+            carService.getCarById(humanBeing.car.id) ?: throw ResourceNotFoundException("Car not found with id $id")
         val updatedHuman = humanBeingMapper.toDto(humanBeing, car);
         return ResponseEntity.ok(updatedHuman)
     }
@@ -120,7 +121,7 @@ class HumanBeingController(
             )
         )
         val car = carService.getCarById(humanBeingDto.carId)
-            ?: throw IllegalArgumentException("Car not found with id ${humanBeingDto.carId}")
+            ?: throw ResourceNotFoundException("Car not found with id ${humanBeingDto.carId}")
         return ResponseEntity.status(HttpStatus.CREATED).body(humanBeingMapper.toDto(createdHuman, car))
     }
 
@@ -148,9 +149,9 @@ class HumanBeingController(
         @RequestBody humanBeingDto: PutHumanBeingDto
     ): ResponseEntity<HumanBeingDto> {
         val humanBeing = humanBeingService.updateHuman(id, humanBeingDto)
-            ?: throw IllegalArgumentException("humanBeing not found with id $id")
+            ?: throw ResourceNotFoundException("humanBeing not found with id $id")
         val car =
-            carService.getCarById(humanBeing.car.id) ?: throw IllegalArgumentException("Car not found with id $id")
+            carService.getCarById(humanBeing.car.id) ?: throw ResourceNotFoundException("Car not found with id $id")
         val updatedHuman = humanBeingMapper.toDto(humanBeing, car);
         return ResponseEntity.ok(updatedHuman)
     }

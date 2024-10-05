@@ -1,6 +1,7 @@
 package com.jellyone.lab1.service
 
 import com.jellyone.lab1.domain.Car
+import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.mapper.CarMapper
 import com.jellyone.lab1.repository.CarRepository
 import org.springframework.stereotype.Service
@@ -26,7 +27,7 @@ class CarService(private val carRepository: CarRepository) {
     }
 
     fun updateCar(id: Long, car: Car): Car? {
-        return carRepository.update(car) ?: throw IllegalArgumentException("Car not found with id ${id}")
+        return carRepository.update(car) ?: throw ResourceNotFoundException("Car not found with id ${id}")
     }
 
     fun deleteCar(id: Long): Boolean {

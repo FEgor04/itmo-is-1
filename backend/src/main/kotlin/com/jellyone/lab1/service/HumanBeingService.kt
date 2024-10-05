@@ -4,6 +4,7 @@ import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.domain.HumanBeing
 import com.jellyone.lab1.domain.enums.Mood
 import com.jellyone.lab1.domain.enums.WeaponType
+import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.CarRepository
@@ -25,7 +26,7 @@ class HumanBeingService(
         sortBy: HumanBeingRepository.HumanBeingFields,
         sortAsc: Boolean,
         name: String?,
-        impactSpeedLT : Double?,
+        impactSpeedLT: Double?,
     ) = humanBeingRepository.findAll(page, pageSize, sortBy, sortAsc, name, impactSpeedLT);
 
 
@@ -35,7 +36,7 @@ class HumanBeingService(
 
     fun createHuman(humanBeing: CreateHumanBeingRequest): HumanBeing {
         val car: Car = carRepository.findById(humanBeing.carId)
-            ?: throw IllegalArgumentException("Car not found with id ${humanBeing.carId}")
+            ?: throw ResourceNotFoundException("Car not found with id ${humanBeing.carId}")
 
         val humanBeing = humanBeingMapper.fromCreateHumanBeingRequestToEntity(humanBeing, car)
         return humanBeingRepository.save(humanBeing)
@@ -46,7 +47,7 @@ class HumanBeingService(
         val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
 
         val car: Car = carRepository.findById(humanBeingDto.carId)
-            ?: throw IllegalArgumentException("Car not found with id ${humanBeingDto.carId}")
+            ?: throw ResourceNotFoundException("Car not found with id ${humanBeingDto.carId}")
 
         val humanBeing = humanBeingMapper.fromPutHumanBeingToEntity(
             humanBeingDto.copy(id = existingHumanBeing.id),
