@@ -91,7 +91,6 @@ class AdminController(
         return ResponseEntity.ok("Admin request rejected")
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
     @Operation(summary = "Get all admin requests", description = "Returns all admin requests")
     @ApiResponses(
