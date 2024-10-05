@@ -13,7 +13,7 @@ import { PaginationFooter } from "@/shared/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
-import { PlusCircle, SearchIcon } from "lucide-react";
+import { Gauge, PlusCircle, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
@@ -125,7 +125,7 @@ function Page() {
           </div>
           <div className="inline-flex items-center">
             <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
-              <SearchIcon className="mr-2 size-4" />
+              <Gauge className="mr-2 size-4" />
               Скорость
             </span>
             <Input
