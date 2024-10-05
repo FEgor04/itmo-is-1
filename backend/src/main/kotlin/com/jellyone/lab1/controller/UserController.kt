@@ -1,5 +1,8 @@
 package com.jellyone.lab1.controller
 
+import com.jellyone.lab1.service.AuthService
+import com.jellyone.lab1.service.UserService
+import com.jellyone.lab1.web.dto.GetMeResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -7,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -17,7 +19,10 @@ import java.security.Principal
 @RequestMapping("/api")
 @Tag(name = "User Management")
 @SecurityRequirement(name = "JWT")
-class UserController {
+class UserController(
+    private val userService: UserService,
+    private val authService: AuthService
+) {
 
     @GetMapping("/me")
     @Operation(summary = "Get current user", description = "Get current user")
@@ -27,7 +32,7 @@ class UserController {
             description = "Current user successfully retrieved",
             content = [
                 Content(
-                    schema = Schema(implementation = String::class)
+                    schema = Schema(implementation = GetMeResponse::class)
                 )
             ]
         ),
@@ -35,8 +40,10 @@ class UserController {
             ApiResponse(responseCode = "500", description = "Internal server error")
         ]
     )
-    fun me(principal: Principal): ResponseEntity<String> {
-        return ResponseEntity.ok(principal.name)
+    fun me(principal: Principal): GetMeResponse {
+        val user = userService.getByUsername(principal.name)
+        val adminRequestStatus = userService.getAdminRequestStatus(principal.name)
+        return GetMeResponse(principal.name, user.role, adminRequestStatus)
     }
 
 }

@@ -1,7 +1,9 @@
 package com.jellyone.lab1.service.impl
 
 import com.jellyone.lab1.domain.AdminRequest
+import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.domain.User
+import com.jellyone.lab1.domain.enums.AdminRequestStatus
 import com.jellyone.lab1.domain.enums.Role
 import com.jellyone.lab1.repository.AdminRequestRepository
 import com.jellyone.lab1.repository.UserRepository
@@ -35,38 +37,57 @@ class UserServiceImpl(
             val request = AdminRequest(
                 id = 0,
                 username = username,
-                password = passwordEncoder.encode(password),
-                status = "PENDING"
+                password = password,
+                status = AdminRequestStatus.valueOf("PENDING")
             )
             adminRequestRepository.save(request)
-            "Admin request submitted"
+            return "Admin request submitted"
         } else {
             val user = User(
                 id = 0,
                 username = username,
-                password = passwordEncoder.encode(password),
-                role = Role.USER
+                password = password,
+                role = Role.ADMIN
             )
-            userRepository.save(user)
-            "Admin registered successfully"
+
+            userRepository.update(user)
+            return "Admin registered successfully"
         }
     }
 
-    override fun approveAdminRequest(id: Long) {
-        val request = adminRequestRepository.findById(id)
-        if (request.status == "PENDING") {
+    override fun approveAdminRequest(username: String) {
+        val request = adminRequestRepository.findAdminRequestByUsername(username)
+        if (request.status == AdminRequestStatus.valueOf("PENDING")) {
             val user = User(
                 id = 0,
                 username = request.username,
                 password = request.password,
-                role = Role.USER
+                role = Role.ADMIN
             )
-            userRepository.save(user)
+            userRepository.update(user)
 
-            request.status = "APPROVED"
+            request.status = AdminRequestStatus.valueOf("APPROVED")
             adminRequestRepository.update(request)
         }
     }
+
+    override fun rejecteAdminRequest(username: String) {
+        val request = adminRequestRepository.findAdminRequestByUsername(username)
+        if (request.status == AdminRequestStatus.valueOf("PENDING")) {
+
+            request.status = AdminRequestStatus.valueOf("REJECTED")
+            adminRequestRepository.update(request)
+        }
+    }
+
+    fun updateUser(id: Long, user: User): User? {
+        return userRepository.update(user) ?: throw IllegalArgumentException("User not found with id ${id}")
+    }
+
+    override fun getAdminRequestStatus(username: String): AdminRequestStatus {
+        return adminRequestRepository.findAdminRequestStatusByUsername(username);
+    }
+
 
     override fun getByUserId(id: Long) = userRepository.findById(id)
 

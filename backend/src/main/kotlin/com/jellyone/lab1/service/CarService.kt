@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service
 @Service
 class CarService(private val carRepository: CarRepository) {
 
-    fun getAllCars(page: Int,
-                   pageSize: Int,
-                   sortBy: CarRepository.CarFields,
-                   sortAsc: Boolean,
-                   modelFilter: String?,
-                   brandFilter: String?,) = carRepository.findAll(page, pageSize, sortBy, sortAsc, modelFilter, brandFilter)
+    fun getAllCars(
+        page: Int,
+        pageSize: Int,
+        sortBy: CarRepository.CarFields,
+        sortAsc: Boolean,
+        modelFilter: String?,
+        brandFilter: String?,
+    ) = carRepository.findAll(page, pageSize, sortBy, sortAsc, modelFilter, brandFilter)
 
     fun getCarById(id: Long?) = id?.let { carRepository.findById(it) }
 
@@ -24,9 +26,7 @@ class CarService(private val carRepository: CarRepository) {
     }
 
     fun updateCar(id: Long, car: Car): Car? {
-        carRepository.findById(id) ?: return null
-        val updatedCar = carRepository.update(car) ?: return null
-        return updatedCar
+        return carRepository.update(car) ?: throw IllegalArgumentException("Car not found with id ${id}")
     }
 
     fun deleteCar(id: Long): Boolean {
