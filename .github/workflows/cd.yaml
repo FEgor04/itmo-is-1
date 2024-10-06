@@ -61,7 +61,7 @@ jobs:
           chmod 600 ~/.ssh/cloudru-efedorov && \
           ssh-keyscan lab1.efedorov.spb.su >> ~/.ssh/known_hosts
       - name: Deploy with ansible
-        wokring-directory: ./ansible
+        working-directory: ./ansible
         run: >
           ansible-playbook staging.yaml --extra-vars "
           registry_uri=${{ secrets.DOCKER_REGISTRY }}
