@@ -709,6 +709,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         sortDirection: "asc" | "desc";
         model?: string;
         brand?: string;
+        color?: string;
       },
       params: RequestParams = {},
     ) =>

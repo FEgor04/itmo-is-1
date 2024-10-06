@@ -6,6 +6,7 @@ import { FetchedHumanBeingSchemaKeys } from "@/entities/human-being/model";
 import { useHumanBeingTable } from "@/entities/human-being/table";
 import { CreateHumanBeingDialogContent } from "@/entities/human-being/ui/create";
 import { Button } from "@/shared/ui/button";
+import { CrudControlsHeader, CrudControlsRight } from "@/shared/ui/controls";
 import { DataTable } from "@/shared/ui/data-table";
 import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
@@ -97,7 +98,7 @@ function Page() {
 
   return (
     <div className="space-y-4">
-      <header className="flex items-center justify-between">
+      <CrudControlsHeader>
         <div>
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
@@ -111,7 +112,7 @@ function Page() {
             />
           </Dialog>
         </div>
-        <div className="space-x-2">
+        <CrudControlsRight>
           <div className="inline-flex items-center">
             <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
               <SearchIcon className="mr-2 size-4" />
@@ -135,8 +136,8 @@ function Page() {
               onChange={(e) => setImpactSpeed(e.target.value)}
             />
           </div>
-        </div>
-      </header>
+        </CrudControlsRight>
+      </CrudControlsHeader>
       <main>
         <DataTable table={table} />
       </main>

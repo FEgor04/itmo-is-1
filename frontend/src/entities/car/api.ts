@@ -17,6 +17,7 @@ export const GetCarsQuerySchema = PaginatedQuerySchema.merge(
 ).extend({
   brand: z.string().min(1).optional().catch(undefined),
   model: z.string().min(1).optional().catch(undefined),
+  color: z.string().min(1).optional().catch(undefined),
 });
 export const GetCarsResponseSchema = PaginatedResponseSchema(BaseCarSchema);
 
@@ -34,6 +35,7 @@ export const getCarsQueryOptions = (
         sortDirection: validated.sortDirection ?? "asc",
         model: validated.model,
         brand: validated.brand,
+        color: validated.color,
       });
       return GetCarsResponseSchema.parse(data);
     },
