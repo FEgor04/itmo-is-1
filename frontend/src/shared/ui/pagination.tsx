@@ -30,7 +30,7 @@ export function PaginationFooter<T extends { page: number; pageSize: number }>({
   const hasNext = query.page < totalPages;
   return (
     <footer className="flex w-full justify-between">
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-2">
         <p className="text-sm font-medium">Строк на странице</p>
         <Select
           value={query.pageSize.toString()}
@@ -41,7 +41,7 @@ export function PaginationFooter<T extends { page: number; pageSize: number }>({
             }))
           }
         >
-          <SelectTrigger className="h-8 w-[70px]">
+          <SelectTrigger className="h-8 w-auto">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -53,7 +53,7 @@ export function PaginationFooter<T extends { page: number; pageSize: number }>({
           </SelectContent>
         </Select>
       </div>
-      <nav className="space-x-2">
+      <nav className="space-x-1 md:space-x-2">
         <Button
           variant="outline"
           className="size-8 p-0"
