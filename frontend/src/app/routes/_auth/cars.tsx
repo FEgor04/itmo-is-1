@@ -10,7 +10,7 @@ import { PaginationFooter } from "@/shared/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SortingState } from "@tanstack/react-table";
-import { PlusCircle, SearchIcon } from "lucide-react";
+import { Palette, PlusCircle, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
@@ -75,14 +75,21 @@ function Page() {
       ...prev,
       brand,
     }));
-  }, 200);
+  }, 500);
 
   const debouncedSetModel = useDebouncedCallback((model: string) => {
     setQuery((prev) => ({
       ...prev,
       model,
     }));
-  }, 200);
+  }, 500);
+
+  const debouncedSetColor = useDebouncedCallback((color: string) => {
+    setQuery((prev) => ({
+      ...prev,
+      color,
+    }));
+  }, 500);
   const [open, setOpen] = useState(false);
 
   return (
@@ -118,6 +125,17 @@ function Page() {
               className="h-8 rounded-l-none ring-0"
               defaultValue={search.model}
               onChange={(e) => debouncedSetModel(e.target.value)}
+            />
+          </div>
+          <div className="flex">
+            <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
+              <Palette className="mr-2 size-4" />
+              Цвет
+            </span>
+            <Input
+              className="h-8 rounded-l-none ring-0"
+              defaultValue={search.color}
+              onChange={(e) => debouncedSetColor(e.target.value)}
             />
           </div>
         </div>
