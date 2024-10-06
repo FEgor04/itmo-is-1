@@ -1,9 +1,6 @@
-- name: Deploy to staging
+- name: Prepare user
   hosts: staging
   become: true
-  vars:
-    staging_host: lab1.efedorov.spb.su
-    registry_uri: fegor04
   tasks:
     - name: Make sure lab1 user exists
       ansible.builtin.user:
@@ -18,12 +15,21 @@
         group: infsystem-lab1
         state: directory
         recurse: true
+- name: Deploy
+  hosts: staging
+  become_user: infsystem-lab1
+  become: True
+  vars:
+    staging_host: lab1.efedorov.spb.su
+    registry_uri: fegor04
+  tasks:
     - name: Clone git repo
       become_user: infsystem-lab1
       ansible.builtin.git:
         dest: /opt/is/lab1
         repo: https://github.com/FEgor04/itmo-is-1.git
         version: main
+        force: true
     - name: Set git repo permissions
       ansible.builtin.file:
         dest: /opt/is/lab1
