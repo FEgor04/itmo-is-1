@@ -94,7 +94,7 @@ jobs:
         "version=${{ github.sha }}
         jar_src=lab1-${{ github.sha }}.jar
         postgres_user=${{ secrets.HELIOS_POSTGRES_USER }}
-        postgres_password_${{ secrets.HELIOS_POSTGRES_PASSWORD }}
+        postgres_password=${{ secrets.HELIOS_POSTGRES_PASSWORD }}
         postgres_db=${{ secrets.HELIOS_POSTGRES_DB }}
         jwt_secret=${{ secrets.JWT_SECRET }}
         jwt_access_ttl=3600000
