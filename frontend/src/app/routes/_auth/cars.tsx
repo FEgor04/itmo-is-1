@@ -94,24 +94,24 @@ function Page() {
 
   return (
     <div className="space-y-4">
-      <header className="flex">
+      <header className="flex flex-col gap-2 lg:flex-row">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline">
+            <Button variant="outline" size="sm">
               <PlusCircle className="mr-2 size-4" />
               Создать
             </Button>
           </DialogTrigger>
           <CreateCarDialogContent onClose={() => setOpen(false)} />
         </Dialog>
-        <div className="ml-auto flex items-center space-x-2">
+        <div className="flex flex-col items-end gap-2 lg:ml-auto lg:flex-row [&>*]:w-full [&_span]:w-32 lg:[&_span]:w-auto lg:[&>*]:w-auto">
           <div className="flex">
             <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
               <SearchIcon className="mr-2 size-4" />
               Брэнд
             </span>
             <Input
-              className="h-8 rounded-l-none ring-0"
+              className="h-8 flex-grow rounded-l-none ring-0"
               defaultValue={search.brand}
               onChange={(e) => debouncedSetBrand(e.target.value)}
             />
