@@ -74,7 +74,8 @@ jobs:
       run: |
         mkdir -p ~/.ssh && \
         echo "${{ secrets.HELIOS_SSH_KEY }}" > ~/.ssh/helios_ansible && \
-        chmod 600 ~/.ssh/helios_ansible
+        chmod 600 ~/.ssh/helios_ansible && \
+        ssh-keygen -R se.ifmo.ru
     - name: Setup build file
       uses: actions/download-artifact@v4
       with:
