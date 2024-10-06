@@ -64,7 +64,7 @@ jobs:
         working-directory: ./ansible
         run: >
           ansible-playbook staging.yaml --extra-vars "
-          registry_uri=${{ secrets.DOCKER_REGISTRY }}
+          docker_registry=${{ secrets.DOCKER_REGISTRY }}
           jwt_secret=${{ secrets.JWT_SECRET }}
           postgres_user=${{ secrets.STAGING_POSTGRES_USER }}
           postgres_password=${{ secrets.STAGING_POSTGRES_PASSWORD }}
