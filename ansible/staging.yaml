@@ -2,13 +2,8 @@
   hosts: staging
   become: true
   vars:
-    postgres_host: postgres
-    postgres_user: postgres
-    postgres_password: postgres
-    postgres_db: postgres
-    jwt_secret: amF0amhvaWFob2loanE5ZXdqMDlyZWlvZmppZmppc2RqZnBkamZwb3Nkam9zZGZramZvcGpzABC
-    jwt_access_ttl: 3600000
-    jwt_refresh_ttl: 3600000
+    staging_host: lab1.efedorov.spb.su
+    registry_uri: fegor04
   tasks:
     - name: Make sure lab1 user exists
       ansible.builtin.user:
