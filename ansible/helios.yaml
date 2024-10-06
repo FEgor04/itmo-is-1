@@ -1,5 +1,7 @@
 - name: Deploy to helios
   hosts: prod
+  vars:
+    jar_src: ../backend/build/libs/lab1-{{version}}.jar
   tasks:
     - name: Make sure lab1 directory exists
       ansible.builtin.file:
@@ -7,7 +9,7 @@
         state: directory
     - name: Copy lab1 jar to prod
       ansible.builtin.copy:
-        src: ../backend/build/libs/lab1-{{version}}.jar
+        src: {{jar_src}}
         dest: /home/studs/s367581/is/lab1/lab1-{{version}}.jar
     - name: Kill previous version
       ansible.builtin.shell:
