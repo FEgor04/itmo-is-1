@@ -2,6 +2,7 @@
   hosts: prod
   vars:
     jar_src: ../backend/build/libs/lab1-{{version}}.jar
+    postgres_host: localhost
   tasks:
     - name: Make sure lab1 directory exists
       ansible.builtin.file:
