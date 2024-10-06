@@ -8,7 +8,7 @@
       ansible.builtin.file:
         path: /home/studs/s367581/is/lab1
         state: directory
-        mode: u=rw,go=r
+        mode: u=rwx,go=rx
     - name: Copy lab1 jar to prod
       ansible.builtin.copy:
         src: '{{ jar_src }}'
