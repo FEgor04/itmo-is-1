@@ -33,7 +33,7 @@ jobs:
         name: frontend
 
   build-backend:
-    needs: build-backend
+    needs: build-frontend
     runs-on: ubuntu-latest
     
     steps:
