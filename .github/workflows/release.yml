@@ -52,6 +52,9 @@ jobs:
       with:
         name: frontend
         path: ./frontend/dist
+
+    - name: Copy frontend to static
+      run: cp -r ./frontend/dist/* ./backend/src/main/resources/static
      
     - name: Build backend
       run: make build-backend-jar
