@@ -6,12 +6,19 @@ include .env
 FRONTEND_IMAGE_NAME ?= is1-frontend
 BACKEND_IMAGE_NAME ?= is1-backend
 
+# Version of frontend component
+# They are separated so that you could update backend and frontend
+# independetly
+FRONTEND_VERSION ?= 0.1.4
+BACKEND_VERSION ?= 0.1.6
+
+# Version of application that will be deploy to Customer server (i.e. Helios)
 VERSION ?= 0.2.0
 
 REGISTRY_URI ?= registry
 
-FRONTEND_IMAGE = ${REGISTRY_URI}/${FRONTEND_IMAGE_NAME}:${VERSION}
-BACKEND_IMAGE = ${REGISTRY_URI}/${BACKEND_IMAGE_NAME}:${VERSION}
+FRONTEND_IMAGE = ${REGISTRY_URI}/${FRONTEND_IMAGE_NAME}:${FRONTEND_VERSION}
+BACKEND_IMAGE = ${REGISTRY_URI}/${BACKEND_IMAGE_NAME}:${BACKEND_VERSION}
 POSTGRES_IMAGE=postgres
 TRAEFIK_IMAGE=traefik:3.2
 
