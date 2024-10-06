@@ -22,6 +22,7 @@ class CarRepository(private val dsl: DSLContext) {
         sortAsc: Boolean,
         modelFilter: String?,
         brandFilter: String?,
+        color: String?,
     ): PaginatedResponse<Car> {
         val dslWhere =
             DSL.field("lower(model)")
@@ -30,6 +31,7 @@ class CarRepository(private val dsl: DSLContext) {
                     DSL.field("lower(brand)")
                         .contains(brandFilter?.lowercase() ?: "")
                 )
+                .and(DSL.field("lower(color)").contains(color?.lowercase() ?: ""))
         val total = dsl.fetchCount(
             dsl.selectFrom("car")
                 .where(

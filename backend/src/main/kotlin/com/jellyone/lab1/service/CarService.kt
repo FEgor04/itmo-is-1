@@ -25,7 +25,8 @@ class CarService(
         sortAsc: Boolean,
         modelFilter: String?,
         brandFilter: String?,
-    ) = carRepository.findAll(page, pageSize, sortBy, sortAsc, modelFilter, brandFilter)
+        color: String?
+    ) = carRepository.findAll(page, pageSize, sortBy, sortAsc, modelFilter, brandFilter, color)
 
     fun getCarById(id: Long?) = id?.let { carRepository.findById(it) }
 

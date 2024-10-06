@@ -41,14 +41,16 @@ class CarController(private val carService: CarService, private val userService:
         @Schema(allowableValues = ["asc", "desc"])
         sortDirection: String,
         model: String?,
-        brand: String?
+        brand: String?,
+        color: String?
     ) = carService.getAllCars(
         page,
         pageSize,
         CarRepository.CarFields.entries.find { it.dbName == sortBy }!!,
         sortDirection == "asc",
         model,
-        brand
+        brand,
+        color,
     ).map { CarMapper.toDto(it) }
 
     @GetMapping("/{id}")

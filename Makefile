@@ -44,6 +44,9 @@ dev-up:
 dev-down:
 	docker compose -f docker-compose.dev.yaml down
 
+dev-up-postgres:
+	docker compose -f docker-compose.dev.yaml up postgres -d
+
 prod-up:
 	docker compose -f docker-compose.yaml up -d
 
