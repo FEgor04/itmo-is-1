@@ -3,6 +3,7 @@ import { CreateCarDialogContent } from "@/entities/car/create";
 import { CarKeys } from "@/entities/car/model";
 import { useCarTable } from "@/entities/car/table";
 import { Button } from "@/shared/ui/button";
+import { CrudControlsHeader, CrudControlsRight } from "@/shared/ui/controls";
 import { DataTable } from "@/shared/ui/data-table";
 import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
@@ -94,7 +95,7 @@ function Page() {
 
   return (
     <div className="space-y-4">
-      <header className="flex flex-col gap-2 lg:flex-row">
+      <CrudControlsHeader>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
@@ -104,7 +105,7 @@ function Page() {
           </DialogTrigger>
           <CreateCarDialogContent onClose={() => setOpen(false)} />
         </Dialog>
-        <div className="flex flex-col items-end gap-2 lg:ml-auto lg:flex-row [&>*]:w-full [&_span]:w-32 lg:[&_span]:w-auto lg:[&>*]:w-auto">
+        <CrudControlsRight>
           <div className="flex">
             <span className="inline-flex h-8 items-center rounded-md rounded-r-none border border-r-0 border-input px-2 align-middle text-sm">
               <SearchIcon className="mr-2 size-4" />
@@ -138,8 +139,8 @@ function Page() {
               onChange={(e) => debouncedSetColor(e.target.value)}
             />
           </div>
-        </div>
-      </header>
+        </CrudControlsRight>
+      </CrudControlsHeader>
       <main>
         <DataTable table={table} />
       </main>
