@@ -43,10 +43,9 @@ prod-down:
 build-frontend-dist:
 	cd frontend && pnpm run build
 
-build-backend-jar: build-frontend-dist
-	cp -r frontend/dist/* backend/src/main/resources/static && \
-		cd backend && ./gradlew bootJar
+build-backend-jar:
+	cd backend && ./gradlew bootJar
 
-deploy-helios:
+deploy-helios: 
 	cd ansible && \
 		ansible-playbook helios.yaml --extra-vars "version=${VERSION}"
