@@ -12,10 +12,10 @@
         src: '{{ jar_src }}'
         dest: /home/studs/s367581/is/lab1/lab1-{{ version }}.jar
     - name: Kill previous version
+      ignore_errors: true
       ansible.builtin.shell:
         cmd: kill `cat /home/studs/s367581/is/lab1/pidfile` && rm /home/studs/s367581/is/lab1/pidfile
         removes: /home/studs/s367581/is/lab1/pidfile
-        ignore_errors: true
     - name: Start new version
       ansible.builtin.shell:
         chdir: /home/studs/s367581/is/lab1
