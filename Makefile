@@ -1,3 +1,6 @@
+.env:
+	cp .env.example .env
+
 include .env
 
 FRONTEND_IMAGE_NAME ?= is1-frontend
