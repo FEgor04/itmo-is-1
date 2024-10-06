@@ -46,4 +46,30 @@ jobs:
       - name: Push backend
         run: REGISTRY_URI=${{ secrets.DOCKER_REGISTRY }} make push-backend
 
+  deploy-staging:
+    needs:
+      - image-frontend
+      - image-backend
+    runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up ssh key
+        run: |
+          mkdir -p ~/.ssh && \
+          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/cloudru-efedorov && \
+          chmod 600 ~/.ssh/cloudru-efedorov && \
+          ssh-keyscan lab1.efedorov.spb.su >> ~/.ssh/known_hosts
+      - name: Deploy with ansible
+        working-directory: ./ansible
+        run: >
+          ansible-playbook staging.yaml --extra-vars "
+          docker_registry=${{ secrets.DOCKER_REGISTRY }}
+          jwt_secret=${{ secrets.JWT_SECRET }}
+          postgres_user=${{ secrets.STAGING_POSTGRES_USER }}
+          postgres_password=${{ secrets.STAGING_POSTGRES_PASSWORD }}
+          postgres_db=${{ secrets.STAGING_POSTGRES_DB }}
+          postgres_host=postgres:5432
+          jwt_secret=${{ secrets.JWT_SECRET }}
+          jwt_access_ttl=3600000
+          jwt_refresh_ttl=2592000000"

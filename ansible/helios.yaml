@@ -3,6 +3,8 @@
   vars:
     jar_src: ../backend/build/libs/lab1-{{version}}.jar
     postgres_host: localhost
+    staging_host: lab1.efedorov.spb.su
+    registry_uri: fegor04
   tasks:
     - name: Make sure lab1 directory exists
       ansible.builtin.file:
