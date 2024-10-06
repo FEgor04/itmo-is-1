@@ -1,0 +1,57 @@
+- name: Prepare user
+  hosts: staging
+  become: true
+  tasks:
+    - name: Make sure lab1 user exists
+      ansible.builtin.user:
+        name: infsystem-lab1
+        groups: 
+          - docker
+          - sudo
+    - name: Make sure directory for is exists
+      ansible.builtin.file:
+        dest: /opt/is
+        owner: infsystem-lab1
+        group: infsystem-lab1
+        state: directory
+        recurse: true
+- name: Deploy
+  hosts: staging
+  become_user: infsystem-lab1
+  become: True
+  vars:
+    staging_host: lab1.efedorov.spb.su
+    registry_uri: fegor04
+  tasks:
+    - name: Clone git repo
+      become_user: infsystem-lab1
+      ansible.builtin.git:
+        dest: /opt/is/lab1
+        repo: https://github.com/FEgor04/itmo-is-1.git
+        version: main
+        force: true
+    - name: Set git repo permissions
+      ansible.builtin.file:
+        dest: /opt/is/lab1
+        owner: infsystem-lab1
+        group: infsystem-lab1
+        state: directory
+        recurse: true
+    - name: Set permissions for acme.json
+      ansible.builtin.file:
+        dest: /opt/is/lab1/traefik/letsEncrypt/acme.json
+        state: file
+        owner: infsystem-lab1
+        group: infsystem-lab1
+        mode: u=rw,go-rwx
+    - name: Copy .env
+      ansible.builtin.template:
+        src: ./env.j2
+        dest: /opt/is/lab1/.env
+        owner: infsystem-lab1
+        group: infsystem-lab1
+        mode: u=rw,go-rwx
+    - name: Restart docker services
+      ansible.builtin.command:
+        chdir: /opt/is/lab1
+        cmd: make prod-up
