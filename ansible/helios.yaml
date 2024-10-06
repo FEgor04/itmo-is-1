@@ -1,0 +1,31 @@
+- name: Deploy to helios
+  hosts: prod
+  vars:
+    jar_src: ../backend/build/libs/lab1-{{version}}.jar
+    postgres_host: localhost
+  tasks:
+    - name: Make sure lab1 directory exists
+      ansible.builtin.file:
+        path: /home/studs/s367581/is/lab1
+        state: directory
+        mode: u=rwx,go=rx
+    - name: Copy lab1 jar to prod
+      ansible.builtin.copy:
+        src: '{{ jar_src }}'
+        dest: /home/studs/s367581/is/lab1/lab1-{{ version }}.jar
+        mode: u=rw,go=r
+    - name: Kill previous version
+      ignore_errors: true
+      ansible.builtin.shell:
+        cmd: kill `cat /home/studs/s367581/is/lab1/pidfile` && rm /home/studs/s367581/is/lab1/pidfile
+        removes: /home/studs/s367581/is/lab1/pidfile
+    - name: Copy configuration
+      ansible.builtin.template:
+        src: ./env.j2
+        dest: /home/studs/s367581/is/lab1/.env
+        mode: u=rw,go-rwx
+    - name: Start new version
+      ansible.builtin.shell:
+        chdir: /home/studs/s367581/is/lab1
+        cmd: "nohup java -XX:MaxHeapSize=512m -jar lab1-{{ version }}.jar 2>&1 > log & echo $! > /home/studs/s367581/is/lab1/pidfile"
+        creates: /home/studs/s367581/is/lab1/pidfile

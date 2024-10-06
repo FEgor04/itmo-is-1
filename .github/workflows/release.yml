@@ -1,0 +1,100 @@
+name: Deploy
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-frontend:
+    defaults:
+      run:
+        working-directory: ./frontend
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: 'Install Node'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.5.x'
+    - name: Install dependencies
+      run: npm install -g pnpm && pnpm install
+    - name: Build frontend
+      run: pnpm run build
+    - name: Upload dist
+      uses: actions/upload-artifact@v4
+      with:
+        path: ./frontend/dist
+        name: frontend
+
+  build-backend:
+    needs: build-frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    - name: Download frontend
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend
+        path: ./frontend/dist
+
+    - name: Copy frontend to static
+      run: >
+        mkdir -p backend/src/main/resources/static &&
+        cp -r ./frontend/dist/* ./backend/src/main/resources/static
+     
+    - name: Build backend
+      run: make build-backend-jar
+      env:
+        VERSION: ${{ github.event.release.tag_name }}
+
+    - name: Upload backend jar
+      uses: actions/upload-artifact@v4
+      with:
+        path: ./backend/build/libs/lab1-${{ github.event.release.tag_name }}.jar
+        name: backend-${{ github.event.release.tag_name }}.jar
+
+  deploy:
+    needs: [build-backend]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up ssh key
+      run: |
+        mkdir -p ~/.ssh && \
+        echo "${{ secrets.HELIOS_SSH_KEY }}" > ~/.ssh/helios_ansible && \
+        chmod 600 ~/.ssh/helios_ansible && \
+        ssh-keyscan -p 2222 se.ifmo.ru >> ~/.ssh/known_hosts
+    - name: Setup build file
+      uses: actions/download-artifact@v4
+      with:
+        path: ./ansible
+        name: backend-${{ github.event.release.tag_name }}.jar
+    - name: Deploy via ansible
+      working-directory: ./ansible
+      run: >
+        ansible-playbook helios.yaml
+        --extra-vars
+        "version=${{ github.event.release.tag_name }}
+        jar_src=lab1-${{ github.event.release.tag_name }}.jar
+        postgres_user=${{ secrets.HELIOS_POSTGRES_USER }}
+        postgres_password=${{ secrets.HELIOS_POSTGRES_PASSWORD }}
+        postgres_db=${{ secrets.HELIOS_POSTGRES_DB }}
+        jwt_secret=${{ secrets.JWT_SECRET }}
+        jwt_access_ttl=3600000
+        jwt_refresh_ttl=2592000000
+        "

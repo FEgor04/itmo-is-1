@@ -1,10 +1,19 @@
+.env:
+	cp .env.example .env
+
 include .env
 
 FRONTEND_IMAGE_NAME ?= is1-frontend
 BACKEND_IMAGE_NAME ?= is1-backend
 
+# Version of frontend component
+# They are separated so that you could update backend and frontend
+# independetly
 FRONTEND_VERSION ?= 0.1.4
-BACKEND_VERSION ?= 0.1.5
+BACKEND_VERSION ?= 0.1.6
+
+# Version of application that will be deploy to Customer server (i.e. Helios)
+VERSION ?= 0.2.0
 
 REGISTRY_URI ?= registry
 
@@ -30,13 +39,23 @@ push-frontend:
 	docker push ${FRONTEND_IMAGE}
 
 dev-up:
-	docker compose -f docker-compose.dev.yaml up
+	docker compose -f docker-compose.dev.yaml up -d
 
 dev-down:
 	docker compose -f docker-compose.dev.yaml down
 
 prod-up:
-	docker compose -f docker-compose.yaml up
+	docker compose -f docker-compose.yaml up -d
 
 prod-down:
 	docker compose -f docker-compose.yaml down
+
+build-frontend-dist:
+	cd frontend && pnpm run build
+
+build-backend-jar:
+	cd backend && ./gradlew bootJar
+
+deploy-helios: 
+	cd ansible && \
+		ansible-playbook helios.yaml --extra-vars "version=${VERSION}"
