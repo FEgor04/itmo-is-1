@@ -82,4 +82,4 @@ jobs:
         name: backend-${{ github.sha }}.jar
     - name: Deploy via ansible
       working-directory: ./ansible
-      run: ansible-playbook helios.yaml --extra-vars "version={{ github.sha }} jar_src=lab1-{{ github.sha }}.jar
+      run: ansible-playbook helios.yaml --extra-vars "version={{ github.sha }} jar_src=lab1-{{ github.sha }}.jar"
