@@ -79,8 +79,8 @@ jobs:
     - name: Setup build file
       uses: actions/download-artifact@v4
       with:
-        path: ./ansible/lab1-{{ github.sha }}.jar
-        name: lab-${{ github.sha }}.jar
+        path: ./ansible/lab1-${{ github.sha }}.jar
+        name: backend-${{ github.sha }}.jar
     - name: Deploy via ansible
       working-directory: ./ansible
       run: |
