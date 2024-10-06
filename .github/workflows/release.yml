@@ -72,6 +72,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Set up ssh key
       run: |
+        mkdir -p ~/.ssh && \
         cat ${{ secrets.HELIOS_SSH_KEY }} > ~/.ssh/helios_ansible && \
         chmod 600 ~/.ssh/helios_ansible
     - name: Setup build file
