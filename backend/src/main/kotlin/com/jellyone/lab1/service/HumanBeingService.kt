@@ -63,11 +63,10 @@ class HumanBeingService(
 
     fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto, username: String): HumanBeing? {
         val owner = userService.getByUsername(username)
-        if (!checkOwner(id, owner.id, owner.role)) {
+        val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
+        if (!checkOwner(existingHumanBeing.ownerId, owner.id, owner.role)) {
             throw OwnerPermissionsConflictException()
         }
-
-        val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
 
         val car: Car = carRepository.findById(humanBeingDto.carId)
             ?: throw ResourceNotFoundException("Car not found with id ${humanBeingDto.carId}")
