@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+security:
+  jwt:
+    secret: ${securityJwtSecret}
+    access: ${securityJwtAccess}
+    refresh: ${securityJwtRefresh}
