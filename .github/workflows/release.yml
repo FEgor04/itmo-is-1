@@ -2,6 +2,8 @@ name: Deploy
 on:
   release:
     types: [published]
+  push:
+    branches: [95-fix-release-deploy]
 
 jobs:
   build-frontend:
