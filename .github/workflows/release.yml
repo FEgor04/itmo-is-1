@@ -101,4 +101,5 @@ jobs:
         jwt_secret=${{ secrets.JWT_SECRET }}
         jwt_access_ttl=3600000
         jwt_refresh_ttl=2592000000
+        docker_registry=${{ secrets.DOCKER_REGISTRY }}
         "
