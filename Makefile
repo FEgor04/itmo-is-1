@@ -12,8 +12,8 @@ BACKEND_IMAGE_NAME ?= is1-backend
 FRONTEND_VERSION ?= 0.1.6
 BACKEND_VERSION ?= 0.1.7
 
-# Version of application that will be deploy to Customer server (i.e. Helios)
-VERSION ?= 0.2.0
+# Version of application that will be deployed to Customer server (i.e. Helios)
+VERSION ?= 0.2.1
 
 REGISTRY_URI ?= registry
 
