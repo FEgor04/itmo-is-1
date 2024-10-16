@@ -29,5 +29,5 @@
     - name: Start new version
       ansible.builtin.shell:
         chdir: /home/studs/s367581/is/lab1
-        cmd: "nohup java -XX:MaxHeapSize=512m -jar lab1-{{ version }}.jar 2>&1 > log & echo $! > /home/studs/s367581/is/lab1/pidfile"
+        cmd: "nohup java -XX:MaxHeapSize=512m -jar lab1-{{ version }}.jar 2>&1 >> log & echo $! > /home/studs/s367581/is/lab1/pidfile"
         creates: /home/studs/s367581/is/lab1/pidfile
