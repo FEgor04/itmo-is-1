@@ -1,8 +1,19 @@
+import { getPrincipalQueryOptions } from "@/entities/principal/api";
 import { Button } from "@/shared/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: Page,
+  loader: async ({context}) => {
+    try { 
+      const principal = await context.queryClient.ensureQueryData(getPrincipalQueryOptions())
+      return principal
+    }
+    catch {
+      // User is not authenticated. Swalling the exception
+    }
+  }
 });
 
 function Page() {
@@ -26,7 +37,25 @@ function Page() {
           <li>React Query😊 Tailwind CSS😇</li>
           <li>PostgreSQL😎 Jooq🐂💩</li>
         </ul>
-        <div className="flex gap-4">
+        <CallToAction />
+      </section>
+    </div>
+  );
+}
+
+function CallToAction() {
+  const initialData = Route.useLoaderData()
+  const { data } = useQuery({...getPrincipalQueryOptions(), initialData})
+
+  if(data) {
+    return <div>
+    <Button asChild>
+    <Link to="/humans" search={{page: 1, pageSize: 10}}>Вперед к круду!</Link>
+    </Button>
+    </div>
+  }
+
+  return <div className="flex gap-4">
           <Button asChild>
             <Link to="/signup">Регистрация</Link>
           </Button>
@@ -34,8 +63,4 @@ function Page() {
             <Link to="/signin">Вход</Link>
           </Button>
         </div>
-      </section>
-      <section className="text-center"></section>
-    </div>
-  );
 }
