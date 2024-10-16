@@ -13,7 +13,7 @@ FRONTEND_VERSION ?= 0.1.6
 BACKEND_VERSION ?= 0.1.7
 
 # Version of application that will be deployed to Customer server (i.e. Helios)
-VERSION ?= 0.2.1
+VERSION ?= 0.2.2
 
 REGISTRY_URI ?= registry
 
