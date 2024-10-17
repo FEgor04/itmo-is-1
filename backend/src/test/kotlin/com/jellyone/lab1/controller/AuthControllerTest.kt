@@ -150,6 +150,7 @@ class AuthControllerTest {
             .then()
             .statusCode(HttpStatus.OK.value())
     }
+
     @Test
     fun loginWithIncorrectCredentialsShouldReturnUnauthorized() {
         val loginRequest = JwtRequest(username = "wronguser", password = "wrongpassword")
