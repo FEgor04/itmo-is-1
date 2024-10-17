@@ -88,6 +88,12 @@ export function Dashboard() {
             <TooltipTrigger asChild>
               <Link
                 data-active={pathname.includes("/visualize")}
+                search={{
+                  page: 1,
+                  pageSize: 10,
+                  sortBy: "id",
+                  sortDirection: "asc",
+                }}
                 to="/visualize"
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[active=true]:bg-accent md:h-8 md:w-8"
               >

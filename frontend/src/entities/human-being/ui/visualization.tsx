@@ -1,15 +1,18 @@
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/shared/ui/chart";
 import { FetchedHumanBeing } from "../model";
 import { CartesianGrid, Scatter, ScatterChart, XAxis, YAxis } from "recharts";
+import { useState } from "react";
+import { Dialog } from "@/shared/ui/dialog";
+import { EditHumanBeingDialogContent } from "./edit";
 
 type Props = {
   humans: Array<FetchedHumanBeing>;
 };
+
 const stringToColour = (str: string) => {
   let hash = 0;
   str.split('').forEach(char => {
@@ -25,7 +28,10 @@ const stringToColour = (str: string) => {
 }
 
 export function HumansVisualization({ humans }: Props) {
+  const [humanBeing, setHumanBeing] = useState<FetchedHumanBeing | undefined>()
+
   return (
+    <>
     <ChartContainer config={{}} className="min-h-[400px] w-full">
       <ScatterChart>
         <CartesianGrid />
@@ -33,9 +39,13 @@ export function HumansVisualization({ humans }: Props) {
         <YAxis dataKey="y" label="Y" type="number" />
         <ChartTooltip content={<ChartTooltipContent labelKey="name" />} />
         {humans.map(it => <Scatter data={[it.coordinates]} name={it.name} fill={stringToColour(String(it.ownerId * 51324))} key={it.id} onClick={() => {
-          console.log("edit id ", it.id)
+          setHumanBeing(it)
         }}  />)}
       </ScatterChart>
     </ChartContainer>
+      <Dialog open={!!humanBeing} onOpenChange={() => setHumanBeing(undefined)}>
+      {humanBeing && <EditHumanBeingDialogContent humanBeing={humanBeing} onClose={() => setHumanBeing(undefined)} />}
+      </Dialog>
+    </>
   );
 }
