@@ -1,11 +1,12 @@
 package com.jellyone.lab1.controller
 
+import com.jellyone.lab1.domain.enums.Role
 import com.jellyone.lab1.web.dto.SignUpRequest
 import com.jellyone.lab1.web.dto.auth.JwtRequest
 import com.jellyone.lab1.web.dto.auth.JwtResponse
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.core.IsEqual
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -21,7 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @AutoConfigureMockMvc
-class AdminControllerTest {
+class UserControllerTest {
     @LocalServerPort
     private var port: Int = 0
 
@@ -76,6 +77,9 @@ class AdminControllerTest {
             .get("/api/amIAdmin")
             .then()
             .statusCode(200)
+            .contentType(ContentType.JSON)
+            .body("username", IsEqual.equalTo(username))
+            .body("role", IsEqual.equalTo(Role.ADMIN.toString()))
     }
 
     private fun registerAdminUser(username: String): String {
