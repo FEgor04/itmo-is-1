@@ -5,6 +5,7 @@ import {
 import { CreateHumanBeingDialogContent } from "@/entities/human-being/ui/create";
 import { HumansVisualization } from "@/entities/human-being/ui/visualization";
 import { Button } from "@/shared/ui/button";
+import { Card, CardContent } from "@/shared/ui/card";
 import { CrudControlsHeader, CrudControlsRight } from "@/shared/ui/controls";
 import { Dialog } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
@@ -103,7 +104,11 @@ function Page() {
         </CrudControlsRight>
       </CrudControlsHeader>
       <main>
+      <Card>
+      <CardContent>
         <HumansVisualization humans={data.values} />
+      </CardContent>
+        </Card>
       </main>
       <PaginationFooter query={query} setQuery={setQuery} total={data.total} />
     </div>

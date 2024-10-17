@@ -30,9 +30,15 @@ const stringToColour = (str: string) => {
 export function HumansVisualization({ humans }: Props) {
   const [humanBeing, setHumanBeing] = useState<FetchedHumanBeing | undefined>()
 
+  if(humans.length == 0) {
+    return <h3 className="text-center text-2xl font-bold p-8">
+    Нет данных
+    </h3>
+  }
+
   return (
     <>
-    <ChartContainer config={{}} className="min-h-[400px] w-full">
+    <ChartContainer config={{}} className="min-h-[400px] w-full mx-auto">
       <ScatterChart>
         <CartesianGrid />
         <XAxis dataKey="x" label="X" type="number" />
