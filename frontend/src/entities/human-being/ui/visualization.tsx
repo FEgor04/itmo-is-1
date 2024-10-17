@@ -10,50 +10,31 @@ import { CartesianGrid, Scatter, ScatterChart, XAxis, YAxis } from "recharts";
 type Props = {
   humans: Array<FetchedHumanBeing>;
 };
-
-function distinct(values: Array<number>) {
-  return Array.from(new Set(values));
-}
-
-function useHumansChartConfig(humans: Array<FetchedHumanBeing>): ChartConfig {
-  const ownerIds = distinct(humans.map((it) => it.ownerId));
-  return ownerIds.reduce(
-    (acc, it) => ({
-      ...acc,
-      [it]: {
-        label: it,
-        color: "#00ff00",
-      },
-    }),
-    {},
-  );
+const stringToColour = (str: string) => {
+  let hash = 0;
+  str.split('').forEach(char => {
+    hash = char.charCodeAt(0) + ((hash << 5) - hash)
+  })
+  let colour = '#'
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xff
+    colour += value.toString(16).padStart(2, '0')
+  }
+  console.log(colour)
+  return colour
 }
 
 export function HumansVisualization({ humans }: Props) {
-  const humansFlattened = humans.map((it) => ({
-    ...it,
-    x: it.coordinates.x,
-    y: it.coordinates.y,
-  }));
-  const owners = distinct(humans.map((it) => it.ownerId));
-  const config = useHumansChartConfig(humans);
-  console.log(config);
-  console.log(humansFlattened);
   return (
-    <ChartContainer config={config} className="min-h-[400px] w-full">
+    <ChartContainer config={{}} className="min-h-[400px] w-full">
       <ScatterChart>
         <CartesianGrid />
-        <XAxis dataKey="x" />
-        <YAxis dataKey="y" />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        {owners.map((ownerId) => (
-          <Scatter
-            fill="red"
-            key={ownerId}
-            name={String(ownerId)}
-            data={humansFlattened.filter((it) => it.ownerId == ownerId)}
-          />
-        ))}
+        <XAxis dataKey="x" label="X" type="number" />
+        <YAxis dataKey="y" label="Y" type="number" />
+        <ChartTooltip content={<ChartTooltipContent labelKey="name" />} />
+        {humans.map(it => <Scatter data={[it.coordinates]} name={it.name} fill={stringToColour(String(it.ownerId * 51324))} key={it.id} onClick={() => {
+          console.log("edit id ", it.id)
+        }}  />)}
       </ScatterChart>
     </ChartContainer>
   );
