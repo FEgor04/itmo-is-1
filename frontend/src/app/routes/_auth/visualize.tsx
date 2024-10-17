@@ -1,45 +1,38 @@
-import { getHumansQueryOptions, GetHumansQuerySchema } from '@/entities/human-being/api';
-import { CreateHumanBeingDialogContent } from '@/entities/human-being/ui/create';
-import { Button } from '@/shared/ui/button';
-import { CrudControlsHeader, CrudControlsRight } from '@/shared/ui/controls';
-import { Dialog } from '@/shared/ui/dialog';
-import { Input } from '@/shared/ui/input';
-import { PaginationFooter } from '@/shared/ui/pagination';
-import { DialogTrigger } from '@radix-ui/react-dialog';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router'
-import { SortingState } from '@tanstack/react-table';
-import { Gauge, PlusCircle, SearchIcon } from 'lucide-react';
-import { useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
-import { z } from 'zod';
+import {
+  getHumansQueryOptions,
+  GetHumansQuerySchema,
+} from "@/entities/human-being/api";
+import { CreateHumanBeingDialogContent } from "@/entities/human-being/ui/create";
+import { HumansVisualization } from "@/entities/human-being/ui/visualization";
+import { Button } from "@/shared/ui/button";
+import { CrudControlsHeader, CrudControlsRight } from "@/shared/ui/controls";
+import { Dialog } from "@/shared/ui/dialog";
+import { Input } from "@/shared/ui/input";
+import { PaginationFooter } from "@/shared/ui/pagination";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Gauge, PlusCircle, SearchIcon } from "lucide-react";
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import { z } from "zod";
 
 const SearchSchema = GetHumansQuerySchema;
 
-export const Route = createFileRoute('/_auth/visualize')({
+export const Route = createFileRoute("/_auth/visualize")({
   component: Page,
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     return context.queryClient.ensureQueryData(getHumansQueryOptions(deps));
   },
-})
-
+});
 
 function Page() {
   const query = Route.useSearch();
   const navigate = Route.useNavigate();
   const initialData = Route.useLoaderData();
   const { data } = useQuery({ ...getHumansQueryOptions(query), initialData });
-  const sortingState: SortingState =
-    query.sortDirection && query.sortBy
-      ? [
-          {
-            desc: query.sortDirection == "desc",
-            id: query.sortBy,
-          },
-        ]
-      : [];
 
   function setQuery(
     updater: (
@@ -110,6 +103,7 @@ function Page() {
         </CrudControlsRight>
       </CrudControlsHeader>
       <main>
+        <HumansVisualization humans={data.values} />
       </main>
       <PaginationFooter query={query} setQuery={setQuery} total={data.total} />
     </div>
