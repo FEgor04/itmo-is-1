@@ -2,10 +2,8 @@ name: Deploy
 on:
   release:
     types: [published]
-  push:
-    branches: [104-manual-deployment]
 env:
-  VERSION: ${{ github.sha }}
+  VERSION: ${{ github.event.release.tag_name }}
 
 jobs:
   build-frontend:
