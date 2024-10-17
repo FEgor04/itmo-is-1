@@ -27,6 +27,7 @@ export const BaseHumanBeingSchema = z.object({
 export const FetchedHumanBeingSchema = BaseHumanBeingSchema.extend({
   car: BaseCarSchema,
 });
+
 export const FetchedHumanBeingSchemaKeys = z.enum([
   "id",
   "name",

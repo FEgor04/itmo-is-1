@@ -12,7 +12,7 @@ type RouterContext = {
   queryClient: QueryClient;
 };
 
-import { Car, PanelLeft, User } from "lucide-react";
+import { Car, PanelLeft, User, ScatterChart } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/ui/sheet";
@@ -30,6 +30,7 @@ function LocationTitle() {
     "/cars": "Машины",
     "/humans": "Люди",
     "/requests": "Заявки",
+    "/visualize": "Визуализация",
   };
   return pathname in map ? map[pathname] : "";
 }
@@ -82,6 +83,25 @@ export function Dashboard() {
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">Машины</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                data-active={pathname.includes("/visualize")}
+                search={{
+                  page: 1,
+                  pageSize: 10,
+                  sortBy: "id",
+                  sortDirection: "asc",
+                }}
+                to="/visualize"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[active=true]:bg-accent md:h-8 md:w-8"
+              >
+                <ScatterChart className="h-5 w-5" />
+                <span className="sr-only">Визуализация</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Визуализация</TooltipContent>
           </Tooltip>
         </nav>
       </aside>

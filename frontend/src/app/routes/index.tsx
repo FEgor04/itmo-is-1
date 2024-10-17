@@ -5,15 +5,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: Page,
-  loader: async ({context}) => {
-    try { 
-      const principal = await context.queryClient.ensureQueryData(getPrincipalQueryOptions())
-      return principal
-    }
-    catch {
+  loader: async ({ context }) => {
+    try {
+      const principal = await context.queryClient.ensureQueryData(
+        getPrincipalQueryOptions(),
+      );
+      return principal;
+    } catch {
       // User is not authenticated. Swalling the exception
     }
-  }
+  },
 });
 
 function Page() {
@@ -44,23 +45,29 @@ function Page() {
 }
 
 function CallToAction() {
-  const initialData = Route.useLoaderData()
-  const { data } = useQuery({...getPrincipalQueryOptions(), initialData})
+  const initialData = Route.useLoaderData();
+  const { data } = useQuery({ ...getPrincipalQueryOptions(), initialData });
 
-  if(data) {
-    return <div>
-    <Button asChild>
-    <Link to="/humans" search={{page: 1, pageSize: 10}}>Вперед к круду!</Link>
-    </Button>
-    </div>
+  if (data) {
+    return (
+      <div>
+        <Button asChild>
+          <Link to="/humans" search={{ page: 1, pageSize: 10 }}>
+            Вперед к круду!
+          </Link>
+        </Button>
+      </div>
+    );
   }
 
-  return <div className="flex gap-4">
-          <Button asChild>
-            <Link to="/signup">Регистрация</Link>
-          </Button>
-          <Button asChild variant="link">
-            <Link to="/signin">Вход</Link>
-          </Button>
-        </div>
+  return (
+    <div className="flex gap-4">
+      <Button asChild>
+        <Link to="/signup">Регистрация</Link>
+      </Button>
+      <Button asChild variant="link">
+        <Link to="/signin">Вход</Link>
+      </Button>
+    </div>
+  );
 }
