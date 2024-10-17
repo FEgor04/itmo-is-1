@@ -30,6 +30,7 @@ function LocationTitle() {
     "/cars": "Машины",
     "/humans": "Люди",
     "/requests": "Заявки",
+    "/visualize": "Визуализация",
   };
   return pathname in map ? map[pathname] : "";
 }
