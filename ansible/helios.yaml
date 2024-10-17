@@ -16,10 +16,20 @@
         src: '{{ jar_src }}'
         dest: /home/studs/s367581/is/lab1/lab1-{{ version }}.jar
         mode: u=rw,go=r
+    - name: Copy start script
+      ansible.builtin.template:
+        src: ./start.j2
+        dest: /home/studs/s367581/is/lab1/start.sh
+        mode: u=rwx,go-rwx
+    - name: Copy stop script
+      ansible.builtin.template:
+        src: ./stop.j2
+        dest: /home/studs/s367581/is/lab1/stop.sh
+        mode: u=rwx,go-rwx
     - name: Kill previous version
       ignore_errors: true
       ansible.builtin.shell:
-        cmd: kill `cat /home/studs/s367581/is/lab1/pidfile` && rm /home/studs/s367581/is/lab1/pidfile
+        cmd: /home/studs/s367581/is/lab1/stop.sh
         removes: /home/studs/s367581/is/lab1/pidfile
     - name: Copy configuration
       ansible.builtin.template:
@@ -29,5 +39,5 @@
     - name: Start new version
       ansible.builtin.shell:
         chdir: /home/studs/s367581/is/lab1
-        cmd: "nohup java -XX:MaxHeapSize=512m -jar lab1-{{ version }}.jar 2>&1 >> log & echo $! > /home/studs/s367581/is/lab1/pidfile"
+        cmd: ./start.sh
         creates: /home/studs/s367581/is/lab1/pidfile
