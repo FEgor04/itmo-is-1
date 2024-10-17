@@ -14,7 +14,7 @@ data class User(
 
     override fun getAuthorities(): Collection<SimpleGrantedAuthority> {
         val list = mutableListOf<SimpleGrantedAuthority>()
-        list.add(SimpleGrantedAuthority("ROLE${role.name.uppercase()}"))
+        list.add(SimpleGrantedAuthority(role.toString()))
         return list
     }
 
