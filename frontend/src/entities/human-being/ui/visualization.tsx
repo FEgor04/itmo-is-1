@@ -41,10 +41,10 @@ export function HumansVisualization({ humans }: Props) {
     <ChartContainer config={{}} className="min-h-[400px] w-full mx-auto">
       <ScatterChart>
         <CartesianGrid />
-        <XAxis dataKey="x" label="X" type="number" />
-        <YAxis dataKey="y" label="Y" type="number" />
-        <ChartTooltip content={<ChartTooltipContent labelKey="name" />} />
-        {humans.map(it => <Scatter data={[it.coordinates]} name={it.name} fill={stringToColour(String(it.ownerId * 51324))} key={it.id} onClick={() => {
+        <XAxis dataKey="x"  type="number" tickLine={false} tickMargin={10} axisLine={false} />
+        <YAxis dataKey="y" type="number" width={0}  tickLine={false} tickMargin={10} axisLine={false} />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        {humans.map(it => <Scatter  data={[it.coordinates]} name={it.name} fill={stringToColour(String(it.ownerId * 51324))} key={it.id} onClick={() => {
           setHumanBeing(it)
         }}  />)}
       </ScatterChart>
