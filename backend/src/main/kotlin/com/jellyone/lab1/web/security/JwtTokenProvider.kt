@@ -114,6 +114,19 @@ class JwtTokenProvider(
             .payload.subject
     }
 
+     fun getAuthorities(token: String): List<String> {
+         val rolesString = parser()
+             .verifyWith(key)
+             .build()
+             .parseSignedClaims(token)
+             .payload["roles"].toString()
+
+         return rolesString
+             .removeSurrounding("[", "]")
+             .split(",")
+             .map { it.trim() }
+    }
+
     fun getAuthentication(token: String): Authentication {
         val userName = getUserName(token)
         val userDetails: UserDetails = userDetailsService.loadUserByUsername(userName)

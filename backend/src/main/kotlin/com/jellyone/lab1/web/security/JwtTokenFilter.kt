@@ -33,7 +33,7 @@ class JwtTokenFilter(
         var bearerToken = httpRequest.getHeader("Authorization")
 
         val uri = httpRequest.requestURI
-        if(!uri.contains("/api")) {
+        if (!uri.contains("/api")) {
             logger.info("Request to static, passing it")
             filterChain.doFilter(servletRequest, servletResponse)
             return
@@ -53,8 +53,7 @@ class JwtTokenFilter(
                         SecurityContextHolder.getContext().authentication = it
                     }
                 }
-                val user = userService.getByUsername(authenticationFacade.getAuthName())
-                if (user.role == Role.ADMIN) {
+                if (jwtTokenProvider.getAuthorities(bearerToken).contains(Role.ADMIN.toString())) {
                     authenticationFacade.setAdminRole()
                 }
             } else {
