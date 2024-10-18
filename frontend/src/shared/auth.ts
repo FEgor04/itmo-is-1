@@ -147,8 +147,7 @@ async function refreshAccessTokenFn(
   // need to create new Api in order to escape refreshing loop
   const { data: rawValues } = await new Api({ baseURL: "/" }).api.refresh(
     refreshToken,
-    { type: ContentType.Text
-    }
+    { type: ContentType.Text },
   );
   return RefreshTokenResponseSchema.parse(rawValues);
 }
