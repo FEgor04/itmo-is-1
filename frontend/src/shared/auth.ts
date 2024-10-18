@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { ApiInstance } from "./instance";
-import axios from "axios";
+import { Api, ContentType } from "./api.gen";
 
 export function setSession(session: {
   accessToken: string;
@@ -9,6 +9,9 @@ export function setSession(session: {
 }) {
   localStorage.setItem("accessToken", session.accessToken);
   localStorage.setItem("refreshToken", session.refreshToken);
+  setTimeout(() => {
+    localStorage.removeItem("accessToken");
+  }, 5000);
 }
 
 export function getAccessToken() {
@@ -141,9 +144,11 @@ const RefreshTokenResponseSchema = SignInResponseSchema;
 async function refreshAccessTokenFn(
   refreshToken: string,
 ): Promise<SessionData> {
-  const { data: rawValues } = await axios.post<{ access: string }>(
-    "/api/refresh",
+  // need to create new Api in order to escape refreshing loop
+  const { data: rawValues } = await new Api({ baseURL: "/" }).api.refresh(
     refreshToken,
+    { type: ContentType.Text
+    }
   );
   return RefreshTokenResponseSchema.parse(rawValues);
 }

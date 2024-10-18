@@ -275,6 +275,21 @@ export interface SignUpRequest {
   password: string;
 }
 
+/** JWT Response */
+export interface JwtResponse {
+  /**
+   * User ID
+   * @format int64
+   */
+  id: number;
+  /** Username */
+  username: string;
+  /** Access token */
+  accessToken: string;
+  /** Refresh token */
+  refreshToken: string;
+}
+
 /** Error message model */
 export interface ErrorMessage {
   /**
@@ -291,21 +306,6 @@ export interface ErrorMessage {
   description: string;
   /** @example "The requested resource could not be found" */
   message: string;
-}
-
-/** JWT Response */
-export interface JwtResponse {
-  /**
-   * User ID
-   * @format int64
-   */
-  id: number;
-  /** Username */
-  username: string;
-  /** Access token */
-  accessToken: string;
-  /** Refresh token */
-  refreshToken: string;
 }
 
 export interface SignInRequest {
