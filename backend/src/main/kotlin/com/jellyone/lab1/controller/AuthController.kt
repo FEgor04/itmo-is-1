@@ -21,6 +21,7 @@ import jakarta.validation.constraints.NotBlank
 import lombok.RequiredArgsConstructor
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 import java.security.Principal
 
 
@@ -88,7 +89,8 @@ class AuthController(
         operationId = "refresh"
     )
     fun refresh(
-        @Valid @RequestBody @NotBlank
+        @RequestBody
+        @Valid @SwaggerRequestBody(content = arrayOf(Content(mediaType = "text/plain"))) @NotBlank
         @Parameter(description = "Refresh token used to generate a new JWT token", required = true) refreshToken: String
     ): JwtResponse {
         return authService.refresh(refreshToken)

@@ -104,10 +104,10 @@ function Page() {
         </CrudControlsRight>
       </CrudControlsHeader>
       <main>
-      <Card>
-      <CardContent>
-        <HumansVisualization humans={data.values} />
-      </CardContent>
+        <Card>
+          <CardContent>
+            <HumansVisualization humans={data.values} />
+          </CardContent>
         </Card>
       </main>
       <PaginationFooter query={query} setQuery={setQuery} total={data.total} />

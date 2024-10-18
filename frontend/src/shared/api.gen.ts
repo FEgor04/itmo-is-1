@@ -275,6 +275,21 @@ export interface SignUpRequest {
   password: string;
 }
 
+/** JWT Response */
+export interface JwtResponse {
+  /**
+   * User ID
+   * @format int64
+   */
+  id: number;
+  /** Username */
+  username: string;
+  /** Access token */
+  accessToken: string;
+  /** Refresh token */
+  refreshToken: string;
+}
+
 /** Error message model */
 export interface ErrorMessage {
   /**
@@ -291,21 +306,6 @@ export interface ErrorMessage {
   description: string;
   /** @example "The requested resource could not be found" */
   message: string;
-}
-
-/** JWT Response */
-export interface JwtResponse {
-  /**
-   * User ID
-   * @format int64
-   */
-  id: number;
-  /** Username */
-  username: string;
-  /** Access token */
-  accessToken: string;
-  /** Refresh token */
-  refreshToken: string;
 }
 
 export interface SignInRequest {
@@ -907,6 +907,23 @@ export class Api<
     me: (params: RequestParams = {}) =>
       this.request<GetMeResponse, GetMeResponse>({
         path: `/api/me`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Get current admin-user
+     *
+     * @tags User Management
+     * @name CheckAdmin
+     * @summary Get current admin-user
+     * @request GET:/api/amIAdmin
+     * @secure
+     */
+    checkAdmin: (params: RequestParams = {}) =>
+      this.request<GetMeResponse, GetMeResponse>({
+        path: `/api/amIAdmin`,
         method: "GET",
         secure: true,
         ...params,
