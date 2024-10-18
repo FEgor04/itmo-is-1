@@ -54,9 +54,9 @@ class HumanBeingControllerTest {
         }
     }
 
-    fun registerTestUser() {
-        val signUpRequest = SignUpRequest(username = "testuser", password = "password")
-        RestAssured.given()
+    fun registerTestUser(username: String = "testuser", password: String = "password"): JwtResponse {
+        val signUpRequest = SignUpRequest(username, password)
+        val jwtResponse = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(signUpRequest)
             .accept(ContentType.JSON)
@@ -64,10 +64,13 @@ class HumanBeingControllerTest {
             .post("/api/auth/register")
             .then()
             .statusCode(HttpStatus.OK.value())
+            .extract()
+            .`as`(JwtResponse::class.java)
+        return jwtResponse
     }
 
-    private fun loginUser() {
-        val loginRequest = JwtRequest(username = "testuser", password = "password")
+    private fun loginUser(username: String = "testuser", password: String = "password") {
+        val loginRequest = JwtRequest(username, password)
         val response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(loginRequest)
@@ -205,7 +208,24 @@ class HumanBeingControllerTest {
             .statusCode(HttpStatus.NOT_FOUND.value())
     }
 
-    private fun createTestHuman(): HumanBeingDto {
+    @Test
+    fun `should not delete other user's human`() {
+        val owner = registerTestUser("user1", "pass1")
+        val actor = registerTestUser("user2", "pass")
+        val human = createTestHuman(owner.accessToken)
+        assert(human.ownerId != actor.id)
+        assert(human.ownerId == owner.id)
+
+        RestAssured.given()
+            .header("Authorization", "Bearer $${actor.accessToken}") // Add the JWT token to the header
+            .accept(ContentType.JSON)
+            .`when`()
+            .delete("/api/humans/${human.id}")
+            .then()
+            .statusCode(HttpStatus.FORBIDDEN.value())
+    }
+
+    private fun createTestHuman(overrideJwtToken: String? = null): HumanBeingDto {
         val createdCar = createTestCar()
 
         val createDto = CreateHumanBeingDto(
@@ -221,7 +241,7 @@ class HumanBeingControllerTest {
         )
 
         val response = RestAssured.given()
-            .header("Authorization", "Bearer $jwtToken") // Add the JWT token to the header
+            .header("Authorization", "Bearer ${overrideJwtToken ?: jwtToken}") // Add the JWT token to the header
             .contentType(ContentType.JSON)
             .body(createDto)
             .accept(ContentType.JSON)
