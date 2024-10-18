@@ -161,7 +161,7 @@ export function Dashboard() {
         </header>
         <main className="flex-1 items-start p-4 sm:px-6 sm:py-0">
           <Outlet />
-          {import.meta.env.PROD && <TanStackRouterDevtools />}
+          {import.meta.env.DEV && <TanStackRouterDevtools />}
         </main>
       </div>
     </div>
