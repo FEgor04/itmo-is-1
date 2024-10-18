@@ -225,6 +225,38 @@ class HumanBeingControllerTest {
             .statusCode(HttpStatus.FORBIDDEN.value())
     }
 
+    @Test
+    fun `should not update other user's human`() {
+        val owner = registerTestUser("user1", "pass1")
+        val actor = registerTestUser("user2", "pass")
+        val human = createTestHuman(owner.accessToken)
+        assert(human.ownerId != actor.id)
+        assert(human.ownerId == owner.id)
+
+        RestAssured.given()
+            .header("Authorization", "Bearer $${owner.accessToken}")
+            .accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
+            .body(
+                PutHumanBeingDto(
+                    null,
+                    human.name,
+                    human.x,
+                    human.y,
+                    human.realHero,
+                    human.hasToothpick,
+                    human.car.id,
+                    human.mood,
+                    human.impactSpeed,
+                    human.weaponType
+                )
+            )
+            .`when`()
+            .put("/api/humans/${human.id}")
+            .then()
+            .statusCode(HttpStatus.FORBIDDEN.value())
+    }
+
     private fun createTestHuman(overrideJwtToken: String? = null): HumanBeingDto {
         val createdCar = createTestCar()
 
