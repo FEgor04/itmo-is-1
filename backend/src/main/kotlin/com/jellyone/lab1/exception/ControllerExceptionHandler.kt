@@ -68,14 +68,14 @@ class ControllerExceptionHandler {
         return ResponseEntity(message, HttpStatus.UNAUTHORIZED)
     }
 
-    @ExceptionHandler(value = [IllegalStateException::class, OwnerPermissionsConflictException::class])
+    @ExceptionHandler(value = [IllegalStateException::class])
     fun illegalStateExceptionHandler(ex: Exception, request: WebRequest): ResponseEntity<ErrorMessage> {
         val message =
             ex.message?.let { ErrorMessage(HttpStatus.CONFLICT.value(), Date(), request.getDescription(false), it) }
         return ResponseEntity(message, HttpStatus.CONFLICT)
     }
 
-    @ExceptionHandler(value = [AccessDeniedException::class])
+    @ExceptionHandler(value = [AccessDeniedException::class, OwnerPermissionsConflictException::class])
     fun accessDeniedExceptionHandler(ex: Exception, request: WebRequest): ResponseEntity<ErrorMessage> {
         val message = ex.message?.let { ErrorMessage(HttpStatus.FORBIDDEN.value(), Date(), ACCESS_DENIED, it) }
         return ResponseEntity(message, HttpStatus.FORBIDDEN)

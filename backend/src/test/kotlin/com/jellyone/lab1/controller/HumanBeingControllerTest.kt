@@ -82,7 +82,6 @@ class HumanBeingControllerTest {
             .extract()
             .`as`(JwtResponse::class.java)
 
-        // Save the JWT token for use in further requests
         jwtToken = response.accessToken
     }
 
@@ -210,14 +209,14 @@ class HumanBeingControllerTest {
 
     @Test
     fun `should not delete other user's human`() {
-        val owner = registerTestUser("user1", "pass1")
-        val actor = registerTestUser("user2", "pass")
+        val owner = registerTestUser("user4", "pass1")
+        val actor = registerTestUser("user5", "pass")
         val human = createTestHuman(owner.accessToken)
         assert(human.ownerId != actor.id)
         assert(human.ownerId == owner.id)
 
         RestAssured.given()
-            .header("Authorization", "Bearer $${actor.accessToken}") // Add the JWT token to the header
+            .header("Authorization", "Bearer ${actor.accessToken}")
             .accept(ContentType.JSON)
             .`when`()
             .delete("/api/humans/${human.id}")
@@ -227,15 +226,14 @@ class HumanBeingControllerTest {
 
     @Test
     fun `should not update other user's human`() {
-        val owner = registerTestUser("user1", "pass1")
-        val actor = registerTestUser("user2", "pass")
+        val owner = registerTestUser("user6", "pass1")
+        val actor = registerTestUser("user7", "pass")
         val human = createTestHuman(owner.accessToken)
         assert(human.ownerId != actor.id)
         assert(human.ownerId == owner.id)
 
         RestAssured.given()
-            .header("Authorization", "Bearer $${owner.accessToken}")
-            .accept(ContentType.JSON)
+            .header("Authorization", "Bearer ${actor.accessToken}")
             .contentType(ContentType.JSON)
             .body(
                 PutHumanBeingDto(
@@ -251,6 +249,7 @@ class HumanBeingControllerTest {
                     human.weaponType
                 )
             )
+            .accept(ContentType.JSON)
             .`when`()
             .put("/api/humans/${human.id}")
             .then()
