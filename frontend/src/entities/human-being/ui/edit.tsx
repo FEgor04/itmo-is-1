@@ -21,10 +21,14 @@ import { FetchedHumanBeing } from "../model";
 type Props = {
   humanBeing: FetchedHumanBeing;
   onClose: () => void;
-  disabled ?: boolean
+  disabled?: boolean;
 };
 
-export function EditHumanBeingDialogContent({ humanBeing, onClose, disabled = false }: Props) {
+export function EditHumanBeingDialogContent({
+  humanBeing,
+  onClose,
+  disabled = false,
+}: Props) {
   const form = useForm<z.infer<typeof EditHumanBeingSchema>>({
     resolver: zodResolver(EditHumanBeingSchema),
     defaultValues: {
@@ -42,8 +46,8 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose, disabled = fa
   const { mutate, isPending } = useEditHumanBeingMutation();
 
   function onSubmit(values: z.infer<typeof EditHumanBeingSchema>) {
-    if(disabled) {
-      return
+    if (disabled) {
+      return;
     }
     mutate(values, {
       onSuccess: () => {
@@ -189,7 +193,11 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose, disabled = fa
         </form>
       </Form>
       <DialogFooter>
-        <Button disabled={isPending || disabled} type="submit" form="edit-human-being-form">
+        <Button
+          disabled={isPending || disabled}
+          type="submit"
+          form="edit-human-being-form"
+        >
           Сохранить
         </Button>
       </DialogFooter>

@@ -30,7 +30,7 @@ const stringToColour = (str: string) => {
 };
 
 export function HumansVisualization({ humans }: Props) {
-  const {data: principal} = useQuery(getPrincipalQueryOptions())
+  const { data: principal } = useQuery(getPrincipalQueryOptions());
   const [humanBeing, setHumanBeing] = useState<FetchedHumanBeing | undefined>();
 
   if (humans.length == 0) {
@@ -74,7 +74,9 @@ export function HumansVisualization({ humans }: Props) {
       <Dialog open={!!humanBeing} onOpenChange={() => setHumanBeing(undefined)}>
         {humanBeing && (
           <EditHumanBeingDialogContent
-            disabled={principal?.id === undefined || principal.id != humanBeing.ownerId}
+            disabled={
+              principal?.id === undefined || principal.id != humanBeing.ownerId
+            }
             humanBeing={humanBeing}
             onClose={() => setHumanBeing(undefined)}
           />
