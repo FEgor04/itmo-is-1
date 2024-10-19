@@ -24,7 +24,7 @@ type Props = {
   value: CarID | undefined;
   onChange: (value: CarID | undefined) => void;
   className?: string;
-};
+} & React.ComponentProps<typeof Button>;
 
 export function SelectCar({ value, onChange, ...props }: Props) {
   const [open, setOpen] = React.useState(false);
