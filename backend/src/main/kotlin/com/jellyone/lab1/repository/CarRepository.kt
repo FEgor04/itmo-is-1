@@ -5,16 +5,19 @@ import io.swagger.v3.oas.annotations.media.Schema
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 class CarRepository(private val dsl: DSLContext) {
 
+    @Transactional
     fun findById(id: Long): Car? {
         return dsl.selectFrom("car")
             .where(DSL.field("id").eq(id))
             .fetchOneInto(Car::class.java)
     }
 
+    @Transactional
     fun findAll(
         page: Int,
         pageSize: Int,
@@ -68,6 +71,7 @@ class CarRepository(private val dsl: DSLContext) {
         COLOR("color"),
     }
 
+    @Transactional
     fun save(car: Car): Car {
         val record = dsl.insertInto(DSL.table("car"))
             .set(DSL.field("color"), car.color)
@@ -83,6 +87,7 @@ class CarRepository(private val dsl: DSLContext) {
         return car.copy(id = id)
     }
 
+    @Transactional
     fun update(car: Car): Car? {
         if (findById(car.id ?: return null) == null) return null
 
@@ -98,6 +103,7 @@ class CarRepository(private val dsl: DSLContext) {
         return car
     }
 
+    @Transactional
     fun deleteById(id: Long): Boolean {
         // Сначала находим всех human_being, связанных с данной машиной
         val humanBeings = dsl.selectFrom("human_being")

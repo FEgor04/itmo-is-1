@@ -5,10 +5,12 @@ import com.jellyone.lab1.domain.enums.AdminRequestStatus
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 class AdminRequestRepository(private val dsl: DSLContext) {
 
+    @Transactional
     fun save(request: AdminRequest) {
         dsl.insertInto(DSL.table("admin_requests"))
             .set(DSL.field("username"), request.username)
@@ -17,7 +19,7 @@ class AdminRequestRepository(private val dsl: DSLContext) {
             .execute()
     }
 
-
+    @Transactional
     fun findById(id: Long): AdminRequest {
         val result = dsl.select(DSL.field("id"), DSL.field("username"), DSL.field("password"), DSL.field("status"))
             .from(DSL.table("admin_requests"))
@@ -34,6 +36,7 @@ class AdminRequestRepository(private val dsl: DSLContext) {
         } ?: throw NoSuchElementException("Request with ID $id not found.")
     }
 
+    @Transactional
     fun findAll(
         page: Int,
         pageSize: Int,
@@ -72,6 +75,7 @@ class AdminRequestRepository(private val dsl: DSLContext) {
         )
     }
 
+    @Transactional
     fun update(request: AdminRequest) {
         val rowsUpdated = dsl.update(DSL.table("admin_requests"))
             .set(DSL.field("username"), request.username)
@@ -85,6 +89,7 @@ class AdminRequestRepository(private val dsl: DSLContext) {
         }
     }
 
+    @Transactional
     fun findAdminRequestStatusByUsername(username: String): AdminRequestStatus {
         val result = dsl.select(DSL.field("id"), DSL.field("username"), DSL.field("password"), DSL.field("status"))
             .from(DSL.table("admin_requests"))
@@ -96,6 +101,7 @@ class AdminRequestRepository(private val dsl: DSLContext) {
         } ?: AdminRequestStatus.NO_REQUEST
     }
 
+    @Transactional
     fun findAdminRequestByUsername(username: String): AdminRequest {
         val result = dsl.select(DSL.field("id"), DSL.field("username"), DSL.field("password"), DSL.field("status"))
             .from(DSL.table("admin_requests"))
