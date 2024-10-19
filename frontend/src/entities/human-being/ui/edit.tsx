@@ -21,9 +21,14 @@ import { FetchedHumanBeing } from "../model";
 type Props = {
   humanBeing: FetchedHumanBeing;
   onClose: () => void;
+  disabled?: boolean;
 };
 
-export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
+export function EditHumanBeingDialogContent({
+  humanBeing,
+  onClose,
+  disabled = false,
+}: Props) {
   const form = useForm<z.infer<typeof EditHumanBeingSchema>>({
     resolver: zodResolver(EditHumanBeingSchema),
     defaultValues: {
@@ -41,6 +46,9 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
   const { mutate, isPending } = useEditHumanBeingMutation();
 
   function onSubmit(values: z.infer<typeof EditHumanBeingSchema>) {
+    if (disabled) {
+      return;
+    }
     mutate(values, {
       onSuccess: () => {
         onClose();
@@ -69,6 +77,7 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <FormMessage />
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
@@ -80,6 +89,7 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <FormMessage />
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
@@ -91,6 +101,7 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <FormMessage />
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
@@ -105,6 +116,7 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <Label>Настоящий герой?</Label>
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
@@ -119,6 +131,7 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <Label>Зубочистка есть?</Label>
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
@@ -131,6 +144,7 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <FormMessage />
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
@@ -142,6 +156,7 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <FormMessage />
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
@@ -154,11 +169,12 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                 <FormMessage />
               </FormItem>
             )}
+            disabled={disabled}
           />
           <FormField
             control={form.control}
             name="car"
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { value, onChange, disabled } }) => (
               <FormItem>
                 <Label>Машина</Label>
                 <div>
@@ -166,16 +182,22 @@ export function EditHumanBeingDialogContent({ humanBeing, onClose }: Props) {
                     className="inline-flex w-full justify-between"
                     value={value}
                     onChange={onChange}
+                    disabled={disabled}
                   />
                 </div>
                 <FormMessage />
               </FormItem>
             )}
+            disabled={disabled}
           />
         </form>
       </Form>
       <DialogFooter>
-        <Button disabled={isPending} type="submit" form="edit-human-being-form">
+        <Button
+          disabled={isPending || disabled}
+          type="submit"
+          form="edit-human-being-form"
+        >
           Сохранить
         </Button>
       </DialogFooter>
