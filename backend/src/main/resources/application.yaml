@@ -17,4 +17,6 @@ security:
         refresh: ${JWT_REFRESH_TTL}
 logging:
     level:
+        com.jellyone.lab1: DEBUG
+        org.springframework: INFO
         org.springframework.security: ERROR
