@@ -10,10 +10,10 @@ BACKEND_IMAGE_NAME ?= is1-backend
 # They are separated so that you could update backend and frontend
 # independetly
 FRONTEND_VERSION ?= 0.2.3
-BACKEND_VERSION ?= 0.1.10
+BACKEND_VERSION ?= 0.1.11
 
 # Version of application that will be deployed to Customer server (i.e. Helios)
-VERSION ?= 0.3.1
+VERSION ?= 0.3.2
 
 REGISTRY_URI ?= registry
 
