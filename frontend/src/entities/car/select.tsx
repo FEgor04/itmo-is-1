@@ -10,7 +10,7 @@ import {
   CommandLoading,
 } from "@/shared/ui/command";
 import { cn } from "@/shared/lib";
-import { Button } from "@/shared/ui/button";
+import { Button, ButtonProps } from "@/shared/ui/button";
 import { ChevronsUpDown, Check } from "lucide-react";
 import { z } from "zod";
 import { BaseCarSchema } from "./model";
@@ -24,7 +24,7 @@ type Props = {
   value: CarID | undefined;
   onChange: (value: CarID | undefined) => void;
   className?: string;
-};
+} & React.ComponentProps<typeof Button>;
 
 export function SelectCar({ value, onChange, ...props }: Props) {
   const [open, setOpen] = React.useState(false);

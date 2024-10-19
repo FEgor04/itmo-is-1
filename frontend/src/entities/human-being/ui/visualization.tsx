@@ -8,6 +8,8 @@ import { CartesianGrid, Scatter, ScatterChart, XAxis, YAxis } from "recharts";
 import { useState } from "react";
 import { Dialog } from "@/shared/ui/dialog";
 import { EditHumanBeingDialogContent } from "./edit";
+import { useQuery } from "@tanstack/react-query";
+import { getPrincipalQueryOptions } from "@/entities/principal/api.ts";
 
 type Props = {
   humans: Array<FetchedHumanBeing>;
@@ -28,6 +30,7 @@ const stringToColour = (str: string) => {
 };
 
 export function HumansVisualization({ humans }: Props) {
+  const {data: principal} = useQuery(getPrincipalQueryOptions())
   const [humanBeing, setHumanBeing] = useState<FetchedHumanBeing | undefined>();
 
   if (humans.length == 0) {
@@ -71,6 +74,7 @@ export function HumansVisualization({ humans }: Props) {
       <Dialog open={!!humanBeing} onOpenChange={() => setHumanBeing(undefined)}>
         {humanBeing && (
           <EditHumanBeingDialogContent
+            disabled={principal?.id === undefined || principal.id != humanBeing.ownerId}
             humanBeing={humanBeing}
             onClose={() => setHumanBeing(undefined)}
           />
