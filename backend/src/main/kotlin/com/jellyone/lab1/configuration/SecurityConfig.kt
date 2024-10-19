@@ -29,7 +29,8 @@ class ApplicationConfig(
     @Lazy private val tokenProvider: JwtTokenProvider,
     private val applicationContext: ApplicationContext,
     private val authenticationFacade: IAuthenticationFacade,
-    @Lazy private val userService: UserService
+    @Lazy private val userService: UserService,
+    private val requestIdFilter: RequestIdFilter
 ) {
 
     @Bean
@@ -59,6 +60,7 @@ class ApplicationConfig(
                     .anyRequest().authenticated()
             }
             .anonymous { it.disable() }
+            .addFilterBefore(requestIdFilter, UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(
                 JwtTokenFilter(tokenProvider, authenticationFacade, userService),
                 UsernamePasswordAuthenticationFilter::class.java
