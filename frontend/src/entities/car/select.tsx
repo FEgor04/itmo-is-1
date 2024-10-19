@@ -10,7 +10,7 @@ import {
   CommandLoading,
 } from "@/shared/ui/command";
 import { cn } from "@/shared/lib";
-import { Button, ButtonProps } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button";
 import { ChevronsUpDown, Check } from "lucide-react";
 import { z } from "zod";
 import { BaseCarSchema } from "./model";
