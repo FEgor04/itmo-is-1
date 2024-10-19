@@ -6,8 +6,10 @@ plugins {
 	kotlin("plugin.jpa") version "1.9.25"
 }
 
+fun removeVIfFirst(s: String) = if (s.startsWith("v")) s.removePrefix("v") else s
+
 group = "com.jellyone"
-version = System.getenv("VERSION") ?: "latest"
+version = removeVIfFirst(System.getenv("VERSION") ?: "latest")
 
 java {
 	toolchain {
