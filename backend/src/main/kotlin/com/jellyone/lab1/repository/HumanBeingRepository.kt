@@ -8,12 +8,14 @@ import com.jellyone.lab1.domain.enums.WeaponType
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.sql.Date
 import java.time.LocalDate
 
 @Repository
 class HumanBeingRepository(private val dsl: DSLContext) {
 
+    @Transactional
     fun findById(id: Long): HumanBeing? {
         return dsl.selectFrom("human_being")
             .where(DSL.field("id").eq(id))
@@ -22,6 +24,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
             }
     }
 
+    @Transactional
     fun findAll(
         page: Int,
         pageSize: Int,
@@ -108,6 +111,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         )
     }
 
+    @Transactional
     fun save(humanBeing: HumanBeing): HumanBeing {
         val record = dsl.insertInto(DSL.table("human_being"))
             .set(DSL.field("name"), humanBeing.name)
@@ -129,6 +133,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         return humanBeing.copy(id = id)
     }
 
+    @Transactional
     fun update(humanBeing: HumanBeing): HumanBeing? {
         if (findById(humanBeing.id ?: return null) == null) return null
 
@@ -150,6 +155,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         return humanBeing
     }
 
+    @Transactional
     fun deleteById(id: Long): Boolean {
         val rowsDeleted = dsl.deleteFrom(DSL.table("human_being"))
             .where(DSL.field("id").eq(id))
@@ -157,7 +163,8 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         return rowsDeleted > 0
     }
 
-    private fun createHumanBeingFromResult(result: org.jooq.Record): HumanBeing {
+    @Transactional
+     fun createHumanBeingFromResult(result: org.jooq.Record): HumanBeing {
         val coordinates = Coordinates(
             x = result.get("x") as Double,
             y = result.get("y") as Double
@@ -181,8 +188,8 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         )
     }
 
-
-    private fun fetchCarById(carId: Long): Car {
+    @Transactional
+     fun fetchCarById(carId: Long): Car {
         return dsl.selectFrom("car")
             .where(DSL.field("id").eq(carId))
             .fetchOneInto(Car::class.java) ?: throw IllegalArgumentException("Car with id $carId not found")

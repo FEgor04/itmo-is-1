@@ -5,10 +5,11 @@ import com.jellyone.lab1.domain.enums.Role
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 class UserRepository(private val dsl: DSLContext) {
-
+    @Transactional
     fun findByUsername(username: String): User? {
         val result = dsl.select(DSL.field("id"), DSL.field("username"), DSL.field("password"), DSL.field("role"))
             .from(DSL.table("users"))
@@ -24,20 +25,20 @@ class UserRepository(private val dsl: DSLContext) {
             )
         }
     }
-
+    @Transactional
     fun findById(id: Long): User? {
         return dsl.selectFrom("users")
             .where(DSL.field("id").eq(id))
             .fetchOneInto(User::class.java)
     }
-
+    @Transactional
     fun countByRole(role: String): Int {
         return dsl.selectCount()
             .from(DSL.table("users"))
             .where(DSL.field("role").eq(role))
             .fetchOne(0, Int::class.java) ?: 0
     }
-
+    @Transactional
     fun save(user: User) {
         dsl.insertInto(DSL.table("users"))
             .set(DSL.field("username"), user.username)
@@ -45,7 +46,7 @@ class UserRepository(private val dsl: DSLContext) {
             .set(DSL.field("role"), user.role.name)
             .execute()
     }
-
+    @Transactional
     fun update(user: User): User? {
         if (findByUsername(user.username) != null) {
             dsl.update(DSL.table("users"))
