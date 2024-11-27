@@ -10,7 +10,7 @@
           - sudo
     - name: Make sure directory for is exists
       ansible.builtin.file:
-        dest: /opt/is
+        dest: /opt/is/lab1
         owner: infsystem-lab1
         group: infsystem-lab1
         state: directory
