@@ -29,7 +29,7 @@
       ansible.builtin.git:
         dest: /opt/is/lab1
         repo: https://github.com/FEgor04/itmo-is-1.git
-        version: {version}
+        version: '{{ version }}'
         force: true
     - name: Set git repo permissions
       ansible.builtin.file:
