@@ -8,7 +8,8 @@ x-healthcheck: &healthcheck
 x-healthy: &healthy
   condition: service_healthy
 
-networks: traefik-ingress:
+networks:
+  traefik-ingress:
     external: true
   internal:
     external: false
