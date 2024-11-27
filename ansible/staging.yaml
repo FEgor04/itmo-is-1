@@ -22,13 +22,14 @@
   vars:
     staging_host: lab1.efedorov.spb.su
     registry_uri: fegor04
+    version: main
   tasks:
     - name: Clone git repo
       become_user: infsystem-lab1
       ansible.builtin.git:
         dest: /opt/is/lab1
         repo: https://github.com/FEgor04/itmo-is-1.git
-        version: main
+        version: '{{ version }}'
         force: true
     - name: Set git repo permissions
       ansible.builtin.file:
@@ -51,6 +52,9 @@
         owner: infsystem-lab1
         group: infsystem-lab1
         mode: u=rw,go-rwx
+    - name: Create traefik-ingress network
+      docker_network:
+        name: traefik-ingress
     - name: Restart docker services
       ansible.builtin.command:
         chdir: /opt/is/lab1

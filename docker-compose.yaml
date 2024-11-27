@@ -8,6 +8,12 @@ x-healthcheck: &healthcheck
 x-healthy: &healthy
   condition: service_healthy
 
+networks:
+  traefik-ingress:
+    external: true
+  internal:
+    external: false
+
 services:
   frontend:
     image: ${FRONTEND_IMAGE}
@@ -16,11 +22,14 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
     labels:
       - traefik.enable=true
-      - traefik.http.routers.frontend.entrypoints=webSecure
-      - traefik.http.routers.frontend.rule=PathPrefix(`/`)&&Host(`${HOST}`)
-      - traefik.http.services.frontend.loadbalancer.server.port=80
-      - traefik.http.routers.frontend.tls=true
-      - traefik.http.routers.frontend.tls.certresolver=letsEncrypt
+      - traefik.http.routers.lab1-frontend.entrypoints=webSecure
+      - traefik.http.routers.lab1-frontend.rule=PathPrefix(`/`)&&Host(`${HOST}`)
+      - traefik.http.services.lab1-frontend.loadbalancer.server.port=80
+      - traefik.http.routers.lab1-frontend.tls=true
+      - traefik.http.routers.lab1-frontend.tls.certresolver=letsEncrypt
+    networks:
+      - traefik-ingress
+
   backend:
     image: ${BACKEND_IMAGE}
     environment:
@@ -33,14 +42,18 @@ services:
       - JWT_REFRESH_TTL=${JWT_REFRESH_TTL}
     labels:
       - traefik.enable=true
-      - traefik.http.routers.backend.entrypoints=webSecure
-      - traefik.http.routers.backend.rule=PathPrefix(`/api`)&&Host(`${HOST}`)
-      - traefik.http.services.backend.loadbalancer.server.port=8080
-      - traefik.http.routers.backend.tls=true
-      - traefik.http.routers.backend.tls.certresolver=letsEncrypt
+      - traefik.http.routers.lab1-backend.entrypoints=webSecure
+      - traefik.http.routers.lab1-backend.rule=PathPrefix(`/api`)&&Host(`${HOST}`)
+      - traefik.http.services.lab1-backend.loadbalancer.server.port=8080
+      - traefik.http.routers.lab1-backend.tls=true
+      - traefik.http.routers.lab1-backend.tls.certresolver=letsEncrypt
     depends_on:
       postgres:
         condition: "service_healthy"
+    networks:
+      - traefik-ingress
+      - internal
+
   postgres:
     image: ${POSTGRES_IMAGE}
     healthcheck:
@@ -54,21 +67,9 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
-  ingress:
-    image: ${TRAEFIK_IMAGE}
-    ports:
-      - 80:80
-      - 443:443
-      - 8001:8001
-    labels:
-      - "traefik.enable=false"
-    volumes:
-      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik/letsEncrypt:/letsEncrypt
-    depends_on:
-      frontend:
-        <<: *healthy
+    networks:
+      - traefik-ingress
+      - internal
 
 volumes:
   pgdata:
