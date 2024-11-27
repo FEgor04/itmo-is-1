@@ -8,6 +8,11 @@ x-healthcheck: &healthcheck
 x-healthy: &healthy
   condition: service_healthy
 
+networks: traefik-ingress:
+    external: true
+  internal:
+    external: false
+
 services:
   frontend:
     image: ${FRONTEND_IMAGE}
@@ -21,6 +26,9 @@ services:
       - traefik.http.services.frontend.loadbalancer.server.port=80
       - traefik.http.routers.frontend.tls=true
       - traefik.http.routers.frontend.tls.certresolver=letsEncrypt
+    networks:
+      - traefik-ingress
+
   backend:
     image: ${BACKEND_IMAGE}
     environment:
@@ -41,6 +49,10 @@ services:
     depends_on:
       postgres:
         condition: "service_healthy"
+    networks:
+      - traefik-ingress
+      - internal
+
   postgres:
     image: ${POSTGRES_IMAGE}
     healthcheck:
@@ -54,21 +66,9 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
-  ingress:
-    image: ${TRAEFIK_IMAGE}
-    ports:
-      - 80:80
-      - 443:443
-      - 8001:8001
-    labels:
-      - "traefik.enable=false"
-    volumes:
-      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik/letsEncrypt:/letsEncrypt
-    depends_on:
-      frontend:
-        <<: *healthy
+    networks:
+      - traefik-ingress
+      - internal
 
 volumes:
   pgdata:

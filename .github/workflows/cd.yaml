@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "129-remove-traefik" ]
 
 jobs:
   image-frontend:
@@ -72,4 +72,6 @@ jobs:
           postgres_host=postgres:5432
           jwt_secret=${{ secrets.JWT_SECRET }}
           jwt_access_ttl=3600000
-          jwt_refresh_ttl=2592000000"
+          jwt_refresh_ttl=2592000000
+          version=${{ github.sha }}
+          "
