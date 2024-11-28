@@ -48,7 +48,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
                 .where(dslWhere)
         )
 
-        if(total == 0) {
+        if (total == 0) {
             return PaginatedResponse(page, pageSize, total, emptyList())
         }
         val records = dsl.select(
@@ -164,7 +164,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
     }
 
     @Transactional
-     fun createHumanBeingFromResult(result: org.jooq.Record): HumanBeing {
+    fun createHumanBeingFromResult(result: org.jooq.Record): HumanBeing {
         val coordinates = Coordinates(
             x = result.get("x") as Double,
             y = result.get("y") as Double
@@ -189,11 +189,19 @@ class HumanBeingRepository(private val dsl: DSLContext) {
     }
 
     @Transactional
-     fun fetchCarById(carId: Long): Car {
+    fun fetchCarById(carId: Long): Car {
         return dsl.selectFrom("car")
             .where(DSL.field("id").eq(carId))
             .fetchOneInto(Car::class.java) ?: throw IllegalArgumentException("Car with id $carId not found")
     }
+
+    @Transactional
+    fun countByName(name: String): Long {
+        return dsl.selectCount().from("human_being")
+            .where(DSL.field("name").eq(name))
+            .fetchOne(0, Long::class.java) ?: 0L
+    }
+
 
     private fun getLocalDateFromSqlDate(date: java.sql.Date): LocalDate {
         return date.toLocalDate()

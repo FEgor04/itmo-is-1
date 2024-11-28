@@ -8,11 +8,13 @@ import com.jellyone.lab1.domain.enums.WeaponType
 import com.jellyone.lab1.domain.logs.HumanBeingsLogs
 import com.jellyone.lab1.domain.logs.LogAction
 import com.jellyone.lab1.exception.OwnerPermissionsConflictException
+import com.jellyone.lab1.exception.ResourceAlreadyExistsException
 import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository
+import com.jellyone.lab1.service.props.HumanBeingProperties
 import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -24,9 +26,9 @@ class HumanBeingService(
     private val carRepository: CarRepository,
     private val humanBeingMapper: HumanBeingMapper,
     private val userService: UserService,
-    private val logsService: LogsService
+    private val logsService: LogsService,
+    private val humanBeingProperties: HumanBeingProperties
 ) {
-
     fun getAllHumans(
         page: Int,
         pageSize: Int,
@@ -44,6 +46,10 @@ class HumanBeingService(
     fun createHuman(humanBeing: CreateHumanBeingRequest): HumanBeing {
         val car: Car = carRepository.findById(humanBeing.carId)
             ?: throw ResourceNotFoundException("Car not found with id ${humanBeing.carId}")
+
+        if (checkNameIsUnique(humanBeing.name)) {
+            throw ResourceAlreadyExistsException("Human with name $humanBeing.name already exists")
+        }
 
         val humanBeing =
             humanBeingRepository.save(humanBeingMapper.fromCreateHumanBeingRequestToEntity(humanBeing, car))
@@ -66,6 +72,9 @@ class HumanBeingService(
         val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
         if (!checkOwner(user.id, existingHumanBeing.ownerId, user.role)) {
             throw OwnerPermissionsConflictException()
+        }
+        if (checkNameIsUnique(humanBeingDto.name)) {
+            throw ResourceAlreadyExistsException("Human with name $humanBeingDto.name already exists")
         }
 
         val car: Car = carRepository.findById(humanBeingDto.carId)
@@ -97,6 +106,10 @@ class HumanBeingService(
             return true
         }
         return ownerId == userId
+    }
+
+    private fun checkNameIsUnique(name: String): Boolean {
+        return name != humanBeingProperties.name || humanBeingRepository.countByName(name) == 0L
     }
 
     data class CreateHumanBeingRequest(
