@@ -43,7 +43,7 @@ class CarService(
             )
         )
         val user = userService.getByUserId(car.ownerId)
-        logsService.carsLogsSave(CarsLogs(0,car.id!! ,LogAction.CREATED, user!!.username, LocalDateTime.now()))
+        logsService.carsLogsSave(CarsLogs(0, car.id!!, LogAction.CREATED, user!!.username, LocalDateTime.now()))
         return car;
     }
 
@@ -55,22 +55,23 @@ class CarService(
             throw OwnerPermissionsConflictException()
         }
 
-        logsService.carsLogsSave(CarsLogs(0, id, LogAction.UPDATED,username, LocalDateTime.now()))
+        logsService.carsLogsSave(CarsLogs(0, id, LogAction.UPDATED, username, LocalDateTime.now()))
 
         return carRepository.update(car.copy(ownerId = user.id, id = carFromDb.id))
             ?: throw ResourceNotFoundException("Car not found with id ${id}")
 
     }
 
-    fun deleteCar(id: Long, username: String): Boolean {
+    fun deleteCar(carId: Long, username: String): Boolean {
         val user = userService.getByUsername(username)
-        if (!checkOwner(user.id, id, user.role)) {
+        val car = getCarById(carId) ?: throw ResourceNotFoundException("Car not found with id $carId");
+        if (!checkOwner(user.id, car.ownerId, user.role)) {
             throw OwnerPermissionsConflictException()
         }
 
-        logsService.carsLogsSave(CarsLogs(0,id, LogAction.DELETED, username, LocalDateTime.now()))
+        logsService.carsLogsSave(CarsLogs(0, carId, LogAction.DELETED, username, LocalDateTime.now()))
 
-        return carRepository.deleteById(id)
+        return carRepository.deleteById(carId)
     }
 
 
