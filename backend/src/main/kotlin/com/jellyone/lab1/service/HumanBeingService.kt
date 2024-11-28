@@ -62,9 +62,9 @@ class HumanBeingService(
     }
 
     fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto, username: String): HumanBeing? {
-        val owner = userService.getByUsername(username)
+        val user = userService.getByUsername(username)
         val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
-        if (!checkOwner(existingHumanBeing.ownerId, owner.id, owner.role)) {
+        if (!checkOwner(user.id, existingHumanBeing.ownerId, user.role)) {
             throw OwnerPermissionsConflictException()
         }
 
@@ -75,19 +75,20 @@ class HumanBeingService(
             humanBeingDto.copy(id = existingHumanBeing.id),
             existingHumanBeing.creationDate,
             car,
-            owner.id
+            user.id
         )
         logsService.humansLogsSave(HumanBeingsLogs(0, id, LogAction.UPDATED, username, LocalDateTime.now()))
         return humanBeingRepository.update(humanBeing)
     }
 
-    fun deleteHuman(id: Long, username: String): Boolean {
+    fun deleteHuman(humanId: Long, username: String): Boolean {
         val user = userService.getByUsername(username)
-        if (!checkOwner(id, user.id, user.role)) {
+        val humanBeing = getHumanById(humanId) ?: throw ResourceNotFoundException("Human not found with id $humanId")
+        if (!checkOwner(user.id, humanBeing.ownerId, user.role)) {
             throw OwnerPermissionsConflictException()
         }
-        logsService.humansLogsSave(HumanBeingsLogs(0, id, LogAction.DELETED, username, LocalDateTime.now()))
-        return humanBeingRepository.deleteById(id)
+        logsService.humansLogsSave(HumanBeingsLogs(0, humanId, LogAction.DELETED, username, LocalDateTime.now()))
+        return humanBeingRepository.deleteById(humanId)
     }
 
 
