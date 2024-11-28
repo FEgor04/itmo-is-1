@@ -90,7 +90,7 @@ class ImportService(
                 }
                 humanBeingRepository.save(humanBeing)
             }
-            return updateSuccessfulImport(import)
+            return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
             updateFailedImport(import)
             throw e
@@ -109,9 +109,10 @@ class ImportService(
         )
     }
 
-    fun updateSuccessfulImport(import: Import): Import {
+    fun updateSuccessfulImport(import: Import, loadedEntitiesCount: Long): Import {
         import.status = ImportStatus.FINISHED
         import.finishedAt = LocalDateTime.now()
+        import.createdEntitiesCount = loadedEntitiesCount
         importRepository.update(import)
         return import
     }

@@ -7,7 +7,7 @@ data class Import(
     val id: Long? = 0,
     var status: ImportStatus,
     val message: String?,
-    val createdEntitiesCount: Long,
+    var createdEntitiesCount: Long,
     val createdAt: LocalDateTime,
     var finishedAt: LocalDateTime?,
     val user: User
