@@ -20,7 +20,8 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
     tags = [
         Tag(name = "Human Management", description = "API for humans"),
         Tag(name = "Car Management", description = "API for cars"),
-        Tag(name = "User Management", description = "API for users")
+        Tag(name = "User Management", description = "API for users"),
+        Tag(name = "Import Management", description = "API for import"),
     ]
 )
 
