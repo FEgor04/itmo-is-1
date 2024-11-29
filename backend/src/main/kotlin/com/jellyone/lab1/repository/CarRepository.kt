@@ -88,6 +88,30 @@ class CarRepository(private val dsl: DSLContext) {
     }
 
     @Transactional
+    fun saveAll(cars: List<Car>): List<Car> {
+        val generatedIds = mutableListOf<Long>()
+
+        cars.forEach { car ->
+            val result = dsl.insertInto(DSL.table("car"))
+                .set(DSL.field("color"), car.color)
+                .set(DSL.field("model"), car.model)
+                .set(DSL.field("brand"), car.brand)
+                .set(DSL.field("cool"), car.cool)
+                .set(DSL.field("owner_id"), car.ownerId)
+                .returning(DSL.field("id"))
+                .fetchOne()
+
+            result?.let {
+                generatedIds.add(it[DSL.field("id", Long::class.java)] as Long)
+            }
+        }
+
+        return cars.mapIndexed { index, car ->
+            car.copy(id = generatedIds[index])
+        }
+    }
+
+    @Transactional
     fun update(car: Car): Car? {
         if (findById(car.id ?: return null) == null) return null
 

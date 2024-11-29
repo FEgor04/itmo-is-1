@@ -29,6 +29,7 @@ class ImportService(
     private val userService: UserService,
     private val importRepository: ImportRepository
 ) {
+    private var isNameNotUnique: Boolean = false
 
     fun getAll(page: Int, pageSize: Int) = importRepository.getAll(page, pageSize)
 
@@ -46,6 +47,8 @@ class ImportService(
             val importData: List<ImportCsvDataDto> = reader.readValues<ImportCsvDataDto>(inputStream).readAll()
 
             val humanBeings = mutableListOf<HumanBeing>()
+            val cars = mutableListOf<Car>()
+
             importData.forEach { dto ->
                 val car = Car(
                     color = dto.carColor,
@@ -54,8 +57,6 @@ class ImportService(
                     cool = dto.carCool,
                     ownerId = user.id
                 )
-
-                val savedCar = carRepository.save(car)
 
                 val humanBeing = HumanBeing(
                     name = dto.name,
@@ -66,15 +67,20 @@ class ImportService(
                     mood = dto.mood?.let { Mood.valueOf(it) },
                     impactSpeed = dto.speed,
                     weaponType = WeaponType.valueOf(dto.weaponType),
-                    car = savedCar,
                     ownerId = user.id
                 )
                 if (checkNameIsNotUnique(humanBeing.name)) {
                     throw ResourceAlreadyExistsException("Human with name $humanBeing.name already exists")
                 }
+                checkNameNotUnique(humanBeing.name)
+
+                cars.add(car)
                 humanBeings.add(humanBeing)
             }
-
+            val savedCars = carRepository.saveAll(cars)
+            humanBeings.forEachIndexed { index, humanBeing ->
+                humanBeing.car = savedCars[index]
+            }
             humanBeingRepository.saveAll(humanBeings)
             return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
@@ -114,6 +120,12 @@ class ImportService(
 
 
     private fun checkNameIsNotUnique(name: String): Boolean {
-        return name == humanBeingProperties.name && humanBeingRepository.countByName(name) != 0L
+        return (name == humanBeingProperties.name && isNameNotUnique) || humanBeingRepository.countByName(name) != 0L
+    }
+
+    private fun checkNameNotUnique(name: String) {
+        if (name == humanBeingProperties.name) {
+            isNameNotUnique = true
+        }
     }
 }

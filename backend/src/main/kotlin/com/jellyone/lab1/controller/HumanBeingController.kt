@@ -61,7 +61,7 @@ class HumanBeingController(
         sortDirection == "asc",
         name,
         impactSpeedLT
-    ).map { humanBeingMapper.toDto(it, carService.getCarById(it.car.id)!!) }
+    ).map { humanBeingMapper.toDto(it, carService.getCarById(it.car!!.id)!!) }
 
 
     @GetMapping("/{id}")
@@ -86,7 +86,7 @@ class HumanBeingController(
         val humanBeing =
             humanBeingService.getHumanById(id) ?: throw ResourceNotFoundException("HumanBeing not found with id $id")
         val car =
-            carService.getCarById(humanBeing.car.id) ?: throw ResourceNotFoundException("Car not found with id $id")
+            carService.getCarById(humanBeing.car!!.id) ?: throw ResourceNotFoundException("Car not found with id $id")
         val updatedHuman = humanBeingMapper.toDto(humanBeing, car);
         return ResponseEntity.ok(updatedHuman)
     }
@@ -161,7 +161,7 @@ class HumanBeingController(
         val humanBeing = humanBeingService.updateHuman(id, humanBeingDto, principal.name)
             ?: throw ResourceNotFoundException("humanBeing not found with id $id")
         val car =
-            carService.getCarById(humanBeing.car.id) ?: throw ResourceNotFoundException("Car not found with id $id")
+            carService.getCarById(humanBeing.car!!.id) ?: throw ResourceNotFoundException("Car not found with id $id")
         val updatedHuman = humanBeingMapper.toDto(humanBeing, car);
         return ResponseEntity.ok(updatedHuman)
     }

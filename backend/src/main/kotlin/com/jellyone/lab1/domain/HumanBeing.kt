@@ -11,7 +11,7 @@ data class HumanBeing(
     val creationDate: LocalDate = LocalDate.now(),
     val realHero: Boolean,
     val hasToothpick: Boolean,
-    val car: Car,
+    var car: Car? = null,
     val mood: Mood? = null,
     val impactSpeed: Long? = null,
     val weaponType: WeaponType,
