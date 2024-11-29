@@ -143,27 +143,15 @@ class ImportService(
     private inner class Validator {
 
         fun validateCar(car: Car): ValidationResult {
-            if (car.model.isBlank()) {
-                return ValidationResult(false, "Car model cannot be empty.")
-            }
-            if (car.brand.isBlank()) {
-                return ValidationResult(false, "Car brand cannot be empty.")
-            }
-            if (car.color.isBlank()) {
-                return ValidationResult(false, "Car color cannot be empty.")
-            }
             return ValidationResult(true, "")
         }
 
         fun validateHumanBeing(humanBeing: HumanBeing): ValidationResult {
-            if (humanBeing.name.isBlank()) {
-                return ValidationResult(false, "Human name cannot be empty.")
-            }
-            if (humanBeing.mood == null) {
-                return ValidationResult(false, "Human mood cannot be null.")
-            }
             if (humanBeing.impactSpeed!! >= 108L) {
                 return ValidationResult(false, "Human impact speed cannot be greater than 108.")
+            }
+            if (humanBeing.name.isBlank()) {
+                return ValidationResult(false, "Human name cannot be blank.")
             }
             return ValidationResult(true, "")
         }
