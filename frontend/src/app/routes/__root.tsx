@@ -32,6 +32,7 @@ function LocationTitle() {
     "/humans": "Люди",
     "/requests": "Заявки",
     "/visualize": "Визуализация",
+    "/imports": "Импорт",
   };
   return pathname in map ? map[pathname] : "";
 }
