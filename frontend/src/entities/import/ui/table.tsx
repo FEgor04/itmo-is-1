@@ -5,7 +5,6 @@ import {
 } from "@tanstack/react-table";
 import { Import } from "@/entities/import";
 import { ImportStatusBadge } from "@/entities/import/ui/status.tsx";
-import { ReactNode } from "react";
 
 export const columns: Array<ColumnDef<Import>> = [
   {
