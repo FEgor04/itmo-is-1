@@ -86,23 +86,25 @@ export function Dashboard() {
             </TooltipTrigger>
             <TooltipContent side="right">Машины</TooltipContent>
           </Tooltip>
-          {featureFlags.importPage && <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                data-active={pathname.includes("/imports")}
-                search={{
-                  page: 1,
-                  pageSize: 10,
-                }}
-                to="/imports"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[active=true]:bg-accent md:h-8 md:w-8"
-              >
-                <FileUp className="h-5 w-5" />
-                <span className="sr-only">Импорт</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Импорт</TooltipContent>
-          </Tooltip>}
+          {featureFlags.importPage && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  data-active={pathname.includes("/imports")}
+                  search={{
+                    page: 1,
+                    pageSize: 10,
+                  }}
+                  to="/imports"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground data-[active=true]:bg-accent md:h-8 md:w-8"
+                >
+                  <FileUp className="h-5 w-5" />
+                  <span className="sr-only">Импорт</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">Импорт</TooltipContent>
+            </Tooltip>
+          )}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -122,7 +124,6 @@ export function Dashboard() {
             </TooltipTrigger>
             <TooltipContent side="right">Визуализация</TooltipContent>
           </Tooltip>
-
         </nav>
       </aside>
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -169,17 +170,19 @@ export function Dashboard() {
                   <Car className="h-5 w-5" />
                   Машины
                 </Link>
-                {featureFlags.importPage && <Link
-                  search={{
-                    page: 1,
-                    pageSize: 10,
-                  }}
-                  to="/imports"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground data-[state=active]:text-foreground"
-                >
-                  <FileUp className="h-5 w-5" />
-                  Импорт
-                </Link>}
+                {featureFlags.importPage && (
+                  <Link
+                    search={{
+                      page: 1,
+                      pageSize: 10,
+                    }}
+                    to="/imports"
+                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground data-[state=active]:text-foreground"
+                  >
+                    <FileUp className="h-5 w-5" />
+                    Импорт
+                  </Link>
+                )}
                 <Link
                   search={{
                     page: 1,

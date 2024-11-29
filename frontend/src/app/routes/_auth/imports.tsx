@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_auth/imports")({
     return context.queryClient.ensureQueryData(getImportsQueryOptions(deps));
   },
   beforeLoad: () => {
-    if(!featureFlags.importPage) {
+    if (!featureFlags.importPage) {
       throw notFound();
     }
   },
