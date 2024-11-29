@@ -134,6 +134,27 @@ class HumanBeingRepository(private val dsl: DSLContext) {
     }
 
     @Transactional
+    fun saveAll(humanBeings: List<HumanBeing>) {
+        dsl.batch(
+            humanBeings.map { humanBeing ->
+                dsl.insertInto(DSL.table("human_being"))
+                    .set(DSL.field("name"), humanBeing.name)
+                    .set(DSL.field("x"), humanBeing.coordinates.x)
+                    .set(DSL.field("y"), humanBeing.coordinates.y)
+                    .set(DSL.field("creation_date"), humanBeing.creationDate)
+                    .set(DSL.field("real_hero"), humanBeing.realHero)
+                    .set(DSL.field("has_toothpick"), humanBeing.hasToothpick)
+                    .set(DSL.field("car_id"), humanBeing.car.id)
+                    .set(DSL.field("mood"), humanBeing.mood?.name)
+                    .set(DSL.field("impact_speed"), humanBeing.impactSpeed)
+                    .set(DSL.field("weapon_type"), humanBeing.weaponType.name)
+                    .set(DSL.field("owner_id"), humanBeing.ownerId)
+            }
+        ).execute()
+    }
+
+
+    @Transactional
     fun update(humanBeing: HumanBeing): HumanBeing? {
         if (findById(humanBeing.id ?: return null) == null) return null
 

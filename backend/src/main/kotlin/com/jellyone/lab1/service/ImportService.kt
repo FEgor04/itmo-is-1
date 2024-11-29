@@ -45,7 +45,7 @@ class ImportService(
             val reader = csvMapper.readerFor(ImportCsvDataDto::class.java).with(schema)
             val importData: List<ImportCsvDataDto> = reader.readValues<ImportCsvDataDto>(inputStream).readAll()
 
-
+            val humanBeings = mutableListOf<HumanBeing>()
             importData.forEach { dto ->
                 val car = Car(
                     color = dto.carColor,
@@ -72,8 +72,10 @@ class ImportService(
                 if (checkNameIsNotUnique(humanBeing.name)) {
                     throw ResourceAlreadyExistsException("Human with name $humanBeing.name already exists")
                 }
-                humanBeingRepository.save(humanBeing)
+                humanBeings.add(humanBeing)
             }
+
+            humanBeingRepository.saveAll(humanBeings)
             return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
             updateFailedImport(import, e.message ?: "Unknown error")

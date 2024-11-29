@@ -10,7 +10,7 @@ BACKEND_IMAGE_NAME ?= is1-backend
 # They are separated so that you could update backend and frontend
 # independetly
 FRONTEND_VERSION ?= 0.2.5
-BACKEND_VERSION ?= 0.2.0
+BACKEND_VERSION ?= 0.2.1
 
 # Version of application that will be deployed to Customer server (i.e. Helios)
 VERSION ?= 0.3.3
