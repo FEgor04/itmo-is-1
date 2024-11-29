@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestPart
 
@@ -29,19 +30,19 @@ class ImportController(
     private val authenticationFacade: IAuthenticationFacade
 ) {
 
-    @PostMapping("")
+    @PostMapping("", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(
-        summary = "Импорт файла",
-        description = "Позволяет загрузить файл для обработки",
+        summary = "Import file",
+        description = "Allows you to upload a file for processing",
         responses = [
             ApiResponse(
-                description = "Успешный импорт",
+                description = "Successful import",
                 responseCode = "200",
                 content = [Content(schema = Schema(implementation = ImportDto::class))]
             )
         ],
         requestBody = RequestBody(
-            description = "Файл для импорта",
+            description = "File for import",
             required = true,
             content = [
                 Content(
