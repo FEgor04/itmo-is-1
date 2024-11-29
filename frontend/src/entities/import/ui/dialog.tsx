@@ -5,8 +5,8 @@ import {
 } from "@/shared/ui/dialog.tsx";
 
 type Props = {
-  onClose: () => void
-}
+  onClose: () => void;
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function UploadImportDialogContent(_props: Props) {

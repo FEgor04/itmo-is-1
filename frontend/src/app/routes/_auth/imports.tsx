@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import {
   getImportsQueryOptions,
   getImportsRequestSchema,
@@ -13,12 +13,18 @@ import { DialogTrigger } from "@/shared/ui/dialog.tsx";
 import { useDialog } from "@/shared/use-dialog.tsx";
 import { Button } from "@/shared/ui/button.tsx";
 import { UploadIcon } from "lucide-react";
+import { featureFlags } from "@/shared/config.ts";
 
 export const Route = createFileRoute("/_auth/imports")({
   validateSearch: getImportsRequestSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ deps, context }) => {
     return context.queryClient.ensureQueryData(getImportsQueryOptions(deps));
+  },
+  beforeLoad: () => {
+    if(!featureFlags.importPage) {
+      throw notFound();
+    }
   },
   component: Page,
 });
