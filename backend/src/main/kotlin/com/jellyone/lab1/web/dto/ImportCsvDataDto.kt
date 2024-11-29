@@ -38,7 +38,4 @@ data class ImportCsvDataDto(
 
     @JsonProperty("car.cool")
     val carCool: Boolean,
-
-    @JsonProperty("ownerId")
-    val ownerId: Long
 )

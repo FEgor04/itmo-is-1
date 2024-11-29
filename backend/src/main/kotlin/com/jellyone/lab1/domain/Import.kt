@@ -6,9 +6,9 @@ import java.time.LocalDateTime
 data class Import(
     val id: Long? = 0,
     var status: ImportStatus,
-    val message: String?,
+    var message: String?,
     var createdEntitiesCount: Long,
     val createdAt: LocalDateTime,
     var finishedAt: LocalDateTime?,
-    val user: User
+    val user: User,
 )

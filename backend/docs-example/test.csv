@@ -1,2 +1,3 @@
 name,x,y,realHero,hasToothpick,mood,speed,weaponType,car.model,car.brand,car.color,car.cool
-Ryan Gosling,1,1,true,true,FRENZY,10,AXE,Lada,Kalina,Red,true
+Ryan,1,1,true,true,FRENZY,10,AXE,Lada,Kalina,Red,true
+Ryan2,2,2,false,false,FRENZY,20,AXE,Lada,Kalina,Red,true

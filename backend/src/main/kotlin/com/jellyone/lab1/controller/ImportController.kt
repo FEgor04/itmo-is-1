@@ -7,6 +7,7 @@ import com.jellyone.lab1.web.dto.ImportDto
 import com.jellyone.lab1.web.dto.toDto
 import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -14,6 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.parameters.RequestBody
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestPart
 
 @RestController
 @RequestMapping("/api/import")
@@ -23,18 +28,36 @@ class ImportController(
     private val importService: ImportService,
     private val authenticationFacade: IAuthenticationFacade
 ) {
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Import started"),
-            ApiResponse(responseCode = "500", description = "Internal server error")
-        ]
+
+    @PostMapping("")
+    @Operation(
+        summary = "Импорт файла",
+        description = "Позволяет загрузить файл для обработки",
+        responses = [
+            ApiResponse(
+                description = "Успешный импорт",
+                responseCode = "200",
+                content = [Content(schema = Schema(implementation = ImportDto::class))]
+            )
+        ],
+        requestBody = RequestBody(
+            description = "Файл для импорта",
+            required = true,
+            content = [
+                Content(
+                    mediaType = "multipart/form-data",
+                    schema = Schema(type = "object", format = "binary")
+                )
+            ]
+        )
     )
-    @Operation(summary = "Import", description = "Imports data from csv file")
-    @PostMapping
     fun import(
-        @RequestParam("file") file: MultipartFile,
+        @RequestPart("file") file: MultipartFile,
         principal: Principal
-    ) = importService.import(file.inputStream, importService.createProgressImport(principal.name)).toDto()
+    ): ImportDto {
+        val import = importService.createProgressImport(principal.name)
+        return importService.import(file.inputStream, import, principal.name).toDto()
+    }
 
     @ApiResponses(
         value = [

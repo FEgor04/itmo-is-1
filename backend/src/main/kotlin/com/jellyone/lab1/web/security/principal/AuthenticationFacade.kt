@@ -37,7 +37,7 @@ class AuthenticationFacade : IAuthenticationFacade {
     }
 
     override fun isAdmin(): Boolean {
-        return getAuthentication().authorities?.contains(SimpleGrantedAuthority("ROLE_${Role.ADMIN.name.uppercase()}"))
+        return getAuthentication().authorities?.contains(SimpleGrantedAuthority(Role.ADMIN.name.uppercase()))
             ?: false
     }
 }

@@ -36,31 +36,15 @@ class ImportService(
         importRepository.getAllByUser(page, pageSize, username)
 
     @Transactional
-    fun import(inputStream: InputStream, import: Import): Import {
+    fun import(inputStream: InputStream, import: Import, username: String): Import {
+        val user = userService.getByUsername(username)
         try {
             val csvMapper = CsvMapper()
-            val schema = CsvSchema.builder()
-                .setColumnSeparator(',')
-                .addColumn("name")
-                .addColumn("x")
-                .addColumn("y")
-                .addColumn("realHero")
-                .addColumn("hasToothpick")
-                .addColumn("mood")
-                .addColumn("speed")
-                .addColumn("weaponType")
-                .addColumn("car.model")
-                .addColumn("car.brand")
-                .addColumn("car.color")
-                .addColumn("car.cool")
-                .addColumn("ownerId")
-                .build()
+            val schema = CsvSchema.emptySchema().withHeader()
 
-            val reader = csvMapper
-                .readerFor(ImportCsvDataDto::class.java)
-                .with(schema)
+            val reader = csvMapper.readerFor(ImportCsvDataDto::class.java).with(schema)
+            val importData: List<ImportCsvDataDto> = reader.readValues<ImportCsvDataDto>(inputStream).readAll()
 
-            val importData: List<ImportCsvDataDto> = reader.readValue<List<ImportCsvDataDto>?>(inputStream).toList()
 
             importData.forEach { dto ->
                 val car = Car(
@@ -68,7 +52,7 @@ class ImportService(
                     model = dto.carModel,
                     brand = dto.carBrand,
                     cool = dto.carCool,
-                    ownerId = dto.ownerId
+                    ownerId = user.id
                 )
 
                 val savedCar = carRepository.save(car)
@@ -83,23 +67,23 @@ class ImportService(
                     impactSpeed = dto.speed,
                     weaponType = WeaponType.valueOf(dto.weaponType),
                     car = savedCar,
-                    ownerId = dto.ownerId
+                    ownerId = user.id
                 )
-                if (checkNameIsUnique(humanBeing.name)) {
+                if (checkNameIsNotUnique(humanBeing.name)) {
                     throw ResourceAlreadyExistsException("Human with name $humanBeing.name already exists")
                 }
                 humanBeingRepository.save(humanBeing)
             }
             return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
-            updateFailedImport(import)
+            updateFailedImport(import, e.message ?: "Unknown error")
             throw e
         }
     }
 
     fun createProgressImport(username: String): Import {
         val user = userService.getByUsername(username)
-        return Import(
+        val import = Import(
             status = ImportStatus.IN_PROGRESS,
             message = null,
             createdEntitiesCount = 0,
@@ -107,6 +91,7 @@ class ImportService(
             finishedAt = null,
             user = user
         )
+        return importRepository.create(import)
     }
 
     fun updateSuccessfulImport(import: Import, loadedEntitiesCount: Long): Import {
@@ -117,15 +102,16 @@ class ImportService(
         return import
     }
 
-    fun updateFailedImport(import: Import): Import {
+    fun updateFailedImport(import: Import, message: String): Import {
         import.status = ImportStatus.FAILED
+        import.message = message
         import.finishedAt = LocalDateTime.now()
         importRepository.update(import)
         return import
     }
 
 
-    private fun checkNameIsUnique(name: String): Boolean {
-        return name != humanBeingProperties.name || humanBeingRepository.countByName(name) == 0L
+    private fun checkNameIsNotUnique(name: String): Boolean {
+        return name == humanBeingProperties.name && humanBeingRepository.countByName(name) != 0L
     }
 }
