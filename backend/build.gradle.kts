@@ -52,7 +52,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     implementation("org.springframework.retry:spring-retry:2.0.10")
-    implementation("io.gatling:gatling-app:3.10te.1")
+    implementation("io.gatling:gatling-app:3.10.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
