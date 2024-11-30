@@ -45,7 +45,7 @@ export const getImportsResponseSchema = PaginatedResponseSchema(ImportSchema);
 export type Import = z.infer<typeof ImportSchema>;
 
 function parseDTO(dto: ImportDto): Import {
-  if(dto.status == "FINISHED") {
+  if (dto.status == "FINISHED") {
     return SuccessfulImport.parse({
       id: dto.id,
       status: "finished",
@@ -54,18 +54,18 @@ function parseDTO(dto: ImportDto): Import {
 
       startedAt: dto.createdAt + "Z",
       createdEntities: dto.createdEntitiesCount,
-    })
+    });
   }
 
-  if(dto.status == "FAILED") {
+  if (dto.status == "FAILED") {
     return ErrorImport.parse({
       id: dto.id,
       status: "error",
       author: dto.author,
       startedAt: dto.createdAt + "Z",
       finishedAt: dto.finishedAt + "Z",
-      message: dto.message
-    })
+      message: dto.message,
+    });
   }
 
   return InProgressImport.parse({
@@ -73,7 +73,7 @@ function parseDTO(dto: ImportDto): Import {
     status: "inProgress",
     author: dto.author,
     startedAt: dto.createdAt + "Z",
-  })
+  });
 }
 
 export const getImportsQueryOptions = (
@@ -83,7 +83,7 @@ export const getImportsQueryOptions = (
   return queryOptions({
     queryKey: ["imports", "list", request],
     queryFn: async () => {
-      const {data} = await ApiInstance.api.getAllImports({
+      const { data } = await ApiInstance.api.getAllImports({
         page: request.page,
         pageSize: request.pageSize,
       });
@@ -92,8 +92,8 @@ export const getImportsQueryOptions = (
         page: data.page,
         pageSize: data.pageSize,
         total: data.total,
-        values: data.values.map(parseDTO)
-      })
+        values: data.values.map(parseDTO),
+      });
     },
   });
 };
@@ -102,10 +102,10 @@ export function useUploadImportMutation() {
   return useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
-      formData.append("file", file)
-      const {data} = await ApiInstance.api.import(formData)
+      formData.append("file", file);
+      const { data } = await ApiInstance.api.import(formData);
 
       return parseDTO(data);
-    }
-  })
+    },
+  });
 }
