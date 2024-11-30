@@ -32,8 +32,10 @@ class ImportService(
     private val validator = Validator()
     private var isNameNotUnique: Boolean = false
 
+    @Transactional
     fun getAll(page: Int, pageSize: Int) = importRepository.getAll(page, pageSize)
 
+    @Transactional
     fun getAllByUser(page: Int, pageSize: Int, username: String) =
         importRepository.getAllByUser(page, pageSize, username)
 
@@ -100,6 +102,7 @@ class ImportService(
         }
     }
 
+    @Transactional
     fun createProgressImport(username: String): Import {
         val user = userService.getByUsername(username)
         val import = Import(
@@ -113,6 +116,7 @@ class ImportService(
         return importRepository.create(import)
     }
 
+    @Transactional
     fun updateSuccessfulImport(import: Import, loadedEntitiesCount: Long): Import {
         import.status = ImportStatus.FINISHED
         import.finishedAt = LocalDateTime.now()
@@ -121,6 +125,7 @@ class ImportService(
         return import
     }
 
+    @Transactional
     fun updateFailedImport(import: Import, message: String): Import {
         import.status = ImportStatus.FAILED
         import.message = message

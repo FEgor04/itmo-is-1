@@ -17,6 +17,7 @@ import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.service.props.HumanBeingProperties
 import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -29,6 +30,7 @@ class HumanBeingService(
     private val logsService: LogsService,
     private val humanBeingProperties: HumanBeingProperties
 ) {
+    @Transactional
     fun getAllHumans(
         page: Int,
         pageSize: Int,
@@ -38,11 +40,12 @@ class HumanBeingService(
         impactSpeedLT: Double?,
     ) = humanBeingRepository.findAll(page, pageSize, sortBy, sortAsc, name, impactSpeedLT);
 
-
+    @Transactional
     fun getHumanById(id: Long): HumanBeing? {
         return humanBeingRepository.findById(id);
     }
 
+    @Transactional
     fun createHuman(humanBeing: CreateHumanBeingRequest): HumanBeing {
         val car: Car = carRepository.findById(humanBeing.carId)
             ?: throw ResourceNotFoundException("Car not found with id ${humanBeing.carId}")
@@ -67,6 +70,7 @@ class HumanBeingService(
 
     }
 
+    @Transactional
     fun updateHuman(id: Long, humanBeingDto: PutHumanBeingDto, username: String): HumanBeing? {
         val user = userService.getByUsername(username)
         val existingHumanBeing = humanBeingRepository.findById(id) ?: return null
@@ -90,6 +94,7 @@ class HumanBeingService(
         return humanBeingRepository.update(humanBeing)
     }
 
+    @Transactional
     fun deleteHuman(humanId: Long, username: String): Boolean {
         val user = userService.getByUsername(username)
         val humanBeing = getHumanById(humanId) ?: throw ResourceNotFoundException("Human not found with id $humanId")

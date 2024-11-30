@@ -9,6 +9,7 @@ import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.mapper.CarMapper
 import com.jellyone.lab1.repository.CarRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
@@ -18,6 +19,7 @@ class CarService(
     private val logsService: LogsService
 ) {
 
+    @Transactional
     fun getAllCars(
         page: Int,
         pageSize: Int,
@@ -28,8 +30,10 @@ class CarService(
         color: String?
     ) = carRepository.findAll(page, pageSize, sortBy, sortAsc, modelFilter, brandFilter, color)
 
+    @Transactional
     fun getCarById(id: Long?) = id?.let { carRepository.findById(it) }
 
+    @Transactional
     fun createCar(car: CreateCarRequest): Car {
 
         val car = carRepository.save(
@@ -47,7 +51,7 @@ class CarService(
         return car;
     }
 
-
+    @Transactional
     fun updateCar(id: Long, car: Car, username: String): Car? {
         val user = userService.getByUsername(username)
         val carFromDb = carRepository.findById(id) ?: return null;
@@ -62,6 +66,7 @@ class CarService(
 
     }
 
+    @Transactional
     fun deleteCar(carId: Long, username: String): Boolean {
         val user = userService.getByUsername(username)
         val car = getCarById(carId) ?: throw ResourceNotFoundException("Car not found with id $carId");

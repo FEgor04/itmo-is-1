@@ -14,6 +14,7 @@ import com.jellyone.lab1.service.UserService
 import com.jellyone.lab1.web.security.principal.IAuthenticationFacade
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.security.Principal
 
 @Service
@@ -24,6 +25,7 @@ class UserServiceImpl(
     private val autenticationFacade: IAuthenticationFacade
 ) : UserService {
 
+    @Transactional
     override fun registerUser(username: String, password: String) {
         if (userRepository.findByUsername(username) != null) {
             throw ResourceAlreadyExistsException("User already exists")
@@ -38,6 +40,7 @@ class UserServiceImpl(
         userRepository.save(user)
     }
 
+    @Transactional
     override fun requestAdmin(username: String, password: String): String {
         return if (userRepository.countByRole(Role.ADMIN.name) > 0) {
             val request = AdminRequest(
@@ -61,6 +64,7 @@ class UserServiceImpl(
         }
     }
 
+    @Transactional
     override fun approveAdminRequest(username: String) {
         val request = adminRequestRepository.findAdminRequestByUsername(username)
         if (request.status == AdminRequestStatus.valueOf("PENDING")) {
@@ -77,6 +81,7 @@ class UserServiceImpl(
         }
     }
 
+    @Transactional
     override fun rejecteAdminRequest(username: String) {
         val request = adminRequestRepository.findAdminRequestByUsername(username)
         if (request.status == AdminRequestStatus.valueOf("PENDING")) {
@@ -86,6 +91,7 @@ class UserServiceImpl(
         }
     }
 
+    @Transactional
     fun getAllAdminRequests(
         page: Int,
         pageSize: Int,
@@ -94,23 +100,26 @@ class UserServiceImpl(
         username: String?,
     ) = adminRequestRepository.findAll(page, pageSize, sortBy, sortAsc, username)
 
-
+    @Transactional
     override fun getAdminRequestStatus(username: String): AdminRequestStatus {
         return adminRequestRepository.findAdminRequestStatusByUsername(username);
     }
 
+    @Transactional
     override fun getUserIdByUsername(username: String): Long {
         val user = userRepository.findByUsername(username)
         return user?.id ?: throw ResourceNotFoundException("User not found")
     }
 
-
+    @Transactional
     override fun getByUserId(id: Long) = userRepository.findById(id)
 
+    @Transactional
     override fun getByUsername(username: String): User {
         return userRepository.findByUsername(username) ?: throw ResourceNotFoundException("User not found")
     }
 
+    @Transactional
     override fun checkPassword(username: String, password: String): Boolean {
         val user = userRepository.findByUsername(username)
             ?: throw ResourceNotFoundException("User not found")
