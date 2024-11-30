@@ -194,6 +194,26 @@ export interface UpdateCarDTO {
   cool: boolean;
 }
 
+export interface ImportDto {
+  /** @format int64 */
+  id: number;
+  status: "IN_PROGRESS" | "FINISHED" | "FAILED";
+  message?: string;
+  /** @format int64 */
+  createdEntitiesCount: number;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  finishedAt?: string;
+  author: UserDto;
+}
+
+export interface UserDto {
+  /** @format int64 */
+  id: number;
+  username: string;
+}
+
 export interface CreateHumanBeingDto {
   /**
    * The name of the human being
@@ -275,21 +295,6 @@ export interface SignUpRequest {
   password: string;
 }
 
-/** JWT Response */
-export interface JwtResponse {
-  /**
-   * User ID
-   * @format int64
-   */
-  id: number;
-  /** Username */
-  username: string;
-  /** Access token */
-  accessToken: string;
-  /** Refresh token */
-  refreshToken: string;
-}
-
 /** Error message model */
 export interface ErrorMessage {
   /**
@@ -306,6 +311,21 @@ export interface ErrorMessage {
   description: string;
   /** @example "The requested resource could not be found" */
   message: string;
+}
+
+/** JWT Response */
+export interface JwtResponse {
+  /**
+   * User ID
+   * @format int64
+   */
+  id: number;
+  /** Username */
+  username: string;
+  /** Access token */
+  accessToken: string;
+  /** Refresh token */
+  refreshToken: string;
 }
 
 export interface SignInRequest {
@@ -336,6 +356,16 @@ export interface GetMeResponse {
    * @example "PENDING"
    */
   adminRequestStatus: "PENDING" | "APPROVED" | "REJECTED" | "NO_REQUEST";
+}
+
+export interface PaginatedResponseImportDto {
+  /** @format int32 */
+  page: number;
+  /** @format int32 */
+  pageSize: number;
+  /** @format int32 */
+  total: number;
+  values: Array<ImportDto>;
 }
 
 export interface PaginatedResponseHumanBeingDto {
@@ -669,6 +699,51 @@ export class Api<
         path: `/api/cars/${id}`,
         method: "DELETE",
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Returns all imports
+     *
+     * @tags Import Management
+     * @name GetAllImports
+     * @summary Get all imports
+     * @request GET:/api/import
+     * @secure
+     */
+    getAllImports: (
+      query: {
+        /** @format int32 */
+        page: number;
+        /** @format int32 */
+        pageSize: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<PaginatedResponseImportDto, PaginatedResponseImportDto>({
+        path: `/api/import`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Allows you to upload a file for processing
+     *
+     * @tags Import Management
+     * @name Import
+     * @summary Import file
+     * @request POST:/api/import
+     * @secure
+     */
+    import: (data: object, params: RequestParams = {}) =>
+      this.request<ImportDto, any>({
+        path: `/api/import`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.FormData,
         ...params,
       }),
 

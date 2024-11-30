@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import webMonkeyIcon from "@/shared/ui/icon.png";
+import { Toaster } from "@/shared/ui/sonner";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -218,6 +219,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     <>
       <TooltipProvider>
         <Dashboard />
+        <Toaster richColors />
       </TooltipProvider>
     </>
   ),
