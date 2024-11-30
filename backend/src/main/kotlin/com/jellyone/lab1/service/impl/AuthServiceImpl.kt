@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthServiceImpl @Autowired constructor(
@@ -21,6 +22,7 @@ class AuthServiceImpl @Autowired constructor(
     private val jwtTokenProvider: JwtTokenProvider
 ) : AuthService {
 
+    @Transactional
     override fun login(loginRequest: JwtRequest): JwtResponse {
         try {
             authenticationManager.authenticate(
