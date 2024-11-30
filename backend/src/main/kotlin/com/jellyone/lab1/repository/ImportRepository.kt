@@ -9,7 +9,6 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.sql.Date
 import java.time.LocalDateTime
 
 @Repository

@@ -8,6 +8,7 @@ import com.jellyone.lab1.domain.enums.WeaponType
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import java.sql.Date
 import java.time.LocalDate
@@ -111,7 +112,7 @@ class HumanBeingRepository(private val dsl: DSLContext) {
         )
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun save(humanBeing: HumanBeing): HumanBeing {
         val record = dsl.insertInto(DSL.table("human_being"))
             .set(DSL.field("name"), humanBeing.name)

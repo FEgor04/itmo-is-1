@@ -1,12 +1,13 @@
 import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.http.HttpDsl.*
 import io.gatling.javaapi.core.Simulation
+import java.time.Duration
 
 class PostHumanSimulation : Simulation() {
 
     private val baseUrl = "http://localhost:8080"
 
-    private val authToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHJpbmciLCJpZCI6MSwicm9sZXMiOlsiQURNSU4iXSwiaWF0IjoxNzMyOTczMjcyLCJleHAiOjE3MzI5NzY4NzJ9.bOHgWO-GtfWOKIaApIz1PfSxuGjrkKw9--RDSvWE-s_WAvQBEr7vde_e09754YOP34FbVc92-cwzm-xwSODT0Q"
+    private val authToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjMiLCJpZCI6MSwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MzI5NzYwNDEsImV4cCI6MTczMjk3OTY0MX0.sWsGhRKxnCZwZR4JPMt94ACD0SoVDq7tr5ug1WgezQobuKgDWJKO2spkHh_coDSrdUQOSVRD_NlWzPShrHDBPA"
 
     private val httpProtocol = http.baseUrl(baseUrl)
         .acceptHeader("application/json")
@@ -16,13 +17,13 @@ class PostHumanSimulation : Simulation() {
         {
           "name": "Ryan Gosling",
           "carId": 1,
-          "x": 12,
-          "y": 123,
+          "x": 1231,
+          "y": 1231,
           "mood": "SORROW",
           "realHero": true,
           "hasToothpick": true,
-          "impactSpeed": 12,
-          "weaponType": "AXE"
+          "impactSpeed": 55,
+          "weaponType": "PISTOL"
         }
     """.trimIndent()
 
@@ -37,7 +38,7 @@ class PostHumanSimulation : Simulation() {
 
     init {
         setUp(
-            scn.injectOpen(atOnceUsers(10))
+            scn.injectOpen(constantUsersPerSec(20.0).during(Duration.ofSeconds(15)))
         ).protocols(httpProtocol)
     }
 }
