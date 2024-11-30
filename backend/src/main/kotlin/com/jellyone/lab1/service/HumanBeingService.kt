@@ -48,7 +48,7 @@ class HumanBeingService(
             ?: throw ResourceNotFoundException("Car not found with id ${humanBeing.carId}")
 
         if (checkNameIsNotUnique(humanBeing.name)) {
-            throw ResourceAlreadyExistsException("Human with name $humanBeing.name already exists")
+            throw ResourceAlreadyExistsException("Human with name ${humanBeing.name} already exists")
         }
 
         val humanBeing =
@@ -74,7 +74,7 @@ class HumanBeingService(
             throw OwnerPermissionsConflictException()
         }
         if (checkNameIsNotUnique(humanBeingDto.name)) {
-            throw ResourceAlreadyExistsException("Human with name $humanBeingDto.name already exists")
+            throw ResourceAlreadyExistsException("Human with name ${humanBeingDto.name} already exists")
         }
 
         val car: Car = carRepository.findById(humanBeingDto.carId)

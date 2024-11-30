@@ -76,7 +76,7 @@ class ImportService(
                     ownerId = user.id
                 )
                 if (checkNameIsNotUnique(humanBeing.name)) {
-                    throw ResourceAlreadyExistsException("Human with name $humanBeing.name already exists")
+                    throw ResourceAlreadyExistsException("Human with name ${humanBeing.name} already exists")
                 }
                 checkNameNotUnique(humanBeing.name)
 
@@ -131,9 +131,8 @@ class ImportService(
 
 
     private fun checkNameIsNotUnique(name: String): Boolean {
-        return (name == humanBeingProperties.name && isNameNotUnique) || humanBeingRepository.countByName(
-            humanBeingProperties.name
-        ) != 0L
+        return (name == humanBeingProperties.name && isNameNotUnique) || (name == humanBeingProperties.name && humanBeingRepository.countByName(
+            humanBeingProperties.name) != 0L)
     }
 
     private fun checkNameNotUnique(name: String) {
