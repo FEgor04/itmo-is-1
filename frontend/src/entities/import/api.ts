@@ -115,5 +115,8 @@ export function useUploadImportMutation() {
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ["imports"] });
     },
+    onError: () => {
+      return queryClient.invalidateQueries({ queryKey: ["imports"] });
+    },
   });
 }
