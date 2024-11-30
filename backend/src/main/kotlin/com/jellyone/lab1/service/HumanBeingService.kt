@@ -109,7 +109,7 @@ class HumanBeingService(
     }
 
     private fun checkNameIsNotUnique(name: String): Boolean {
-        return name == humanBeingProperties.name && humanBeingRepository.countByName(name) != 0L
+        return name == humanBeingProperties.name && humanBeingRepository.countByName(humanBeingProperties.name) != 0L
     }
 
     data class CreateHumanBeingRequest(

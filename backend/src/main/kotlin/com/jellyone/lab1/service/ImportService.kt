@@ -131,7 +131,9 @@ class ImportService(
 
 
     private fun checkNameIsNotUnique(name: String): Boolean {
-        return (name == humanBeingProperties.name && isNameNotUnique) || humanBeingRepository.countByName(name) != 0L
+        return (name == humanBeingProperties.name && isNameNotUnique) || humanBeingRepository.countByName(
+            humanBeingProperties.name
+        ) != 0L
     }
 
     private fun checkNameNotUnique(name: String) {
