@@ -11,6 +11,7 @@ import { z } from "zod";
 import { BaseCarSchema, CarSchemaKeys } from "./model";
 import { SortingQuerySchema } from "@/shared/sorting";
 import { ApiInstance } from "@/shared/instance";
+import { toast } from "sonner";
 
 export const GetCarsQuerySchema = PaginatedQuerySchema.merge(
   SortingQuerySchema(CarSchemaKeys),
@@ -95,11 +96,18 @@ export function useDeleteCarMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
+      toast.loading(`Удаляем машину`, { id: `delete-car-${id}` });
       const { data } = await ApiInstance.api.deleteCar(id);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, id) => {
+      toast.success(`Машина удалена!`, { id: `delete-car-${id}` });
       return queryClient.invalidateQueries({ queryKey: ["cars"] });
+    },
+    onError: (err, id) => {
+      toast.error(`Не удалось удалить машину. Ошибка: ${err}`, {
+        id: `delete-car-${id}`,
+      });
     },
   });
 }

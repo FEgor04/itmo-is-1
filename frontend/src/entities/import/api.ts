@@ -3,7 +3,11 @@ import {
   PaginatedQuerySchema,
   PaginatedResponseSchema,
 } from "@/shared/pagination.ts";
-import { queryOptions, useMutation } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { ApiInstance } from "@/shared/instance.ts";
 import { ImportDto } from "@/shared/api.gen.ts";
 
@@ -99,6 +103,7 @@ export const getImportsQueryOptions = (
 };
 
 export function useUploadImportMutation() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
@@ -106,6 +111,9 @@ export function useUploadImportMutation() {
       const { data } = await ApiInstance.api.import(formData);
 
       return parseDTO(data);
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["imports"] });
     },
   });
 }

@@ -17,6 +17,7 @@ import {
 import { SortingQuerySchema } from "@/shared/sorting";
 import { CarIDSchema } from "../car/model";
 import { ApiInstance } from "@/shared/instance";
+import { toast } from "sonner";
 
 export const GetHumansQuerySchema = PaginatedQuerySchema.merge(
   SortingQuerySchema(FetchedHumanBeingSchemaKeys),
@@ -90,11 +91,18 @@ export function useDeleteHumanBeingMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
+      toast.loading(`Удаляем человека`, { id: `delete-human-${id}` });
       await ApiInstance.api.deleteHuman(id);
       return;
     },
-    onSuccess: () => {
+    onSuccess: (_, id) => {
+      toast.success(`Человек удален!`, { id: `delete-human-${id}` });
       return queryClient.invalidateQueries({ queryKey: ["humans"] });
+    },
+    onError: (err, id) => {
+      toast.error(`Не удалось удалить человека. Ошибка: ${err}`, {
+        id: `delete-human-${id}`,
+      });
     },
   });
 }
