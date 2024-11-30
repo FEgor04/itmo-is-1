@@ -3,8 +3,9 @@ import {
   PaginatedQuerySchema,
   PaginatedResponseSchema,
 } from "@/shared/pagination.ts";
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useMutation } from "@tanstack/react-query";
 import { ApiInstance } from "@/shared/instance.ts";
+import { ImportDto } from "@/shared/api.gen.ts";
 
 const BaseImport = z.object({
   id: z.number(),
@@ -23,10 +24,6 @@ export const SuccessfulImport = BaseImport.extend({
 
 export const InProgressImport = BaseImport.extend({
   status: z.literal("inProgress"),
-  finishedAt: z
-    .null()
-    .nullish()
-    .transform((it) => it ?? undefined),
 });
 
 export const ErrorImport = BaseImport.extend({
@@ -47,6 +44,38 @@ export const getImportsResponseSchema = PaginatedResponseSchema(ImportSchema);
 
 export type Import = z.infer<typeof ImportSchema>;
 
+function parseDTO(dto: ImportDto): Import {
+  if(dto.status == "FINISHED") {
+    return SuccessfulImport.parse({
+      id: dto.id,
+      status: "finished",
+      finishedAt: dto.finishedAt + "Z",
+      author: dto.author,
+
+      startedAt: dto.createdAt + "Z",
+      createdEntities: dto.createdEntitiesCount,
+    })
+  }
+
+  if(dto.status == "FAILED") {
+    return ErrorImport.parse({
+      id: dto.id,
+      status: "error",
+      author: dto.author,
+      startedAt: dto.createdAt + "Z",
+      finishedAt: dto.finishedAt + "Z",
+      message: dto.message
+    })
+  }
+
+  return InProgressImport.parse({
+    id: dto.id,
+    status: "inProgress",
+    author: dto.author,
+    startedAt: dto.createdAt + "Z",
+  })
+}
+
 export const getImportsQueryOptions = (
   requestRaw: z.infer<typeof getImportsRequestSchema>,
 ) => {
@@ -63,8 +92,20 @@ export const getImportsQueryOptions = (
         page: data.page,
         pageSize: data.pageSize,
         total: data.total,
-        values: data.values
+        values: data.values.map(parseDTO)
       })
     },
   });
 };
+
+export function useUploadImportMutation() {
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file)
+      const {data} = await ApiInstance.api.import(formData)
+
+      return parseDTO(data);
+    }
+  })
+}
