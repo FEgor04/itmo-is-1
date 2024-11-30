@@ -4,6 +4,7 @@ import {
   PaginatedResponseSchema,
 } from "@/shared/pagination.ts";
 import { queryOptions } from "@tanstack/react-query";
+import { ApiInstance } from "@/shared/instance.ts";
 
 const BaseImport = z.object({
   id: z.number(),
@@ -53,44 +54,17 @@ export const getImportsQueryOptions = (
   return queryOptions({
     queryKey: ["imports", "list", request],
     queryFn: async () => {
-      return getImportsResponseSchema.parse({
-        page: 1,
+      const {data} = await ApiInstance.api.getAllImports({
+        page: request.page,
         pageSize: request.pageSize,
-        total: 50,
-        values: [
-          {
-            id: 1,
-            status: "error",
-            message: "Error !!!!",
-            author: {
-              id: 55,
-              username: "e.fedorov",
-            },
-            startedAt: new Date(),
-            finishedAt: new Date(),
-          },
-          {
-            id: 2,
-            status: "inProgress",
-            author: {
-              id: 55,
-              username: "e.fedorov",
-            },
-            startedAt: new Date(),
-          },
-          {
-            id: 3,
-            status: "finished",
-            author: {
-              id: 55,
-              username: "e.fedorov",
-            },
-            startedAt: new Date(),
-            finishedAt: new Date(),
-            createdEntities: 500,
-          },
-        ],
-      } satisfies z.infer<typeof getImportsResponseSchema>);
+      });
+
+      return getImportsResponseSchema.parse({
+        page: data.page,
+        pageSize: data.pageSize,
+        total: data.total,
+        values: data.values
+      })
     },
   });
 };
