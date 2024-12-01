@@ -47,6 +47,7 @@ jobs:
         run: REGISTRY_URI=${{ secrets.DOCKER_REGISTRY }} make push-backend
 
   deploy-staging:
+    concurrency: staging
     needs:
       - image-frontend
       - image-backend
