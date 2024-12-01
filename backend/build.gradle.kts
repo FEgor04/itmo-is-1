@@ -6,6 +6,7 @@ plugins {
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("plugin.jpa") version "1.9.25"
+    id("io.gatling.gradle") version "3.13.1"
 }
 
 fun removeVIfFirst(s: String) = if (s.startsWith("v")) s.removePrefix("v") else s
@@ -49,6 +50,9 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
+
+    implementation("org.springframework.retry:spring-retry:2.0.10")
+    implementation("io.gatling:gatling-app:3.13.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

@@ -10,13 +10,13 @@ import com.jellyone.lab1.domain.logs.LogAction
 import com.jellyone.lab1.exception.OwnerPermissionsConflictException
 import com.jellyone.lab1.exception.ResourceAlreadyExistsException
 import com.jellyone.lab1.exception.ResourceNotFoundException
-import com.jellyone.lab1.web.dto.HumanBeingDto
 import com.jellyone.lab1.mapper.HumanBeingMapper
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.service.props.HumanBeingProperties
 import com.jellyone.lab1.web.dto.PutHumanBeingDto
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -45,7 +45,7 @@ class HumanBeingService(
         return humanBeingRepository.findById(id);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun createHuman(humanBeing: CreateHumanBeingRequest): HumanBeing {
         val car: Car = carRepository.findById(humanBeing.carId)
             ?: throw ResourceNotFoundException("Car not found with id ${humanBeing.carId}")
