@@ -1,4 +1,7 @@
 name: Deploy
+
+concurrency: helios
+
 on:
   release:
     types: [published]
