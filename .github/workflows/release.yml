@@ -73,6 +73,7 @@ jobs:
   deploy:
     needs: [build-backend]
     runs-on: ubuntu-latest
+    environment: helios
     
     steps:
     - uses: actions/checkout@v4

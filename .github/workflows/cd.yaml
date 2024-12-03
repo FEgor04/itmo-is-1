@@ -48,6 +48,7 @@ jobs:
 
   deploy-staging:
     concurrency: staging
+    environment: staging
     needs:
       - image-frontend
       - image-backend
