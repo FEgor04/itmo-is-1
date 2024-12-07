@@ -16,6 +16,7 @@ networks:
 
 services:
   frontend:
+    container_name: "is__frontend"
     image: ${FRONTEND_IMAGE}
     healthcheck:
       <<: *healthcheck
@@ -29,8 +30,30 @@ services:
       - traefik.http.routers.lab1-frontend.tls.certresolver=letsEncrypt
     networks:
       - traefik-ingress
-
+  minio:
+    container_name: "is__minio"
+    image: ${MINIO_IMAGE}
+    command: server /data --console-address ":9091"
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "mc", "ready", "local"]
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.minio-user.rule=Host(`minio.${HOST}`)
+      - traefik.http.routers.minio-user.service=minio-user
+      - traefik.http.services.minio-user.loadbalancer.server.port=9000
+      - traefik.http.routers.minio-admin=Host(`minioadm.${HOST}`)
+      - traefik.http.routers.minio-admin.service=minio-admin
+      - traefik.http.services.minio-admin.loadbalancer.server.port=9001
+    networks:
+      - traefik-ingress
+    volumes:
+      - minio:/data
   backend:
+    container_name: "is__backend"
     image: ${BACKEND_IMAGE}
     environment:
       - POSTGRES_HOST=postgres:5432
@@ -55,6 +78,7 @@ services:
       - internal
 
   postgres:
+    container_name: "is__postgres"
     image: ${POSTGRES_IMAGE}
     healthcheck:
       <<: *healthcheck
@@ -73,4 +97,6 @@ services:
 
 volumes:
   pgdata:
+    driver: local
+  minio:
     driver: local
