@@ -44,9 +44,9 @@ services:
       - traefik.enable=true
       - traefik.http.routers.lab1-backend.entrypoints=webSecure
       - traefik.http.routers.lab1-backend.rule=PathPrefix(`/api`)&&Host(`${HOST}`)
-      - traefik.http.services.lab1-backend.loadbalancer.server.port=8080
       - traefik.http.routers.lab1-backend.tls=true
       - traefik.http.routers.lab1-backend.tls.certresolver=letsEncrypt
+      - traefik.http.services.lab1-backend.loadbalancer.server.port=8080
     depends_on:
       postgres:
         condition: "service_healthy"
