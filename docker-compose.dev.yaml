@@ -18,6 +18,18 @@ services:
       - traefik.enable=true
       - traefik.http.routers.frontend.rule=PathPrefix(`/`)
       - traefik.http.routers.frontend.entrypoints=web,webSecure
+  minio:
+    image: ${MINIO_IMAGE}
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "mc", "ready", "local"]
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
   backend:
     image: ${BACKEND_IMAGE}
     environment:
