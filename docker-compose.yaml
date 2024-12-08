@@ -33,7 +33,7 @@ services:
   minio:
     container_name: "is__minio"
     image: ${MINIO_IMAGE}
-    command: server /data --console-address ":9091"
+    command: server /data --console-address ":443"
     healthcheck:
       <<: *healthcheck
       test: ["CMD", "mc", "ready", "local"]
@@ -55,8 +55,8 @@ services:
       - traefik.http.routers.minio-admin.tls.certresolver=letsEncrypt
       - traefik.http.routers.minio-admin.service=minio-admin
       # SERVICES CONFIGURATION
-      - traefik.http.services.minio-admin.loadbalancer.server.port=9001
       - traefik.http.services.minio-user.loadbalancer.server.port=9000
+      - traefik.http.services.minio-admin.loadbalancer.server.port=443
     networks:
       - traefik-ingress
     volumes:
