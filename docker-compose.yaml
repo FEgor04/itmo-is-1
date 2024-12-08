@@ -40,6 +40,7 @@ services:
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_BROWSER_REDIRECT_URL=https://minioadm.${HOST}
     labels:
       - traefik.enable=true
       - traefik.http.routers.minio-user.rule=Host(`minio.${HOST}`)
