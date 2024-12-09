@@ -57,7 +57,7 @@ class ImportController(
         principal: Principal
     ): ImportDto {
         val import = importService.createProgressImport(principal.name)
-        return importService.import(file.inputStream, import, principal.name).toDto()
+        return importService.import(file.inputStream, file.size, import, principal.name).toDto()
     }
 
     @ApiResponses(

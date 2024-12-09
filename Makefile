@@ -48,6 +48,9 @@ dev-down:
 dev-up-postgres:
 	docker compose -f docker-compose.dev.yaml up postgres -d
 
+dev-up-minio:
+	docker compose -f docker-compose.dev.yaml up minio -d
+
 prod-up:
 	docker compose -f docker-compose.yaml up -d
 
