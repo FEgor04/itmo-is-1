@@ -4,7 +4,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Import } from "@/entities/import";
+import { Button } from "@/shared/ui/button";
 import { ImportStatusBadge } from "@/entities/import/ui/status.tsx";
+import { Download } from "lucide-react";
 
 export const columns: Array<ColumnDef<Import>> = [
   {
@@ -41,6 +43,18 @@ export const columns: Array<ColumnDef<Import>> = [
     accessorKey: "finishedAt",
     header: "Дата конца",
   },
+  {
+    id: "actions",
+    cell: ({row}) => {
+      if(row.original.status != "finished") return
+
+      return <Button variant="outline" size="icon" className="size-8" asChild>
+        <a href={`${import.meta.env.VITE_MINIO_URL}/lab1/${row.original.id}.csv`} target="_blank">
+          <Download className="size-4" />
+        </a>
+      </Button>
+    }
+  }
 ];
 
 export function useImportsTable(data: Array<Import>) {

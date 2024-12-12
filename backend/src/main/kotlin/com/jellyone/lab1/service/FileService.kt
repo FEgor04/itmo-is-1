@@ -46,6 +46,7 @@ class FileService(
             return
         }
         log.warn("Bucket ${props.bucketName} doesn't  exist, creating it")
+        // @TODO: create public bucket
         minioClient.makeBucket(MakeBucketArgs.builder().bucket(props.bucketName).build())
         log.info("Bucket ${props.bucketName} created")
     }
