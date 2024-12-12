@@ -16,8 +16,6 @@ import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.ImportRepository
 import com.jellyone.lab1.service.props.HumanBeingProperties
 import com.jellyone.lab1.web.dto.ImportCsvDataDto
-import io.minio.*
-import jakarta.annotation.PostConstruct
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -37,8 +35,7 @@ class ImportService(
     private val humanBeingProperties: HumanBeingProperties,
     private val userService: UserService,
     private val importRepository: ImportRepository,
-    private val minioClient: MinioClient,
-    private val minioProperties: MinioProperties
+    private val fileService: FileService
 ) {
     private val validator = Validator()
     private var isNameNotUnique: Boolean = false
@@ -61,19 +58,13 @@ class ImportService(
 
 
         try {
-            minioClient.putObject(
-                PutObjectArgs.builder()
-                    .bucket("lab1")
-                    .`object`("${import.id}.csv")
-                    .contentType("test/csv")
-                    .stream(ByteArrayInputStream(bytes), objectSize, -1)
-                    .build()
-            )
+            fileService.uploadUncommitedFile(import.id!!, ByteArrayInputStream(bytes), objectSize)
         }
         catch (e: Exception) {
             log.error("Could not upload file to S3, ${e}")
             throw e
         }
+        log.info("Uploaded uncommited file to S3")
 
         try {
             val csvMapper = CsvMapper()
@@ -127,9 +118,12 @@ class ImportService(
             humanBeings.forEachIndexed { index, humanBeing ->
                 humanBeing.car = savedCars[index]
             }
-                       humanBeingRepository.saveAll(humanBeings)
+            humanBeingRepository.saveAll(humanBeings)
+            fileService.commitFile(import.id)
+            log.info("Commited import to S3 & Database")
             return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
+            fileService.rollbackFile(import.id)
             updateFailedImport(import, e.message ?: "Unknown error")
             throw e
         }
@@ -177,17 +171,6 @@ class ImportService(
         if (name == humanBeingProperties.name) {
             isNameNotUnique = true
         }
-    }
-
-    @PostConstruct()
-    fun createBucket() {
-        if(minioClient.bucketExists(BucketExistsArgs.builder().bucket(minioProperties.bucketName).build())) {
-            log.info("Bucket ${minioProperties.bucketName} already exists, skipping creation")
-            return
-        }
-        log.warn("Bucket ${minioProperties.bucketName} doesn't  exist, creating it")
-        minioClient.makeBucket(MakeBucketArgs.builder().bucket(minioProperties.bucketName).build())
-        log.info("Bucket ${minioProperties.bucketName} created")
     }
 
     private inner class Validator {
