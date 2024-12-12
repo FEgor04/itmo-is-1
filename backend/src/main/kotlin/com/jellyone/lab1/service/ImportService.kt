@@ -62,6 +62,7 @@ class ImportService(
         }
         catch (e: Exception) {
             log.error("Could not upload file to S3, ${e}")
+            updateFailedImport(import, e.message ?: "Unknown error")
             throw e
         }
         log.info("Uploaded uncommited file to S3")
@@ -118,9 +119,10 @@ class ImportService(
             humanBeings.forEachIndexed { index, humanBeing ->
                 humanBeing.car = savedCars[index]
             }
+
             humanBeingRepository.saveAll(humanBeings)
             fileService.commitFile(import.id)
-            log.info("Commited import to S3 & Database")
+            log.info("Saved import to database")
             return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
             fileService.rollbackFile(import.id)

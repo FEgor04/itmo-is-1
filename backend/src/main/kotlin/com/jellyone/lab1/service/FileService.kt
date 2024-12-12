@@ -17,6 +17,7 @@ class FileService(
     private val minioClient: MinioClient, private val props: MinioProperties
 ) {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     fun uploadUncommitedFile(id: Long, stream: InputStream, size: Long) {
         minioClient.putObject(
             PutObjectArgs.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").contentType("test/csv")
@@ -36,7 +37,7 @@ class FileService(
     }
 
     fun rollbackFile(id: Long) {
-        minioClient.removeObject(RemoveObjectArgs.builder().bucket(props.bucketName).`object`("${id}.csv").build())
+        minioClient.removeObject(RemoveObjectArgs.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").build())
     }
 
     @PostConstruct()
