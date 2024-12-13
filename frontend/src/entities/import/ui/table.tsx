@@ -51,7 +51,7 @@ export const columns: Array<ColumnDef<Import>> = [
 
       function fetchFile() {
         ApiInstance.api.getImportFile(row.original.id, {format: "blob"}).then((res) => {
-          const blob = res.data
+          const blob = res.data as unknown as Blob
           const fileUrl = window.URL.createObjectURL(blob)
           const alink = document.createElement("a")
           alink.href = fileUrl
