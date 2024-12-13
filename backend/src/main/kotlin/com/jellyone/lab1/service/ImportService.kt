@@ -2,6 +2,7 @@ package com.jellyone.lab1.service
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.jellyone.lab1.configuration.MinioProperties
 import com.jellyone.lab1.domain.Car
 import com.jellyone.lab1.domain.Coordinates
 import com.jellyone.lab1.domain.HumanBeing
@@ -15,11 +16,17 @@ import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.ImportRepository
 import com.jellyone.lab1.service.props.HumanBeingProperties
 import com.jellyone.lab1.web.dto.ImportCsvDataDto
+import org.apache.commons.io.IOUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
+
 
 @Service
 class ImportService(
@@ -27,10 +34,12 @@ class ImportService(
     private val carRepository: CarRepository,
     private val humanBeingProperties: HumanBeingProperties,
     private val userService: UserService,
-    private val importRepository: ImportRepository
+    private val importRepository: ImportRepository,
+    private val fileService: FileService
 ) {
     private val validator = Validator()
     private var isNameNotUnique: Boolean = false
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     @Transactional
     fun getAll(page: Int, pageSize: Int) = importRepository.getAll(page, pageSize)
@@ -40,14 +49,30 @@ class ImportService(
         importRepository.getAllByUser(page, pageSize, username)
 
     @Transactional
-    fun import(inputStream: InputStream, import: Import, username: String): Import {
+    fun import(inputStream: InputStream, objectSize: Long, import: Import, username: String): Import {
         val user = userService.getByUsername(username)
+
+        val byteArray = ByteArrayOutputStream()
+        IOUtils.copy(inputStream, byteArray)
+        val bytes: ByteArray = byteArray.toByteArray()
+
+
+        try {
+            fileService.uploadUncommitedFile(import.id!!, ByteArrayInputStream(bytes), objectSize)
+        }
+        catch (e: Exception) {
+            log.error("Could not upload file to S3, ${e}")
+            updateFailedImport(import, e.message ?: "Unknown error")
+            throw e
+        }
+        log.info("Uploaded uncommited file to S3")
+
         try {
             val csvMapper = CsvMapper()
             val schema = CsvSchema.emptySchema().withHeader()
 
             val reader = csvMapper.readerFor(ImportCsvDataDto::class.java).with(schema)
-            val importData: List<ImportCsvDataDto> = reader.readValues<ImportCsvDataDto>(inputStream).readAll()
+            val importData: List<ImportCsvDataDto> = reader.readValues<ImportCsvDataDto>(ByteArrayInputStream(bytes)).readAll()
 
             val humanBeings = mutableListOf<HumanBeing>()
             val cars = mutableListOf<Car>()
@@ -94,9 +119,13 @@ class ImportService(
             humanBeings.forEachIndexed { index, humanBeing ->
                 humanBeing.car = savedCars[index]
             }
+
             humanBeingRepository.saveAll(humanBeings)
+            fileService.commitFile(import.id)
+            log.info("Saved import to database")
             return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
+            fileService.rollbackFile(import.id)
             updateFailedImport(import, e.message ?: "Unknown error")
             throw e
         }

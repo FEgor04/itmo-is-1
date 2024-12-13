@@ -9,8 +9,8 @@ BACKEND_IMAGE_NAME ?= is1-backend
 # Version of frontend component
 # They are separated so that you could update backend and frontend
 # independetly
-FRONTEND_VERSION ?= 0.3.2
-BACKEND_VERSION ?= 0.2.7
+FRONTEND_VERSION ?= 0.4.0
+BACKEND_VERSION ?= 0.3.0
 
 # Version of application that will be deployed to Customer server (i.e. Helios)
 VERSION ?= 0.3.3
@@ -47,6 +47,9 @@ dev-down:
 
 dev-up-postgres:
 	docker compose -f docker-compose.dev.yaml up postgres -d
+
+dev-up-minio:
+	docker compose -f docker-compose.dev.yaml up minio -d
 
 prod-up:
 	docker compose -f docker-compose.yaml up -d

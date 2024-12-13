@@ -18,6 +18,11 @@ security:
     secret: ${JWT_SECRET}
     access: ${JWT_ACCESS_TTL}
     refresh: ${JWT_REFRESH_TTL}
+minio:
+  host: ${MINIO_HOST}
+  username: ${MINIO_ROOT_USER}
+  password: ${MINIO_ROOT_PASSWORD}
+  bucket-name: ${MINIO_BUCKET_NAME}
 logging:
   level:
     com.jellyone.lab1: DEBUG

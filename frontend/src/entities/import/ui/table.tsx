@@ -4,7 +4,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Import } from "@/entities/import";
+import { Button } from "@/shared/ui/button";
 import { ImportStatusBadge } from "@/entities/import/ui/status.tsx";
+import { Download } from "lucide-react";
+import { ApiInstance } from "@/shared/instance.ts";
 
 export const columns: Array<ColumnDef<Import>> = [
   {
@@ -41,6 +44,27 @@ export const columns: Array<ColumnDef<Import>> = [
     accessorKey: "finishedAt",
     header: "Дата конца",
   },
+  {
+    id: "actions",
+    cell: ({row}) => {
+      if(row.original.status != "finished") return
+
+      function fetchFile() {
+        ApiInstance.api.getImportFile(row.original.id, {format: "blob"}).then((res) => {
+          const blob = res.data as unknown as Blob
+          const fileUrl = window.URL.createObjectURL(blob)
+          const alink = document.createElement("a")
+          alink.href = fileUrl
+          alink.download = `${row.original.id}.csv`
+          alink.click()
+        })
+      }
+
+      return <Button variant="outline" size="icon" className="size-8" onClick={fetchFile}>
+          <Download className="size-4" />
+      </Button>
+    }
+  }
 ];
 
 export function useImportsTable(data: Array<Import>) {
