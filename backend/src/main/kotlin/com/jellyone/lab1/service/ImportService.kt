@@ -9,8 +9,11 @@ import com.jellyone.lab1.domain.HumanBeing
 import com.jellyone.lab1.domain.Import
 import com.jellyone.lab1.domain.enums.ImportStatus
 import com.jellyone.lab1.domain.enums.Mood
+import com.jellyone.lab1.domain.enums.Role
 import com.jellyone.lab1.domain.enums.WeaponType
+import com.jellyone.lab1.exception.OwnerPermissionsConflictException
 import com.jellyone.lab1.exception.ResourceAlreadyExistsException
+import com.jellyone.lab1.exception.ResourceNotFoundException
 import com.jellyone.lab1.repository.CarRepository
 import com.jellyone.lab1.repository.HumanBeingRepository
 import com.jellyone.lab1.repository.ImportRepository
@@ -57,14 +60,11 @@ class ImportService(
         val bytes: ByteArray = byteArray.toByteArray()
 
 
-        try {
-            fileService.uploadUncommitedFile(import.id!!, ByteArrayInputStream(bytes), objectSize)
+        if (!uploadFile(import.id!!, bytes, objectSize)) {
+            updateFailedImport(import, "Could not upload file to S3")
+            throw Exception("Could not upload file to S3")
         }
-        catch (e: Exception) {
-            log.error("Could not upload file to S3, ${e}")
-            updateFailedImport(import, e.message ?: "Unknown error")
-            throw e
-        }
+
         log.info("Uploaded uncommited file to S3")
 
         try {
@@ -72,7 +72,8 @@ class ImportService(
             val schema = CsvSchema.emptySchema().withHeader()
 
             val reader = csvMapper.readerFor(ImportCsvDataDto::class.java).with(schema)
-            val importData: List<ImportCsvDataDto> = reader.readValues<ImportCsvDataDto>(ByteArrayInputStream(bytes)).readAll()
+            val importData: List<ImportCsvDataDto> =
+                reader.readValues<ImportCsvDataDto>(ByteArrayInputStream(bytes)).readAll()
 
             val humanBeings = mutableListOf<HumanBeing>()
             val cars = mutableListOf<Car>()
@@ -163,10 +164,28 @@ class ImportService(
         return import
     }
 
+    fun checkOwner(id: Long, username: String) {
+        val import = importRepository.findById(id) ?: throw ResourceNotFoundException("Import not found with id $id")
+        val user = userService.getByUsername(username)
+        if ((import.user.id != user.id) && (user.role != Role.ADMIN)) {
+            throw OwnerPermissionsConflictException()
+        }
+    }
+
+    fun uploadFile(importId: Long, bytes: ByteArray, objectSize: Long): Boolean {
+        return try {
+            fileService.uploadUncommitedFile(importId, ByteArrayInputStream(bytes), objectSize)
+            true
+        } catch (e: Exception) {
+            log.error("Could not upload file to S3, $e")
+            false
+        }
+    }
 
     private fun checkNameIsNotUnique(name: String): Boolean {
         return (name == humanBeingProperties.name && isNameNotUnique) || (name == humanBeingProperties.name && humanBeingRepository.countByName(
-            humanBeingProperties.name) != 0L)
+            humanBeingProperties.name
+        ) != 0L)
     }
 
     private fun checkNameNotUnique(name: String) {

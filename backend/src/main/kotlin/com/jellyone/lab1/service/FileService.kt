@@ -28,16 +28,21 @@ class FileService(
 
     fun commitFile(id: Long) {
         minioClient.copyObject(
-            CopyObjectArgs.builder().source(CopySource.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").build())
+            CopyObjectArgs.builder()
+                .source(CopySource.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").build())
                 .bucket(props.bucketName)
                 .`object`("${id}.csv")
                 .build()
         )
-        minioClient.removeObject(RemoveObjectArgs.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").build())
+        minioClient.removeObject(
+            RemoveObjectArgs.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").build()
+        )
     }
 
     fun rollbackFile(id: Long) {
-        minioClient.removeObject(RemoveObjectArgs.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").build())
+        minioClient.removeObject(
+            RemoveObjectArgs.builder().bucket(props.bucketName).`object`("${id}_uncommited.csv").build()
+        )
     }
 
     @PostConstruct()
@@ -47,8 +52,23 @@ class FileService(
             return
         }
         log.warn("Bucket ${props.bucketName} doesn't  exist, creating it")
-        // @TODO: create public bucket
+
         minioClient.makeBucket(MakeBucketArgs.builder().bucket(props.bucketName).build())
+
+        try {
+            val policy = generateBucketPolicy(props.bucketName)
+
+            minioClient.setBucketPolicy(
+                SetBucketPolicyArgs.builder()
+                    .bucket(props.bucketName)
+                    .config(policy)
+                    .build()
+            )
+            log.info("Bucket ${props.bucketName} is now public")
+        } catch (e: Exception) {
+            log.error("Failed to set bucket policy for ${props.bucketName}", e)
+        }
+
         log.info("Bucket ${props.bucketName} created")
     }
 
@@ -57,5 +77,25 @@ class FileService(
         val obj = minioClient.getObject(GetObjectArgs.builder().`object`("$id.csv").bucket(props.bucketName).build())
         return obj.readAllBytes()
     }
+
+    private fun generateBucketPolicy(bucketName: String): String {
+        return """
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": [
+                        "s3:GetObject",
+                        "s3:PutObject"
+                    ],
+                    "Resource": "arn:aws:s3:::$bucketName/*"
+                }
+            ]
+        }
+    """.trimIndent()
+    }
+
 
 }
