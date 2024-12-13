@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.MinIOContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -38,6 +39,17 @@ class UserControllerTest {
             registry.add("spring.datasource.url", postgres::getJdbcUrl)
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
+        }
+
+        @Container
+        private val minio = MinIOContainer("minio/minio:RELEASE.2024-11-07T00-52-20Z")
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun configureMinioProperties(registry: DynamicPropertyRegistry) {
+            registry.add("minio.host", minio::getS3URL)
+            registry.add("minio.username", minio::getUserName)
+            registry.add("minio.password", minio::getPassword)
         }
     }
 

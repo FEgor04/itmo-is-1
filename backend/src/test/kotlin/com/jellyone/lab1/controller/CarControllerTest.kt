@@ -35,16 +35,20 @@ class CarControllerTest {
         @Container
         private val postgres = PostgreSQLContainer<Nothing>("postgres:16-alpine")
 
-        @Container
-        private val minio = MinIOContainer("minio/minio:RELEASE.2024-11-07T00-52-20Z")
-
         @DynamicPropertySource
         @JvmStatic
         fun configureProperties(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url", postgres::getJdbcUrl)
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
+        }
 
+        @Container
+        private val minio = MinIOContainer("minio/minio:RELEASE.2024-11-07T00-52-20Z")
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun configureMinioProperties(registry: DynamicPropertyRegistry) {
             registry.add("minio.host", minio::getS3URL)
             registry.add("minio.username", minio::getUserName)
             registry.add("minio.password", minio::getPassword)
