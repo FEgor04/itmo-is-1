@@ -53,4 +53,9 @@ class FileService(
     }
 
 
+    fun getImportFile(id: Long): ByteArray {
+        val obj = minioClient.getObject(GetObjectArgs.builder().`object`("$id.csv").bucket(props.bucketName).build())
+        return obj.readAllBytes()
+    }
+
 }

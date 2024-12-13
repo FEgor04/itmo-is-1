@@ -2,6 +2,7 @@ package com.jellyone.lab1.controller
 
 import com.jellyone.lab1.repository.PaginatedResponse
 import com.jellyone.lab1.repository.map
+import com.jellyone.lab1.service.FileService
 import com.jellyone.lab1.service.ImportService
 import com.jellyone.lab1.web.dto.ImportDto
 import com.jellyone.lab1.web.dto.toDto
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
+import jakarta.servlet.http.HttpServletResponse
+import jdk.jfr.ContentType
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestPart
@@ -27,8 +30,28 @@ import org.springframework.web.bind.annotation.RequestPart
 @SecurityRequirement(name = "JWT")
 class ImportController(
     private val importService: ImportService,
-    private val authenticationFacade: IAuthenticationFacade
+    private val authenticationFacade: IAuthenticationFacade,
+    private val fileService: FileService
 ) {
+
+    @GetMapping("/{id}/file")
+    fun getImportFile(@PathVariable id: Long, response: HttpServletResponse) {
+        /**
+         * @TODO: refactor this code & improve error handling: get rid of HttpServletResponse & try.. catch
+         * @TODO: implement user permissions check: admin can download any file, user can download only their file
+         */
+        try {
+            val fileContent = fileService.getImportFile(id)
+            response.contentType = "text/csv"
+            response.setHeader("Content-Disposition", "attachment; filename=\"$id.csv\"")
+            response.outputStream.use { outputStream ->
+                outputStream.write(fileContent)
+            }
+        } catch (e: Exception) {
+            response.status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR
+            response.writer.write("Failed to retrieve CSV file: ${e.message}")
+        }
+    }
 
     @PostMapping("", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(
