@@ -7,6 +7,7 @@ import { Import } from "@/entities/import";
 import { Button } from "@/shared/ui/button";
 import { ImportStatusBadge } from "@/entities/import/ui/status.tsx";
 import { Download } from "lucide-react";
+import { ApiInstance } from "@/shared/instance.ts";
 
 export const columns: Array<ColumnDef<Import>> = [
   {
@@ -48,10 +49,19 @@ export const columns: Array<ColumnDef<Import>> = [
     cell: ({row}) => {
       if(row.original.status != "finished") return
 
-      return <Button variant="outline" size="icon" className="size-8" asChild>
-        <a href={`${import.meta.env.VITE_MINIO_URL}/lab1/${row.original.id}.csv`} target="_blank">
+      function fetchFile() {
+        ApiInstance.api.getImportFile(row.original.id, {format: "blob"}).then((res) => {
+          const blob = res.data
+          const fileUrl = window.URL.createObjectURL(blob)
+          const alink = document.createElement("a")
+          alink.href = fileUrl
+          alink.download = `${row.original.id}.csv`
+          alink.click()
+        })
+      }
+
+      return <Button variant="outline" size="icon" className="size-8" onClick={fetchFile}>
           <Download className="size-4" />
-        </a>
       </Button>
     }
   }
