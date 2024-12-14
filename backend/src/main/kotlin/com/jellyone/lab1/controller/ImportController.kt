@@ -95,13 +95,11 @@ class ImportController(
         }
 
         try {
-            importService.import(ByteArrayInputStream(bytes), file.size, import, principal.name)
+             return importService.import(ByteArrayInputStream(bytes), file.size, import, principal.name).toDto()
         } catch (e: Exception) {
             importService.rollbackFile(import.id)
             return importService.updateFailedImport(import, "Could not upload file to S3").toDto()
         }
-
-        return importService.updateSuccessfulImport(import, import.createdEntitiesCount).toDto()
     }
 
     @ApiResponses(

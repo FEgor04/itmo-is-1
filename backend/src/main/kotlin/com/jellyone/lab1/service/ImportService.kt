@@ -52,7 +52,7 @@ class ImportService(
         importRepository.getAllByUser(page, pageSize, username)
 
     @Transactional
-    fun import(inputStream: InputStream, objectSize: Long, import: Import, username: String) {
+    fun import(inputStream: InputStream, objectSize: Long, import: Import, username: String): Import {
         val user = userService.getByUsername(username)
 
         val byteArray = ByteArrayOutputStream()
@@ -118,7 +118,7 @@ class ImportService(
             humanBeingRepository.saveAll(humanBeings)
 //            fileService.commitFile(import.id)
             log.info("Saved import to database")
-//            return updateSuccessfulImport(import, importData.size.toLong())
+            return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
 //            fileService.rollbackFile(import.id)
 //            updateFailedImport(import, e.message ?: "Unknown error")
