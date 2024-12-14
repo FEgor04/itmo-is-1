@@ -17,12 +17,9 @@ class ImportDataSimulation : Simulation() {
         .contentTypeHeader("application/json")
 
     private val fileContent = """
-            name,x,y,realHero,hasToothpick,mood,speed,weaponType,car.model,car.brand,car.color,car.cool
             Ryan,1,1,true,true,FRENZY,10,AXE,Lada,Kalina,Red,true
             Ryan2,2,2,false,false,FRENZY,20,AXE,Lada,Kalina,Red,true
         """.trimIndent()
-
-    val file = MockMultipartFile("file", "test.csv", "text/csv", fileContent.toByteArray())
 
     private val scn = scenario("Import Data Scenario")
         .exec(
@@ -38,8 +35,6 @@ class ImportDataSimulation : Simulation() {
                 .check(status().`is`(200))
         )
 
-
-    private val importScn = scenario("Import Data Scenario")
 
     init {
         setUp(

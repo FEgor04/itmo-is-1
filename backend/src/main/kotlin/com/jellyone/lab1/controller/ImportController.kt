@@ -38,7 +38,7 @@ class ImportController(
 
     @GetMapping("/{id}/file")
     fun getImportFile(
-        @PathVariable id: Long, response: HttpServletResponse,
+        @PathVariable id: Long,
         principal: Principal
     ): ResponseEntity<ByteArray> {
 
