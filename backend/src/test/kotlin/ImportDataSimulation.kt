@@ -9,15 +9,14 @@ class ImportDataSimulation : Simulation() {
     private val baseUrl = "http://localhost:8080"
 
     // Need to be replaced with real token
-    private val authToken =
-        "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjMiLCJpZCI6MSwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MzI5NzYwNDEsImV4cCI6MTczMjk3OTY0MX0.sWsGhRKxnCZwZR4JPMt94ACD0SoVDq7tr5ug1WgezQobuKgDWJKO2spkHh_coDSrdUQOSVRD_NlWzPShrHDBPA"
+    private val authToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlZmVkb3JvdiIsImlkIjoxLCJyb2xlcyI6WyJVU0VSIl0sImlhdCI6MTczNDE4MDcwNywiZXhwIjoxNzM0MTg0MzA3fQ.F_Dfvjoe4yr9cWsf8ff_2_Q7cCj_Cov7o0jzwg2uz1S_efbHhHDg6VrG_P90CAfhTPQRZ-MyXmHpZ769ygJwoA"
 
     private val httpProtocol = http.baseUrl(baseUrl)
         .acceptHeader("application/json")
-        .contentTypeHeader("application/json")
 
     private val fileContent = """
-            Ryan,1,1,true,true,FRENZY,10,AXE,Lada,Kalina,Red,true
+            name,x,y,realHero,hasToothpick,mood,speed,weaponType,car.model,car.brand,car.color,car.cool
+            Ryan Gosling,1,1,true,true,FRENZY,10,AXE,Lada,Kalina,Red,true
             Ryan2,2,2,false,false,FRENZY,20,AXE,Lada,Kalina,Red,true
         """.trimIndent()
 
@@ -26,13 +25,15 @@ class ImportDataSimulation : Simulation() {
             http("Import Data Scenario")
                 .post("/api/import")
                 .header("Authorization", "Bearer $authToken")
+                .header("Content-Type", "multipart/form-data")
                 .bodyPart(
                     ByteArrayBodyPart(
                         "file",
                         fileContent.toByteArray(),
-                    )
+                    ).fileName("file.csv")
                 )
-                .check(status().`is`(200))
+                .asMultipartForm()
+                .check(status().`is`(409))
         )
 
 
