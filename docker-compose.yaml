@@ -65,13 +65,16 @@ services:
     container_name: "is__backend"
     image: ${BACKEND_IMAGE}
     environment:
-      - POSTGRES_HOST=postgres:5432
+      - POSTGRES_HOST=is__postgres:5432
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_ACCESS_TTL=${JWT_ACCESS_TTL}
       - JWT_REFRESH_TTL=${JWT_REFRESH_TTL}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_BUCKET_NAME=lab1
     labels:
       - traefik.enable=true
       - traefik.http.routers.lab1-backend.entrypoints=webSecure
