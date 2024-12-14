@@ -97,7 +97,7 @@ class ImportController(
         try {
             importService.import(ByteArrayInputStream(bytes), file.size, import, principal.name)
         } catch (e: Exception) {
-            importService.rollbackFile(import.id!!)
+            importService.rollbackFile(import.id)
             return importService.updateFailedImport(import, "Could not upload file to S3").toDto()
         }
 
