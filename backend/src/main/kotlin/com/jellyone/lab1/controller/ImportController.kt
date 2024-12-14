@@ -20,11 +20,14 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import jakarta.servlet.http.HttpServletResponse
 import jdk.jfr.ContentType
+import org.apache.commons.io.IOUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestPart
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 @RestController
 @RequestMapping("/api/import")
@@ -77,8 +80,26 @@ class ImportController(
         @RequestPart("file") file: MultipartFile,
         principal: Principal
     ): ImportDto {
+
         val import = importService.createProgressImport(principal.name)
-        return importService.import(file.inputStream, file.size, import, principal.name).toDto()
+
+        val inputStream = file.inputStream
+        val byteArray = ByteArrayOutputStream()
+        IOUtils.copy(inputStream, byteArray)
+        val bytes: ByteArray = byteArray.toByteArray()
+
+        try {
+            importService.uploadFile(import.id!!, ByteArrayInputStream(bytes), file.size)
+        } catch (e: Exception) {
+            return importService.updateFailedImport(import, "Could not upload file to S3").toDto()
+        }
+
+        try {
+             return importService.import(ByteArrayInputStream(bytes), file.size, import, principal.name).toDto()
+        } catch (e: Exception) {
+            importService.rollbackFile(import.id)
+            return importService.updateFailedImport(import, "Could not upload file to S3").toDto()
+        }
     }
 
     @ApiResponses(

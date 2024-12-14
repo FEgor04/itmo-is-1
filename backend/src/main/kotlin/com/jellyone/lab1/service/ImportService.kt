@@ -59,12 +59,6 @@ class ImportService(
         IOUtils.copy(inputStream, byteArray)
         val bytes: ByteArray = byteArray.toByteArray()
 
-
-        if (!uploadFile(import.id!!, bytes, objectSize)) {
-            updateFailedImport(import, "Could not upload file to S3")
-            throw Exception("Could not upload file to S3")
-        }
-
         log.info("Uploaded uncommited file to S3")
 
         try {
@@ -122,13 +116,21 @@ class ImportService(
             }
 
             humanBeingRepository.saveAll(humanBeings)
-            fileService.commitFile(import.id)
+//            fileService.commitFile(import.id)
             log.info("Saved import to database")
             return updateSuccessfulImport(import, importData.size.toLong())
         } catch (e: Exception) {
-            fileService.rollbackFile(import.id)
-            updateFailedImport(import, e.message ?: "Unknown error")
+//            fileService.rollbackFile(import.id)
+//            updateFailedImport(import, e.message ?: "Unknown error")
             throw e
+        }
+    }
+
+    fun rollbackFile(id: Long) {
+        try {
+            fileService.rollbackFile(id)
+        } catch (e: Exception) {
+            log.error("Could not rollback file, $e")
         }
     }
 
@@ -172,14 +174,8 @@ class ImportService(
         }
     }
 
-    fun uploadFile(importId: Long, bytes: ByteArray, objectSize: Long): Boolean {
-        return try {
-            fileService.uploadUncommitedFile(importId, ByteArrayInputStream(bytes), objectSize)
-            true
-        } catch (e: Exception) {
-            log.error("Could not upload file to S3, $e")
-            false
-        }
+    fun uploadFile(importId: Long, inputStream: InputStream, objectSize: Long) {
+        fileService.uploadFile(importId, inputStream, objectSize)
     }
 
     private fun checkNameIsNotUnique(name: String): Boolean {
