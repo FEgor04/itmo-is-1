@@ -130,6 +130,7 @@ class ImportRepository(
         return import.copy(id = result?.get(DSL.field("id", Long::class.java)))
     }
 
+    @Transactional
     fun update(import: Import) {
         dsl.update(DSL.table("import"))
             .set(DSL.field("status"), import.status.name)
@@ -140,6 +141,46 @@ class ImportRepository(
             .set(DSL.field("user_id"), import.user.id)
             .where(DSL.field("id").eq(import.id))
             .execute()
+    }
+
+    @Transactional
+    fun findById(id: Long): Import? {
+        val result = dsl.select(
+            DSL.field("import.id"),
+            DSL.field("import.status"),
+            DSL.field("import.message"),
+            DSL.field("import.created_entities_count"),
+            DSL.field("import.created_at"),
+            DSL.field("import.finished_at"),
+            DSL.field("users.id"),
+            DSL.field("users.username"),
+            DSL.field("users.role"),
+            DSL.field("users.password")
+        )
+            .from("import")
+            .join("users").on(DSL.field("import.user_id").eq(DSL.field("users.id")))
+            .where(DSL.field("import.id").eq(id))
+            .fetchOne()
+
+        return result?.let { record ->
+            Import(
+                id = record.get(DSL.field("import.id"), Long::class.java),
+                status = ImportStatus.valueOf(record.get(DSL.field("import.status"), String::class.java)),
+                message = record.get(DSL.field("import.message"), String::class.java),
+                createdEntitiesCount = record.get(DSL.field("import.created_entities_count"), Long::class.java),
+                createdAt = record.get(DSL.field("import.created_at"), java.sql.Timestamp::class.java)
+                    .toLocalDateTime(),
+                finishedAt = record.get(DSL.field("import.finished_at"), java.sql.Timestamp::class.java)
+                    .toLocalDateTime(),
+                user = User(
+                    id = record.get(DSL.field("users.id"), Long::class.java),
+                    username = record.get(DSL.field("users.username"), String::class.java),
+                    role = Role.valueOf(record.get(DSL.field("users.role"), String::class.java)),
+                    password = record.get(DSL.field("users.password"), String::class.java)
+                )
+            )
+        }
+
     }
 
     private fun getLocalDateFromSqlDate(date: java.sql.Date): LocalDateTime {

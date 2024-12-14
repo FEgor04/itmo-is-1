@@ -7,6 +7,7 @@ class PostHumanSimulation : Simulation() {
 
     private val baseUrl = "http://localhost:8080"
 
+    // Need to be replaced with real token
     private val authToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjMiLCJpZCI6MSwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MzI5NzYwNDEsImV4cCI6MTczMjk3OTY0MX0.sWsGhRKxnCZwZR4JPMt94ACD0SoVDq7tr5ug1WgezQobuKgDWJKO2spkHh_coDSrdUQOSVRD_NlWzPShrHDBPA"
 
     private val httpProtocol = http.baseUrl(baseUrl)
@@ -35,6 +36,8 @@ class PostHumanSimulation : Simulation() {
                 .body(StringBody(requestBody))
                 .check(status().`is`(409))
         )
+
+    private val importScn = scenario("Import Data Scenario")
 
     init {
         setUp(

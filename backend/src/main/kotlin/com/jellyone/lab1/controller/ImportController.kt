@@ -20,7 +20,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import jakarta.servlet.http.HttpServletResponse
 import jdk.jfr.ContentType
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestPart
 
@@ -35,22 +37,18 @@ class ImportController(
 ) {
 
     @GetMapping("/{id}/file")
-    fun getImportFile(@PathVariable id: Long, response: HttpServletResponse) {
-        /**
-         * @TODO: refactor this code & improve error handling: get rid of HttpServletResponse & try.. catch
-         * @TODO: implement user permissions check: admin can download any file, user can download only their file
-         */
-        try {
-            val fileContent = fileService.getImportFile(id)
-            response.contentType = "text/csv"
-            response.setHeader("Content-Disposition", "attachment; filename=\"$id.csv\"")
-            response.outputStream.use { outputStream ->
-                outputStream.write(fileContent)
-            }
-        } catch (e: Exception) {
-            response.status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR
-            response.writer.write("Failed to retrieve CSV file: ${e.message}")
-        }
+    fun getImportFile(
+        @PathVariable id: Long,
+        principal: Principal
+    ): ResponseEntity<ByteArray> {
+
+        importService.checkOwner(id, principal.name)
+
+        val fileContent = fileService.getImportFile(id)
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType("text/csv"))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$id.csv\"")
+            .body(fileContent)
     }
 
     @PostMapping("", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
