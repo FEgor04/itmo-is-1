@@ -72,6 +72,9 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_ACCESS_TTL=${JWT_ACCESS_TTL}
       - JWT_REFRESH_TTL=${JWT_REFRESH_TTL}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_BUCKET_NAME=lab1
     labels:
       - traefik.enable=true
       - traefik.http.routers.lab1-backend.entrypoints=webSecure
