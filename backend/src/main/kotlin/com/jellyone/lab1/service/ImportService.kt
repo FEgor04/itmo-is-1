@@ -174,14 +174,8 @@ class ImportService(
         }
     }
 
-    fun uploadFile(importId: Long, inputStream: InputStream, objectSize: Long): Boolean {
-        return try {
-            fileService.uploadFile(importId, inputStream, objectSize)
-            true
-        } catch (e: Exception) {
-            log.error("Could not upload file to S3, $e")
-            false
-        }
+    fun uploadFile(importId: Long, inputStream: InputStream, objectSize: Long) {
+        fileService.uploadFile(importId, inputStream, objectSize)
     }
 
     private fun checkNameIsNotUnique(name: String): Boolean {
